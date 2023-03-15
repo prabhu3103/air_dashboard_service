@@ -1,15 +1,10 @@
 package cps.middleware.models.response;
 
 
-import java.util.Objects;
-
+import jakarta.xml.bind.annotation.*;
 import org.springframework.stereotype.Component;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlAttribute;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
+import java.util.Objects;
 
 @Component
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -27,7 +22,6 @@ public class MessageEntry {
 
     public MessageEntry() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     public MessageEntry(String code, String messageType, String text) {

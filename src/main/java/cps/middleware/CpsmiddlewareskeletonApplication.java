@@ -2,12 +2,13 @@ package cps.middleware;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-public class CpsmiddlewareskeletonApplication {
+@EnableJpaRepositories
+public class CpsMiddleWareSkeletonApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CpsmiddlewareskeletonApplication.class, args);
-	}
-
+    public static void main(String[] args) {
+        SpringApplication.run(CpsMiddleWareSkeletonApplication.class, args);
+    }
 }

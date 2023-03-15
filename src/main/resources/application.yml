@@ -1,7 +1,7 @@
 logging:
   file:
     path: ./logs/
-    name: ${logging.file.path}rate-estimate.log
+    name: ${logging.file.path}cps-middleware-skeleton.log
   level:
     org:
       springframework:
@@ -17,11 +17,13 @@ org:
       bootdelegation: com.sun.*
 
 server:
-  port: 8081
+  port: 7070
   servlet:
     context-path: /cps
 
 spring:
+  application:
+    name: cps-middleware-skeleton
   datasource:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     hikari:

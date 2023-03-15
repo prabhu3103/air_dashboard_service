@@ -1,6 +1,8 @@
 ## Swagger-UI
+- [Demo-API](http://localhost:7070/cps/swagger-ui.html) - Click
 
-- [Demo-API](http://localhost:8081/cps/v1/demo) - Click
+## Demo Url
+- [Demo-API](http://localhost:7070/cps/v1/demo) - Click
 
 
 
