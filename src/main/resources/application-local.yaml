@@ -1,0 +1,49 @@
+logging:
+  file:
+    path: ./logs/
+    name: ${logging.file.path}cps-dashboard.log
+  level:
+    org:
+      springframework:
+        context: INFO
+        web: INFO
+    root: INFO
+  pattern:
+    file: '%d [%level] %c{1.} [%t] %m%n'
+
+org:
+  osgi:
+    framework:
+      bootdelegation: com.sun.*
+
+server:
+  port: 8078
+  servlet:
+    context-path: /cps
+
+spring:
+  profiles: local
+  application:
+    name: cps-dashboard
+  redis:
+    host: localhost
+    port: 6379
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    hikari:
+      connectionTimeout: 30000
+      idleTimeout: 600000
+      maxLifetime: 180000
+      maximum-pool-size: 10
+      minimum-idle: 2
+    username: cps
+    password: cps
+    url: jdbc:sqlserver://localhost:1433;databaseName=CPS;encrypt=true;trustServerCertificate=true;
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
