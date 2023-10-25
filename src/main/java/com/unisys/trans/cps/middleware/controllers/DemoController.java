@@ -1,8 +1,8 @@
-package cps.middleware.controllers;
+package com.unisys.trans.cps.middleware.controllers;
 
-import cps.middleware.constants.AuditAction;
-import cps.middleware.models.ResponseEntity;
-import cps.middleware.utilities.CpsAuditUtils;
+import com.unisys.trans.cps.middleware.utilities.CpsAuditUtils;
+import com.unisys.trans.cps.middleware.constants.AuditAction;
+import com.unisys.trans.cps.middleware.models.ResponseEntity;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package cps.middleware.constants;
+package com.unisys.trans.cps.middleware.constants;
 
 /**
  * @author RajAlok

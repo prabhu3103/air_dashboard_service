@@ -1,4 +1,4 @@
-package cps.middleware.configuration;
+package com.unisys.trans.cps.middleware.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package cps.middleware.models.response;
+package com.unisys.trans.cps.middleware.models.response;
 
 
 import jakarta.xml.bind.annotation.*;

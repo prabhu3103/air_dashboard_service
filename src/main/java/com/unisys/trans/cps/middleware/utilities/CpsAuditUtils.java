@@ -1,10 +1,11 @@
-package cps.middleware.utilities;
+package com.unisys.trans.cps.middleware.utilities;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cps.middleware.exception.CpsException;
-import cps.middleware.models.ResponseEntity;
-import cps.middleware.models.request.AuditRequest;
+import com.unisys.trans.cps.middleware.constants.SubFunction;
+import com.unisys.trans.cps.middleware.models.request.AuditRequest;
+import com.unisys.trans.cps.middleware.exception.CpsException;
+import com.unisys.trans.cps.middleware.models.ResponseEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -18,8 +19,6 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import static cps.middleware.constants.SubFunction.INQUIRY;
 
 /**
  * @author RajAlok
@@ -89,7 +88,7 @@ public class CpsAuditUtils {
         auditRequest.setPortalFunction(PORTAL_FUNCTION);
         auditRequest.setPortalIdentity(PORTAL_IDENTITY);
         auditRequest.setServerName(SERVER_NAME);
-        auditRequest.setSubFunction(String.valueOf(INQUIRY));
+        auditRequest.setSubFunction(String.valueOf(SubFunction.INQUIRY));
         auditRequest.setTxnStatus(EMPTY_STRING);
         /* TODO : Need to change once the login module is ready to use */
         auditRequest.setUserId("BiswalT");

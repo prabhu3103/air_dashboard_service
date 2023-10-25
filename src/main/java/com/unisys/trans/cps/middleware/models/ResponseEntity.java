@@ -1,6 +1,6 @@
-package cps.middleware.models;
+package com.unisys.trans.cps.middleware.models;
 
-import cps.middleware.models.response.MessageEntry;
+import com.unisys.trans.cps.middleware.models.response.MessageEntry;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.stereotype.Component;

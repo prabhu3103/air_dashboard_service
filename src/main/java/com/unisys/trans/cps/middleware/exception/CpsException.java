@@ -1,6 +1,6 @@
-package cps.middleware.exception;
+package com.unisys.trans.cps.middleware.exception;
 
-import cps.middleware.models.response.Messages;
+import com.unisys.trans.cps.middleware.models.response.Messages;
 
 /**
  * @author RajAlok
