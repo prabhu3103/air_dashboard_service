@@ -3,9 +3,10 @@ package com.unisys.trans.cps.middleware.utilities;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unisys.trans.cps.middleware.constants.SubFunction;
-import com.unisys.trans.cps.middleware.models.request.AuditRequest;
+import com.unisys.trans.cps.middleware.models.request.AuditRequestDTO;
 import com.unisys.trans.cps.middleware.exception.CpsException;
 import com.unisys.trans.cps.middleware.models.ResponseEntity;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -13,8 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import javax.validation.constraints.NotNull;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.time.LocalDateTime;
@@ -66,35 +65,35 @@ public class CpsAuditUtils {
         return Mono.empty();
     }
 
-    private AuditRequest getAuditRequestBuilder(ResponseEntity<?> responseEntity, Object payload, String carrier) throws JsonProcessingException, UnknownHostException {
+    private AuditRequestDTO getAuditRequestBuilder(ResponseEntity<?> responseEntity, Object payload, String carrier) throws JsonProcessingException, UnknownHostException {
         ObjectMapper mapper = new ObjectMapper();
-        AuditRequest auditRequest = new AuditRequest();
-        auditRequest.setAwbNumber(EMPTY_STRING);
-        auditRequest.setCarrier(carrier);
-        auditRequest.setConfNumber(EMPTY_STRING);
-        auditRequest.setDocument(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(payload));
+        AuditRequestDTO auditRequestDTO = new AuditRequestDTO();
+        auditRequestDTO.setAwbNumber(EMPTY_STRING);
+        auditRequestDTO.setCarrier(carrier);
+        auditRequestDTO.setConfNumber(EMPTY_STRING);
+        auditRequestDTO.setDocument(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(payload));
         if (responseEntity.isSuccessFlag()) {
-            auditRequest.setErrorTxt(EMPTY_STRING);
-            auditRequest.setHostError(EMPTY_STRING);
-            auditRequest.setStatus(SUCCESS);
+            auditRequestDTO.setErrorTxt(EMPTY_STRING);
+            auditRequestDTO.setHostError(EMPTY_STRING);
+            auditRequestDTO.setStatus(SUCCESS);
         } else {
-            auditRequest.setErrorTxt(responseEntity.getErrorList().get(0).getText());
-            auditRequest.setHostError(responseEntity.getErrorList().get(0).getText());
-            auditRequest.setStatus(FAIL);
+            auditRequestDTO.setErrorTxt(responseEntity.getErrorList().get(0).getText());
+            auditRequestDTO.setHostError(responseEntity.getErrorList().get(0).getText());
+            auditRequestDTO.setStatus(FAIL);
         }
-        auditRequest.setEventDate(LocalDateTime.now());
-        auditRequest.setFromPage(FROM_PAGE);
-        auditRequest.setIpAddress(InetAddress.getLocalHost().getHostAddress());
-        auditRequest.setPortalFunction(PORTAL_FUNCTION);
-        auditRequest.setPortalIdentity(PORTAL_IDENTITY);
-        auditRequest.setServerName(SERVER_NAME);
-        auditRequest.setSubFunction(String.valueOf(SubFunction.INQUIRY));
-        auditRequest.setTxnStatus(EMPTY_STRING);
+        auditRequestDTO.setEventDate(LocalDateTime.now());
+        auditRequestDTO.setFromPage(FROM_PAGE);
+        auditRequestDTO.setIpAddress(InetAddress.getLocalHost().getHostAddress());
+        auditRequestDTO.setPortalFunction(PORTAL_FUNCTION);
+        auditRequestDTO.setPortalIdentity(PORTAL_IDENTITY);
+        auditRequestDTO.setServerName(SERVER_NAME);
+        auditRequestDTO.setSubFunction(String.valueOf(SubFunction.INQUIRY));
+        auditRequestDTO.setTxnStatus(EMPTY_STRING);
         /* TODO : Need to change once the login module is ready to use */
-        auditRequest.setUserId("BiswalT");
-        auditRequest.setBranchId(10010);
+        auditRequestDTO.setUserId("BiswalT");
+        auditRequestDTO.setBranchId(10010);
 
-        log.info("Audit_Request_JSON: {}", mapper.writerWithDefaultPrettyPrinter().writeValueAsString(auditRequest));
-        return auditRequest;
+        log.info("Audit_Request_JSON: {}", mapper.writerWithDefaultPrettyPrinter().writeValueAsString(auditRequestDTO));
+        return auditRequestDTO;
     }
 }

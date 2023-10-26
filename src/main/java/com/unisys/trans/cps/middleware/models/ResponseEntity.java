@@ -1,8 +1,6 @@
 package com.unisys.trans.cps.middleware.models;
 
 import com.unisys.trans.cps.middleware.models.response.MessageEntry;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import org.springframework.stereotype.Component;
 
 import java.io.Serial;
@@ -17,7 +15,6 @@ import java.util.Objects;
  */
 
 @Component
-@ApiModel(value = "ResponseEntity", description = "Wrapper Entity for all the Response")
 public class ResponseEntity<T> implements Serializable {
 
     /**
@@ -27,15 +24,12 @@ public class ResponseEntity<T> implements Serializable {
     private static final long serialVersionUID = 8334826799209861627L;
 
     /* successFlag is for transaction completed successfully or not */
-    @ApiModelProperty(notes = "Success Flag.", required = true, position = 0)
     private boolean successFlag;
 
     /* T is the generic type for  all the model classes respective to Business */
-    @ApiModelProperty(notes = "Response object.", required = false, position = 1)
     private T response;
 
     /* List of all the validation error based on business requirement */
-    @ApiModelProperty(notes = "Error List.", required = false, position = 2)
     private List<MessageEntry> errorList;
 
     public ResponseEntity() {

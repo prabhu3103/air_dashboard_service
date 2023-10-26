@@ -32,7 +32,7 @@ spring:
       maxLifetime: 180000
       maximum-pool-size: 10
       minimum-idle: 2
-    password: root
+    password: cps
     url: jdbc:sqlserver://localhost:1433;databaseName=CPS;encrypt=true;trustServerCertificate=true;
     username: cps
   jpa:

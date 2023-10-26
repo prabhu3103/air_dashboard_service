@@ -15,7 +15,7 @@ import java.util.Arrays;
 @RequestMapping("/v1")
 public class PointOfSalesController {
 
-    @Autowired
+    /*@Autowired
     private CpsAuditUtils auditUtils;
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -30,5 +30,5 @@ public class PointOfSalesController {
         response.setResponse(new String("Demo Working Fine"));
         response.setErrorList(null);
         return response;
-    }
+    }*/
 }
