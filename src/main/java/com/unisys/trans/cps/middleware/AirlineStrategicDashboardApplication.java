@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @EnableJpaRepositories
-public class CpsMiddleWareSkeletonApplication {
+public class AirlineStrategicDashboardApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CpsMiddleWareSkeletonApplication.class, args);
+        SpringApplication.run(AirlineStrategicDashboardApplication.class, args);
     }
 }

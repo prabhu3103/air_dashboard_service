@@ -1,10 +1,8 @@
 package com.unisys.trans.cps.middleware.controllers;
 
-import com.unisys.trans.cps.middleware.utilities.CpsAuditUtils;
 import com.unisys.trans.cps.middleware.constants.AuditAction;
 import com.unisys.trans.cps.middleware.models.ResponseEntity;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import com.unisys.trans.cps.middleware.utilities.CpsAuditUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -15,15 +13,13 @@ import java.util.Arrays;
 @Slf4j
 @RestController
 @RequestMapping("/v1")
-@Api(value = "Demo Controller", protocols = "http")
-public class DemoController {
+public class TopAgentsController {
 
     @Autowired
     private CpsAuditUtils auditUtils;
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/demo", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Demo API", response = ResponseEntity.class)
     @ResponseBody
     ResponseEntity getDemo() {
 
