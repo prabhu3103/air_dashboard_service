@@ -18,4 +18,7 @@ public class AirlineDashboardRequest {
 
     @NotNull
     private String location;
+
+    @NotNull
+    private  String carrier;
 }
