@@ -17,7 +17,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
             "from   AuditRequest a  \n" +
             "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
             "and a.carrier = :carrier\n" +
-            "and a.origin = :origin\n" +
+            "and a.origin = :originAirport\n" +
             "group by a.origin,a.destination\n" +
             "order by TOPLANE desc LIMIT 5")
     List<Object[]> getTopLanesBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
