@@ -1,19 +1,141 @@
 package com.unisys.trans.cps.middleware.repository;
 
 import com.unisys.trans.cps.middleware.models.entity.AuditRequest;
-import com.unisys.trans.cps.middleware.models.response.TopAgentsResponseDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigInteger> {
 
-    @Query("select a.accNo, a.branchId, a.carrier, b.accountDescription, COUNT(*) as noOfBookings  from AuditRequest a, BranchAccount b where a.accNo=b.accountId and a.branchId=b.branchId and\n" +
-            "a.carrier=b.carrierCode \n" +
-            "group by a.accNo, a.branchId, a.carrier, b.accountDescription order by noOfBookings desc")
-    public List<Object[]> getTopAgents();
+    @Query("select a.origin, a.destination, COUNT(*) AS TOPLANE\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin = :origin\n" +
+            "group by a.origin,a.destination\n" +
+            "order by TOPLANE desc LIMIT 5")
+    List<Object[]> getTopLanesBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                               @Param("carrier") String carrier, @Param("origin") String origin);
+
+    @Query("select a.origin, a.destination, COUNT(*) AS TOPLANE\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:origin)\n" +
+            "group by a.origin,a.destination\n" +
+            "order by TOPLANE desc LIMIT 5")
+    List<Object[]> getTopLanesBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                             @Param("carrier") String carrier, @Param("origin") String origin);
+
+    @Query("select a.origin, a.destination, COUNT(*) AS TOPLANE\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin in(select b.code from CityCountryMaster b where b.continent=:origin)\n" +
+            "group by a.origin,a.destination\n" +
+            "order by TOPLANE desc LIMIT 5")
+    List<Object[]> getTopLanesBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                             @Param("carrier") String carrier, @Param("origin") String origin);
+
+    @Query("select a.origin, a.destination, COUNT(*) AS TOPLANE\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:origin))\n" +
+            "group by a.origin,a.destination\n" +
+            "order by TOPLANE desc LIMIT 5")
+    List<Object[]> getTopLanesBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                            @Param("carrier") String carrier, @Param("origin") String origin);
+
+    @Query("select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin = :origin\n" +
+            "group by a.origin,a.destination\n" +
+            "order by totalWeight desc LIMIT 5")
+    List<Object[]> getTopLanesWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                            @Param("carrier") String carrier, @Param("origin") String origin);
+
+
+    @Query("select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:origin)\n" +
+            "group by a.origin,a.destination\n" +
+            "order by totalWeight desc LIMIT 5")
+    List<Object[]> getTopLanesWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                            @Param("carrier") String carrier, @Param("origin") String origin);
+
+
+    @Query("select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin in(select b.code from CityCountryMaster b where b.continent=:origin)\n" +
+            "group by a.origin,a.destination\n" +
+            "order by totalWeight desc LIMIT 5")
+    List<Object[]> getTopLanesWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                              @Param("carrier") String carrier, @Param("origin") String origin);
+
+    @Query("select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:origin))\n" +
+            "group by a.origin,a.destination\n" +
+            "order by totalWeight desc LIMIT 5")
+    List<Object[]> getTopLanesWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                           @Param("carrier") String carrier, @Param("origin") String origin);
+
+
+    @Query("select a.origin, a.destination, SUM(a.stdVol) AS totalVolume\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin = :origin\n" +
+            "group by a.origin,a.destination\n" +
+            "order by totalVolume desc LIMIT 5")
+    List<Object[]> getTopLanesVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                            @Param("carrier") String carrier, @Param("origin") String origin);
+
+
+    @Query("select a.origin, a.destination, SUM(a.stdVol) AS totalVolume\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:origin)\n" +
+            "group by a.origin,a.destination\n" +
+            "order by totalVolume desc LIMIT 5")
+    List<Object[]> getTopLanesVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                            @Param("carrier") String carrier, @Param("origin") String origin);
+
+
+    @Query("select a.origin, a.destination, SUM(a.stdVol) AS totalVolume\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin in(select b.code from CityCountryMaster b where b.continent=:origin)\n" +
+            "group by a.origin,a.destination\n" +
+            "order by totalVolume desc LIMIT 5")
+    List<Object[]> getTopLanesVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                              @Param("carrier") String carrier, @Param("origin") String origin);
+
+    @Query("select a.origin, a.destination, SUM(a.stdVol) AS totalVolume\n" +
+            "from   AuditRequest a  \n" +
+            "where a.eventDate >= :startDate and a.eventDate <= :endDate\n" +
+            "and a.carrier = :carrier\n" +
+            "and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:origin))\n" +
+            "group by a.origin,a.destination\n" +
+            "order by totalVolume desc LIMIT 5")
+    List<Object[]> getTopLanesVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                           @Param("carrier") String carrier, @Param("origin") String origin);
+
 }
