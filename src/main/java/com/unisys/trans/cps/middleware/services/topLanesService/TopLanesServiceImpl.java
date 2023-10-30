@@ -105,7 +105,8 @@ public class TopLanesServiceImpl implements TopLanesService {
             TopLanesResponseDTO topLanesResponseDTO = new TopLanesResponseDTO();
             topLanesResponseDTO.setOrigin((String) array[0]);
             topLanesResponseDTO.setDestination((String) array[1]);
-            topLanesResponseDTO.setValue((Long) array[3]);
+            Number value = (Number) array[2];
+            topLanesResponseDTO.setValue(value.longValue());
             topLanesResponseDTO.setValueType(valueType);
             response.add(topLanesResponseDTO);
         }
