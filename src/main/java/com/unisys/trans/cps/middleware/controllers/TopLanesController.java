@@ -32,7 +32,7 @@ public class TopLanesController {
     @ResponseBody
     ResponseEntity<List<TopLanesResponseDTO>> getTopAgents(AirlineDashboardRequest airlineDashboardRequest) {
 
-        log.info("inviteCoworkers Request Payload: {} ", airlineDashboardRequest);
+        log.info("getTopAgents Request Payload: {} ", airlineDashboardRequest);
 
         ResponseEntity<List<TopLanesResponseDTO>> response = new ResponseEntity<>();
 

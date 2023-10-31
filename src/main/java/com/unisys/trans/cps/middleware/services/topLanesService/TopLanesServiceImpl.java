@@ -68,7 +68,7 @@ public class TopLanesServiceImpl implements TopLanesService {
                     }
                     case AirlineDashboardConstants.AREA_BY_REGION -> {
                         topObjects = auditRequestRepository.getTopLanesWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
+                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
                     }
                 }
 
@@ -89,7 +89,7 @@ public class TopLanesServiceImpl implements TopLanesService {
                     }
                     case AirlineDashboardConstants.AREA_BY_REGION -> {
                         topObjects = auditRequestRepository.getTopLanesVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
+                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
                     }
                 }
             }
