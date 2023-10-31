@@ -31,12 +31,13 @@ public class TopAgentsController {
     @ResponseBody
     ResponseEntity<List<TopAgentsResponseDTO>> getTopAgents(AirlineDashboardRequest airlineDashboardRequest) {
 
-        log.info("inviteCoworkers Request Payload: {} ", airlineDashboardRequest);
+        log.info("Airline Strategic Dashboard Request Payload: {} ", airlineDashboardRequest);
 
         ResponseEntity<List<TopAgentsResponseDTO>> response = new ResponseEntity<>();
 
         try {
-            List<TopAgentsResponseDTO> responseABC = topAgentsService.getTopAgents(airlineDashboardRequest);
+            List<TopAgentsResponseDTO> responseDTO = topAgentsService.getTopAgents(airlineDashboardRequest);
+            response.setResponse(responseDTO);
 
         } catch (CpsException e) {
             response.setSuccessFlag(false);

@@ -9,13 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TopAgentsResponseDTO {
 
-    private String accNo;
-
-    private int branchId;
+    private Long branchId;
 
     private String carrier;
 
-    private String accountDescription;
+    private String corporation;
 
-    private int noOfBookings;
+    private Long totalNoOfCounts;
 }
