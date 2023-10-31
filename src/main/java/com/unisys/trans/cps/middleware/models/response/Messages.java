@@ -19,7 +19,6 @@ public class Messages  {
 
     public Messages() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
     public Messages(MessageEntry messageEntry) {
