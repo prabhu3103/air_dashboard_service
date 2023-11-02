@@ -101,14 +101,16 @@ public class TopLanesServiceImpl implements TopLanesService {
     }
 
     private void buildResponseDTO(List<TopLanesResponseDTO> response, List<Object[]> topObjects, String valueType) {
-        for (Object[] array : topObjects) {
-            TopLanesResponseDTO topLanesResponseDTO = new TopLanesResponseDTO();
-            topLanesResponseDTO.setOrigin((String) array[0]);
-            topLanesResponseDTO.setDestination((String) array[1]);
-            Number value = (Number) array[2];
-            topLanesResponseDTO.setValue(value.longValue());
-            topLanesResponseDTO.setValueType(valueType);
-            response.add(topLanesResponseDTO);
+        TopLanesResponseDTO topLanesResponseDTO = new TopLanesResponseDTO();
+        if(topObjects != null) {
+            for (Object[] array : topObjects) {
+                topLanesResponseDTO.setOrigin((String) array[0]);
+                topLanesResponseDTO.setDestination((String) array[1]);
+                Number value = (Number) array[2];
+                topLanesResponseDTO.setValue(value.longValue());
+                topLanesResponseDTO.setValueType(valueType);
+            }
         }
+        response.add(topLanesResponseDTO);
     }
 }

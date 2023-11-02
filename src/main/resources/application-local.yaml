@@ -1,0 +1,50 @@
+logging:
+  file:
+    path: ./logs/
+    name: ${logging.file.path}cps-middleware-skeleton.log
+  level:
+    org:
+      springframework:
+        context: INFO
+        web: INFO
+    root: INFO
+  pattern:
+    file: '%d [%level] %c{1.} [%t] %m%n'
+
+org:
+  osgi:
+    framework:
+      bootdelegation: com.sun.*
+
+server:
+  port: 7070
+  servlet:
+    context-path: /cps
+
+spring:
+  application:
+    name: airline-strategic-dashboard
+  datasource:
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    hikari:
+      connectionTimeout: 30000
+      idleTimeout: 600000
+      maxLifetime: 180000
+      maximum-pool-size: 10
+      minimum-idle: 2
+    password: cps
+    url: jdbc:sqlserver://localhost:1433;databaseName=CPS;encrypt=true;trustServerCertificate=true;
+    username: cps
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant-path-matcher
+
+# swagger-ui custom path
+springdoc:
+  swagger-ui:
+  path: /swagger-ui.html
