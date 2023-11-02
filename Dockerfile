@@ -1,8 +1,8 @@
 FROM openjdk:18-jdk AS builder
 WORKDIR application
 ARG JAR_FILE=target/*.jar
-COPY ${JAR_FILE} cps-middleware-airline-strategic-dashboard-0.0.1-SNAPSHOT
-RUN java -Djarmode=layertools -jar cps-middleware-airline-strategic-dashboard-0.0.1-SNAPSHOT extract
+COPY ${JAR_FILE} cps-middleware-airline-strategic-dashboard-0.0.1-SNAPSHOT.jar
+RUN java -Djarmode=layertools -jar cps-middleware-airline-strategic-dashboard-0.0.1-SNAPSHOT.jar extract
 
 FROM openjdk:18-jdk
 WORKDIR application
