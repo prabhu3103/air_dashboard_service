@@ -319,4 +319,164 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     List<Object[]> getTopAgentsWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("origin") String origin);
 
+    //Point Of Sales - Total Number of Booking Count for Airport
+    @Query("""
+            select a.eventDate AS day, COUNT(*) as bookingCount
+            from   AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin = :originAirport
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                             @Param("carrier") String carrier, @Param("originAirport") String originAirport);
+
+    //Point Of Sales - Total Number of Booking Count for Country
+    @Query("""
+            select a.eventDate AS day, COUNT(*) as bookingCount
+            from   AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                             @Param("carrier") String carrier, @Param("country") String country);
+
+    //Point Of Sales - Total Number of Booking Count for Continent
+    @Query("""
+            select a.eventDate AS day,COUNT(*) as bookingCount
+            from   AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                               @Param("carrier") String carrier, @Param("continent") String continent);
+
+
+    //Point Of Sales - Total Number of Booking Count for Region
+    @Query("""
+            select a.eventDate AS day,COUNT(*) as bookingCount
+            from   AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                            @Param("carrier") String carrier, @Param("region") String region);
+
+
+    //Point Of Sales - Total Number of Weight Count for Airport
+    @Query("""
+            select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
+            from   AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin = :originAirport
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                            @Param("carrier") String carrier, @Param("originAirport") String originAirport);
+
+
+    //Point Of Sales - Total Number of Weight  for Country
+    @Query("""
+            select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
+            from   AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                            @Param("carrier") String carrier, @Param("country") String country);
+
+    //Point Of Sales - Total Number of Weight for Continent
+    @Query("""
+            select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
+            from   AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                              @Param("carrier") String carrier, @Param("continent") String continent);
+
+    //Point Of Sales - Total Number of Weight  for Region
+    @Query("""
+            select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
+            from   AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                           @Param("carrier") String carrier, @Param("region") String region);
+
+
+    //Point Of Sales - Total Number of Volume  for Airport
+    @Query("""
+            select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
+            from AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin = :originAirport
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                            @Param("carrier") String carrier, @Param("originAirport") String originAirport);
+
+    //Point Of Sales - Total Number of Volume  for Country
+    @Query("""
+            select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
+            from   AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                            @Param("carrier") String carrier, @Param("country") String country);
+
+    //Point Of Sales - Total Number of Volume  for Continent
+    @Query("""
+            select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
+            from   AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                              @Param("carrier") String carrier, @Param("continent") String continent);
+
+    //Point Of Sales - Total Number of Volume  for Region
+    @Query("""
+            select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
+            from   AuditRequest a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier = :carrier
+            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
+            group by a.eventDate
+            order by day desc
+            """)
+    List<Object[]> getPointOfSalesVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                           @Param("carrier") String carrier, @Param("region") String region);
+
 }
