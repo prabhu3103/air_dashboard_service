@@ -13,7 +13,5 @@ public class TopLanesResponseDTO {
 
     private Long value;
 
-    private String weightUnit;
-
-    private String volumeUnit;
+    private String unit;
 }

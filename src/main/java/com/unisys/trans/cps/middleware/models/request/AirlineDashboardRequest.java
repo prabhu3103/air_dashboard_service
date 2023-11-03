@@ -8,7 +8,10 @@ import lombok.Data;
 public class AirlineDashboardRequest {
 
     @NotNull
-    private int timePeriod;
+    private String startDate;
+
+    @NotNull
+    private String endDate;
 
     @NotNull
     private String typeOfInfo;
@@ -17,7 +20,7 @@ public class AirlineDashboardRequest {
     private String areaBy;
 
     @NotNull
-    private String location;
+    private String filterValue;
 
     @NotNull
     private  String carrier;
