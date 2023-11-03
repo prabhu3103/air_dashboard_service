@@ -1,34 +1,53 @@
 package com.unisys.trans.cps.middleware.controllers;
 
-import com.unisys.trans.cps.middleware.constants.AuditAction;
+import com.unisys.trans.cps.middleware.exception.CpsException;
 import com.unisys.trans.cps.middleware.models.ResponseEntity;
+import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
+import com.unisys.trans.cps.middleware.models.response.MessageEntry;
+import com.unisys.trans.cps.middleware.models.response.PointOfSalesResponseDTO;
+import com.unisys.trans.cps.middleware.services.pointOfSalesService.PointOfSalesServiceImpl;
 import com.unisys.trans.cps.middleware.utilities.CpsAuditUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
-
+import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/v1")
 public class PointOfSalesController {
 
-    /*@Autowired
+
+    @Autowired
     private CpsAuditUtils auditUtils;
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/demo", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    ResponseEntity getDemo() {
+    @Autowired
+    private PointOfSalesServiceImpl aPointOfSalesServiceImpl;
 
-        log.info("Inside getDemo method of DemoController");
-        ResponseEntity<String> response = new ResponseEntity<>();
-        response.setSuccessFlag(true);
-        auditUtils.feedAudit(AuditAction.CREATE_AUDIT.perform(), response, null, Arrays.asList("086"));
-        response.setResponse(new String("Demo Working Fine"));
-        response.setErrorList(null);
+    @PostMapping(value = "/pointofsales", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    ResponseEntity<List<PointOfSalesResponseDTO>> getPointOfSales(AirlineDashboardRequest airlineDashboardRequest) {
+
+        log.info("getTopAgents Request Payload: {} ", airlineDashboardRequest);
+
+        ResponseEntity<List<PointOfSalesResponseDTO>> response = new ResponseEntity<>();
+
+        try {
+            List<PointOfSalesResponseDTO> pointOfSalesResponse = aPointOfSalesServiceImpl.getPointOfSales(airlineDashboardRequest);
+            response.setResponse(pointOfSalesResponse);
+            response.setSuccessFlag(true);
+
+        } catch (CpsException e) {
+            response.setSuccessFlag(false);
+            response.setErrorList(List.of(new MessageEntry("ERR009", "ERR", e.getMessage())));
+        } catch (Exception e) {
+            response.setSuccessFlag(false);
+            response.setErrorList(List.of(new MessageEntry("ERR010", "ERR", e.getMessage())));
+        }
         return response;
-    }*/
+    }
 }
