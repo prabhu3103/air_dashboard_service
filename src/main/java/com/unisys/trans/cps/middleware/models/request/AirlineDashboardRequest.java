@@ -20,7 +20,7 @@ public class AirlineDashboardRequest {
     private String areaBy;
 
     @NotNull
-    private String location;
+    private String filterValue;
 
     @NotNull
     private  String carrier;

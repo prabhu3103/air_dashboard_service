@@ -38,19 +38,19 @@ public class TopAgentsServiceImpl implements TopAgentsService{
 
             switch (areaBy) {
                 case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
-                    topObjects = auditRequestRepository.getTopAgentsBookingAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsBookingAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 }
                 case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
-                    topObjects = auditRequestRepository.getTopAgentsBookingCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsBookingCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 }
                 case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
-                    topObjects = auditRequestRepository.getTopAgentsBookingContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsBookingContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 }
                 case AirlineDashboardConstants.AREA_BY_REGION -> {
-                    topObjects = auditRequestRepository.getTopAgentsBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION);
                 }
             }
@@ -59,19 +59,19 @@ public class TopAgentsServiceImpl implements TopAgentsService{
         else if(airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_VOLUME)) {
             switch (areaBy) {
                 case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
-                    topObjects = auditRequestRepository.getTopAgentsVolumeAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsVolumeAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
                 }
                 case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
-                    topObjects = auditRequestRepository.getTopAgentsVolumeCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsVolumeCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
                 }
                 case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
-                    topObjects = auditRequestRepository.getTopAgentsVolumeContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsVolumeContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
                 }
                 case AirlineDashboardConstants.AREA_BY_REGION -> {
-                    topObjects = auditRequestRepository.getTopAgentsVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION);
                 }
             }
@@ -80,19 +80,19 @@ public class TopAgentsServiceImpl implements TopAgentsService{
         else if(airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_WEIGHT)) {
             switch (areaBy) {
                 case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
-                    topObjects = auditRequestRepository.getTopAgentsWeightAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsWeightAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
                 }
                 case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
-                    topObjects = auditRequestRepository.getTopAgentsWeightCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsWeightCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
                 }
                 case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
-                    topObjects = auditRequestRepository.getTopAgentsWeightContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsWeightContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
                 }
                 case AirlineDashboardConstants.AREA_BY_REGION -> {
-                    topObjects = auditRequestRepository.getTopAgentsWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getLocation());
+                    topObjects = auditRequestRepository.getTopAgentsWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION);
                 }
             }
