@@ -39,6 +39,7 @@ public class TopAgentsController {
         try {
             List<TopAgentsResponseDTO> responseDTO = topAgentsService.getTopAgents(airlineDashboardRequest);
             response.setResponse(responseDTO);
+            response.setSuccessFlag(true);
 
         } catch (CpsException e) {
             response.setSuccessFlag(false);

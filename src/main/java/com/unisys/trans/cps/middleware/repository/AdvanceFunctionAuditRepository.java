@@ -179,7 +179,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :origin
-            group by a.branchID, a.carrier, b.corporation order by totalNoOfBookingCount desc LIMIT 5""")
+            group by a.branchID, a.carrier, b.corporation order by totalNoOfBookingCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                               @Param("carrier") String carrier, @Param("origin") String origin);
@@ -190,8 +190,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select a.branchID, a.carrier, b.corporation, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:origin)
-            group by a.accNo, a.branchID, a.carrier, b.corporation order by totalNoOfBookingCount desc LIMIT 5""")
+            and a.origin in(select c.code from CityCountryMaster c where c.countryCode=:origin)
+            group by a.branchID, a.carrier, b.corporation order by totalNoOfBookingCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                               @Param("carrier") String carrier, @Param("origin") String origin);
@@ -202,21 +202,21 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select a.branchID, a.carrier, b.corporation, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.continent=:origin)
-            group by a.branchID, a.carrier, b.corporation order by totalNoOfBookingCount desc LIMIT 5""")
+            and a.origin in(select c.code from CityCountryMaster c where c.continent=:origin)
+            group by a.branchID, a.carrier, b.corporation order by totalNoOfBookingCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("origin") String origin);
 
     //Top Agents - Total Number of Booking Count for Region
     @Query("""
-            select a.branchID, a.carrier, a.origin, d.corporation, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
+            select a.branchID, a.carrier, d.corporation, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
             where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.branchID=d.branchId
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where
             b.continent in(select c.continent from RegionMaster c where c.regionName= :origin))
-            group by a.branchID, a.carrier, a.origin order by totalNoOfBookingCount desc LIMIT 5""")
+            group by a.branchID, a.carrier, d.corporation order by totalNoOfBookingCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("origin") String origin);
@@ -227,7 +227,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :origin
-            group by  a.branchID, a.carrier, b.corporation order by totalNoOfVolumeCount desc LIMIT 5""")
+            group by  a.branchID, a.carrier, b.corporation order by totalNoOfVolumeCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("origin") String origin);
@@ -238,8 +238,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select  a.branchID, a.carrier, b.corporation, SUM(a.stdVol)  as totalNoOfVolumeCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:origin)
-            group by a.branchID, a.carrier, b.corporation order by totalNoOfVolumeCount desc LIMIT 5""")
+            and a.origin in(select c.code from CityCountryMaster c where c.countryCode=:origin)
+            group by a.branchID, a.carrier, b.corporation order by totalNoOfVolumeCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("origin") String origin);
@@ -250,21 +250,21 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select  a.branchID, a.carrier, b.corporation, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.continent=:origin)
-            group by  a.branchID, a.carrier, b.corporation order by totalNoOfVolumeCount desc LIMIT 5""")
+            and a.origin in(select c.code from CityCountryMaster c where c.continent=:origin)
+            group by  a.branchID, a.carrier, b.corporation order by totalNoOfVolumeCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("origin") String origin);
 
     //Top Agents - Total Number of Volume for Region
     @Query("""
-            select  a.branchID, a.carrier, a.origin, d.corporation, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
+            select  a.branchID, a.carrier, d.corporation, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
             where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.branchID=d.branchId
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where
             b.continent in(select c.continent from RegionMaster c where c.regionName= :origin))
-            group by a.branchID, a.carrier, a.origin,d.corporation order by totalNoOfVolumeCount desc LIMIT 5""")
+            group by a.branchID, a.carrier, d.corporation order by totalNoOfVolumeCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("origin") String origin);
@@ -276,7 +276,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :origin
-            group by a.branchID, a.carrier, b.corporation order by totalNoOfWeightCount desc LIMIT 5""")
+            group by a.branchID, a.carrier, b.corporation order by totalNoOfWeightCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("origin") String origin);
@@ -287,8 +287,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select a.branchID, a.carrier, b.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:origin)
-            group by a.branchID, a.carrier, b.corporation order by totalNoOfWeightCount desc LIMIT 5""")
+            and a.origin in(select c.code from CityCountryMaster c where c.countryCode=:origin)
+            group by a.branchID, a.carrier, b.corporation order by totalNoOfWeightCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("origin") String origin);
@@ -299,21 +299,21 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select a.branchID, a.carrier, b.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.continent=:origin)
-            group by a.branchID, a.carrier, b.corporation order by totalNoOfWeightCount desc LIMIT 5""")
+            and a.origin in(select c.code from CityCountryMaster c where c.continent=:origin)
+            group by a.branchID, a.carrier, b.corporation order by totalNoOfWeightCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("origin") String origin);
 
     //Top Agents - Total Number of Weight for Region
     @Query("""
-            select a.branchID, a.carrier, a.origin, d.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
+            select a.branchID, a.carrier, d.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
             where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.branchID=d.branchId
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where
             b.continent in(select c.continent from RegionMaster c where c.regionName = :origin))
-            group by a.branchID, a.carrier, a.origin, d.corporation order by totalNoOfWeightCount desc LIMIT 5""")
+            group by a.branchID, a.carrier, d.corporation order by totalNoOfWeightCount desc LIMIT 10""")
 
     List<Object[]> getTopAgentsWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("origin") String origin);
@@ -329,7 +329,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                             @Param("carrier") String carrier, @Param("originAirport") String originAirport);
+                                                 @Param("carrier") String carrier, @Param("originAirport") String originAirport);
 
     //Point Of Sales - Total Number of Booking Count for Country
     @Query("""
@@ -342,7 +342,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                             @Param("carrier") String carrier, @Param("country") String country);
+                                                 @Param("carrier") String carrier, @Param("country") String country);
 
     //Point Of Sales - Total Number of Booking Count for Continent
     @Query("""
@@ -355,7 +355,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                               @Param("carrier") String carrier, @Param("continent") String continent);
+                                                   @Param("carrier") String carrier, @Param("continent") String continent);
 
 
     //Point Of Sales - Total Number of Booking Count for Region
@@ -369,7 +369,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                            @Param("carrier") String carrier, @Param("region") String region);
+                                                @Param("carrier") String carrier, @Param("region") String region);
 
 
     //Point Of Sales - Total Number of Weight Count for Airport
@@ -383,7 +383,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                            @Param("carrier") String carrier, @Param("originAirport") String originAirport);
+                                                @Param("carrier") String carrier, @Param("originAirport") String originAirport);
 
 
     //Point Of Sales - Total Number of Weight  for Country
@@ -397,7 +397,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                            @Param("carrier") String carrier, @Param("country") String country);
+                                                @Param("carrier") String carrier, @Param("country") String country);
 
     //Point Of Sales - Total Number of Weight for Continent
     @Query("""
@@ -410,7 +410,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                              @Param("carrier") String carrier, @Param("continent") String continent);
+                                                  @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Point Of Sales - Total Number of Weight  for Region
     @Query("""
@@ -423,7 +423,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                           @Param("carrier") String carrier, @Param("region") String region);
+                                               @Param("carrier") String carrier, @Param("region") String region);
 
 
     //Point Of Sales - Total Number of Volume  for Airport
@@ -437,7 +437,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                            @Param("carrier") String carrier, @Param("originAirport") String originAirport);
+                                                @Param("carrier") String carrier, @Param("originAirport") String originAirport);
 
     //Point Of Sales - Total Number of Volume  for Country
     @Query("""
@@ -450,7 +450,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                            @Param("carrier") String carrier, @Param("country") String country);
+                                                @Param("carrier") String carrier, @Param("country") String country);
 
     //Point Of Sales - Total Number of Volume  for Continent
     @Query("""
@@ -463,7 +463,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                              @Param("carrier") String carrier, @Param("continent") String continent);
+                                                  @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Point Of Sales - Total Number of Volume  for Region
     @Query("""
@@ -476,7 +476,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by day desc
             """)
     List<Object[]> getPointOfSalesVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                           @Param("carrier") String carrier, @Param("region") String region);
+                                               @Param("carrier") String carrier, @Param("region") String region);
 
 
     //Top Commodity - Total Number of Booking Count for Airport
