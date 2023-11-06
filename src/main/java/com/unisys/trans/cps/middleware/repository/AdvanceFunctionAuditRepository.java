@@ -6,12 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFunctionAudit, BigInteger> {
+public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFunctionAudit, Long> {
 
     //Top Lanes - Total Number of Booking Count for Airport
     @Query("""
