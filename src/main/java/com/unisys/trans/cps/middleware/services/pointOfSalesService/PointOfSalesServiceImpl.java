@@ -3,7 +3,7 @@ package com.unisys.trans.cps.middleware.services.pointOfSalesService;
 import com.unisys.trans.cps.middleware.constants.AirlineDashboardConstants;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.PointOfSalesResponseDTO;
-import com.unisys.trans.cps.middleware.repository.AuditRequestRepository;
+import com.unisys.trans.cps.middleware.repository.AdvanceFunctionAuditRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ import java.util.List;
 public class PointOfSalesServiceImpl implements PointOfSalesService {
 
     @Autowired
-    AuditRequestRepository auditRequestRepository;
+    AdvanceFunctionAuditRepository advanceFunctionAuditRepository;
 
     @Override
     public List<PointOfSalesResponseDTO> getPointOfSales(AirlineDashboardRequest airlineDashboardRequest) {
@@ -39,19 +39,19 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
 
             switch (areaBy) {
                 case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
-                    posObjects = auditRequestRepository.getPointOfSalesBookingAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesBookingAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 }
                 case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
-                    posObjects = auditRequestRepository.getPointOfSalesBookingCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesBookingCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 }
                 case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
-                    posObjects = auditRequestRepository.getPointOfSalesBookingContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesBookingContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 }
                 case AirlineDashboardConstants.AREA_BY_REGION -> {
-                    posObjects = auditRequestRepository.getPointOfSalesBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 }
             }
@@ -60,19 +60,19 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
         else if(airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_VOLUME)) {
             switch (areaBy) {
                 case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
-                    posObjects = auditRequestRepository.getPointOfSalesVolumeAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesVolumeAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
                 }
                 case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
-                    posObjects = auditRequestRepository.getPointOfSalesVolumeCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesVolumeCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
                 }
                 case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
-                    posObjects = auditRequestRepository.getPointOfSalesVolumeContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesVolumeContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
                 }
                 case AirlineDashboardConstants.AREA_BY_REGION -> {
-                    posObjects = auditRequestRepository.getPointOfSalesVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
                 }
             }
@@ -81,19 +81,19 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
         else if(airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_WEIGHT)) {
             switch (areaBy) {
                 case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
-                    posObjects = auditRequestRepository.getPointOfSalesWeightAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesWeightAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
                 }
                 case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
-                    posObjects = auditRequestRepository.getPointOfSalesWeightCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesWeightCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
                 }
                 case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
-                    posObjects = auditRequestRepository.getPointOfSalesWeightContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesWeightContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
                 }
                 case AirlineDashboardConstants.AREA_BY_REGION -> {
-                    posObjects = auditRequestRepository.getPointOfSalesWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                    posObjects = advanceFunctionAuditRepository.getPointOfSalesWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
                 }
             }

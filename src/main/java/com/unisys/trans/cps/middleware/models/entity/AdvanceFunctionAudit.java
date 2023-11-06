@@ -7,21 +7,19 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Data
-@Table(name = "AUDITREQUEST")
+@Table(name = "ADVANCE_FUNCTION_AUDIT")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuditRequest implements Serializable {
+public class AdvanceFunctionAudit implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "REQUESTID")
-    private BigInteger requestId;
-
+    @Column(name = "AUDITID")
+    private long auditID;
     @Column(name = "ORG")
     private String origin;
     @Column(name = "DEST")
@@ -64,8 +62,6 @@ public class AuditRequest implements Serializable {
     //Data from Existing FUCNTIONAUDIT Table
     @Column(name = "BRANCHID")
     private long branchID;
-    @Column(name = "AUDITID")
-    private long auditID;
     @Column(name = "EVENTDATE")
     private LocalDateTime eventDate;
     @Column(name = "CARRIER")
