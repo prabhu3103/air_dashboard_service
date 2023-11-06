@@ -8,6 +8,7 @@ import com.unisys.trans.cps.middleware.models.response.MessageEntry;
 import com.unisys.trans.cps.middleware.models.response.TopAgentsResponseDTO;
 import com.unisys.trans.cps.middleware.services.topAgentService.TopAgentsServiceImpl;
 import com.unisys.trans.cps.middleware.utilities.CpsAuditUtils;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -29,7 +30,7 @@ public class TopAgentsController {
 
     @PostMapping(value = "/topagents", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<TopAgentsResponseDTO>> getTopAgents(AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<List<TopAgentsResponseDTO>> getTopAgents(@Valid @RequestBody AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("Airline Strategic Dashboard Request Payload: {} ", airlineDashboardRequest);
 

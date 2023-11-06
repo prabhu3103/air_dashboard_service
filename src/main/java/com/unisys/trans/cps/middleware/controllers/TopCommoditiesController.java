@@ -8,6 +8,7 @@ import com.unisys.trans.cps.middleware.models.response.MessageEntry;
 import com.unisys.trans.cps.middleware.models.response.TopCommoditiesResponseDTO;
 import com.unisys.trans.cps.middleware.services.topCommoditiesService.TopCommodityService;
 import com.unisys.trans.cps.middleware.utilities.CpsAuditUtils;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,7 +31,7 @@ public class TopCommoditiesController {
 
     @GetMapping(value = "/topcommodities", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List<TopCommoditiesResponseDTO>> topCommodities(AirlineDashboardRequest airlineDashboardRequest) {
+    public ResponseEntity<List<TopCommoditiesResponseDTO>> topCommodities(@Valid @RequestBody AirlineDashboardRequest airlineDashboardRequest) {
         log.info("Inside topCommodities method..");
         ResponseEntity<List<TopCommoditiesResponseDTO>> response = new ResponseEntity<>();
         log.info("Area by : " + airlineDashboardRequest.getAreaBy());
