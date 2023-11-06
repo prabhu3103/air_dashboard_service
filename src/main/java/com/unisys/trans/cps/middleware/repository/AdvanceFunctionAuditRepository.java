@@ -1,6 +1,6 @@
 package com.unisys.trans.cps.middleware.repository;
 
-import com.unisys.trans.cps.middleware.models.entity.AuditRequest;
+import com.unisys.trans.cps.middleware.models.entity.AdvanceFunctionAudit;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigInteger> {
+public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFunctionAudit, BigInteger> {
 
     //Top Lanes - Total Number of Booking Count for Airport
     @Query("""
             select a.origin, a.destination, COUNT(*) AS TOPLANE
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :originAirport
@@ -29,7 +29,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Top Lanes - Total Number of Booking Count for Country
     @Query("""
             select a.origin, a.destination, COUNT(*) AS TOPLANE
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
@@ -42,7 +42,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Top Lanes - Total Number of Booking Count for Continent
     @Query("""
             select a.origin, a.destination, COUNT(*) AS TOPLANE
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
@@ -56,7 +56,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Top Lanes - Total Number of Booking Count for Region
     @Query("""
             select a.origin, a.destination, COUNT(*) AS TOPLANE
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
@@ -70,7 +70,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Top Lanes - Total Number of Weight Count for Airport
     @Query("""
             select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :originAirport
@@ -84,7 +84,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Top Lanes - Total Number of Weight  for Country
     @Query("""
             select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
@@ -97,7 +97,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Top Lanes - Total Number of Weight  for Continent
     @Query("""
             select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
@@ -110,7 +110,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Top Lanes - Total Number of Weight  for Region
     @Query("""
             select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
@@ -124,7 +124,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Top Lanes - Total Number of Volume  for Airport
     @Query("""
             select a.origin, a.destination, SUM(a.stdVol) AS totalVolume
-            from AuditRequest a
+            from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :originAirport
@@ -137,7 +137,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Top Lanes - Total Number of Volume  for Country
     @Query("""
             select a.origin, a.destination, SUM(a.stdVol) AS totalVolume
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
@@ -150,7 +150,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Top Lanes - Total Number of Volume  for Continent
     @Query("""
             select a.origin, a.destination, SUM(a.stdVol) AS totalVolume
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
@@ -163,7 +163,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Top Lanes - Total Number of Volume  for Region
     @Query("""
             select a.origin, a.destination, SUM(a.stdVol) AS totalVolume
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
@@ -176,7 +176,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Booking Count for AirPort
     @Query("""
-            select a.branchID, a.carrier, b.corporation, COUNT(*) as totalNoOfBookingCount from AuditRequest a, BranchProfile b
+            select a.branchID, a.carrier, b.corporation, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :origin
@@ -188,7 +188,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Booking Count for Country
     @Query("""
-            select a.branchID, a.carrier, b.corporation, COUNT(*) as totalNoOfBookingCount from AuditRequest a, BranchProfile b
+            select a.branchID, a.carrier, b.corporation, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:origin)
@@ -200,7 +200,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Booking Count for Continent
     @Query("""
-            select a.branchID, a.carrier, b.corporation, COUNT(*) as totalNoOfBookingCount from AuditRequest a, BranchProfile b
+            select a.branchID, a.carrier, b.corporation, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:origin)
@@ -211,7 +211,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Booking Count for Region
     @Query("""
-            select a.branchID, a.carrier, a.origin, d.corporation, COUNT(*) as totalNoOfBookingCount from AuditRequest a, CityCountryMaster b, RegionMaster c, BranchProfile d
+            select a.branchID, a.carrier, a.origin, d.corporation, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
             where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.branchID=d.branchId
             and a.carrier = :carrier
@@ -224,7 +224,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Volume for AirPort
     @Query("""
-            select a.branchID, a.carrier, b.corporation, SUM(a.stdVol) as totalNoOfVolumeCount from AuditRequest a, BranchProfile b
+            select a.branchID, a.carrier, b.corporation, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :origin
@@ -236,7 +236,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Volume for Country
     @Query("""
-            select  a.branchID, a.carrier, b.corporation, SUM(a.stdVol)  as totalNoOfVolumeCount from AuditRequest a, BranchProfile b
+            select  a.branchID, a.carrier, b.corporation, SUM(a.stdVol)  as totalNoOfVolumeCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:origin)
@@ -248,7 +248,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Volume for Continent
     @Query("""
-            select  a.branchID, a.carrier, b.corporation, SUM(a.stdVol) as totalNoOfVolumeCount from AuditRequest a, BranchProfile b
+            select  a.branchID, a.carrier, b.corporation, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:origin)
@@ -259,7 +259,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Volume for Region
     @Query("""
-            select  a.branchID, a.carrier, a.origin, d.corporation, SUM(a.stdVol) as totalNoOfVolumeCount from AuditRequest a, CityCountryMaster b, RegionMaster c, BranchProfile d
+            select  a.branchID, a.carrier, a.origin, d.corporation, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
             where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.branchID=d.branchId
             and a.carrier = :carrier
@@ -273,7 +273,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Weight for AirPort
     @Query("""
-            select a.branchID, a.carrier, b.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AuditRequest a, BranchProfile b
+            select a.branchID, a.carrier, b.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :origin
@@ -285,7 +285,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Weight for Country
     @Query("""
-            select a.branchID, a.carrier, b.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AuditRequest a, BranchProfile b
+            select a.branchID, a.carrier, b.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:origin)
@@ -297,7 +297,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Weight for Continent
     @Query("""
-            select a.branchID, a.carrier, b.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AuditRequest a, BranchProfile b
+            select a.branchID, a.carrier, b.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:origin)
@@ -308,7 +308,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
 
     //Top Agents - Total Number of Weight for Region
     @Query("""
-            select a.branchID, a.carrier, a.origin, d.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AuditRequest a, CityCountryMaster b, RegionMaster c, BranchProfile d
+            select a.branchID, a.carrier, a.origin, d.corporation, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
             where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.branchID=d.branchId
             and a.carrier = :carrier
@@ -322,7 +322,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Booking Count for Airport
     @Query("""
             select a.eventDate AS day, COUNT(*) as bookingCount
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :originAirport
@@ -335,7 +335,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Booking Count for Country
     @Query("""
             select a.eventDate AS day, COUNT(*) as bookingCount
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
@@ -348,7 +348,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Booking Count for Continent
     @Query("""
             select a.eventDate AS day,COUNT(*) as bookingCount
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
@@ -362,7 +362,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Booking Count for Region
     @Query("""
             select a.eventDate AS day,COUNT(*) as bookingCount
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
@@ -376,7 +376,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Weight Count for Airport
     @Query("""
             select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :originAirport
@@ -390,7 +390,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Weight  for Country
     @Query("""
             select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
@@ -403,7 +403,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Weight for Continent
     @Query("""
             select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
@@ -416,7 +416,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Weight  for Region
     @Query("""
             select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
@@ -430,7 +430,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Volume  for Airport
     @Query("""
             select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
-            from AuditRequest a
+            from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :originAirport
@@ -443,7 +443,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Volume  for Country
     @Query("""
             select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
@@ -456,7 +456,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Volume  for Continent
     @Query("""
             select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
@@ -469,7 +469,7 @@ public interface AuditRequestRepository extends JpaRepository<AuditRequest, BigI
     //Point Of Sales - Total Number of Volume  for Region
     @Query("""
             select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
-            from   AuditRequest a
+            from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))

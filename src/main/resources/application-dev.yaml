@@ -17,7 +17,7 @@ org:
       bootdelegation: com.sun.*
 
 server:
-  port: 7070
+  port: 8092
   servlet:
     context-path: /cps
 
