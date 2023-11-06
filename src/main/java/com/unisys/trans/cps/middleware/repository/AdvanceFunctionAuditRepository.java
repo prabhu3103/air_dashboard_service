@@ -478,4 +478,216 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     List<Object[]> getPointOfSalesVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                            @Param("carrier") String carrier, @Param("region") String region);
 
+
+    //Top Commodity - Total Number of Booking Count for Airport
+    @Query("""
+            SELECT
+                CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, COUNT(a.commodity) AS COMMODITY_COUNT, c.description
+            	FROM AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+            	where a.eventDate >= :startDate and a.eventDate <= :endDate
+                   and a.carrier = :carrier
+                   and a.origin = :originAirport
+                   group by a.commodity, c.description
+                   order by COMMODITY_COUNT desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                 @Param("carrier") String carrier, @Param("originAirport") String originAirport);
+
+
+    //Top Commodity - Total Number of Booking Count for Country
+    @Query("""
+            select
+            	CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, COUNT(a.commodity) AS COMMODITY_COUNT, c.description
+                        from AdvanceFunctionAudit a inner join Commodity c on  a.commodity = c.code
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.carrier = :carrier
+                        and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+                        group by a.commodity, c.description
+                        order by COMMODITY_COUNT desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                 @Param("carrier") String carrier, @Param("country") String country);
+
+
+    //Top Commodity - Total Number of Booking Count for Continent
+    @Query("""
+            select CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, COUNT(a.commodity) AS COMMODITY_COUNT, c.description
+                        from   AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.carrier = :carrier
+                        and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+                        group by a.commodity, c.description
+                        order by COMMODITY_COUNT desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                   @Param("carrier") String carrier, @Param("continent") String continent);
+
+    //Top Commodity - Total Number of Booking Count for Region
+    @Query("""
+            select CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, COUNT(a.commodity) AS COMMODITY_COUNT, c.description
+                        from   AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.carrier = :carrier
+                        and a.origin in (select b.code from CityCountryMaster b where b.continent in (select r.continent from RegionMaster r where r.regionName =:region))
+                        group by a.commodity, c.description
+                        order by COMMODITY_COUNT desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                @Param("carrier") String carrier, @Param("region") String region);
+
+    //Top Commodity - Total Number of Weight Count for Airport
+    @Query("""
+            select CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, SUM(a.stdWeight) AS totalWeight, c.description
+                        from   AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.carrier = :carrier
+                        and a.origin = :originAirport
+                        group by a.commodity, c.description
+                        order by totalWeight desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                @Param("carrier") String carrier, @Param("originAirport") String originAirport);
+
+
+    //Top Commodity - Total Number of Weight Count for Country
+    @Query("""
+            select CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, SUM(a.stdWeight) AS totalWeight, c.description
+                        from   AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.carrier = :carrier
+                        and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+                        group by a.commodity, c.description
+                        order by totalWeight desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                @Param("carrier") String carrier, @Param("country") String country);
+
+
+    //Top Commodity - Total Number of Weight Count for Continent
+    @Query("""
+            select CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, SUM(a.stdWeight) AS totalWeight, c.description
+                        from   AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.carrier = :carrier
+                        and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+                        group by a.commodity, c.description
+                        order by totalWeight desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                  @Param("carrier") String carrier, @Param("continent") String continent);
+
+    //Top Commodity - Total Number of Weight Count for Region
+    @Query("""
+            select CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, SUM(a.stdWeight) AS totalWeight, c.description
+                        from   AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.carrier = :carrier
+                        and a.origin in (select b.code from CityCountryMaster b where b.continent in (select r.continent from RegionMaster r where r.regionName =:region))
+                        group by a.commodity, c.description
+                        order by totalWeight desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                               @Param("carrier") String carrier, @Param("region") String region);
+
+
+    //Top Commodity - Total Number of Volume Count for Airport
+    @Query("""
+            select CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, SUM(a.stdVol) AS totalVolume, c.description
+                        from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.carrier = :carrier
+                        and a.origin = :originAirport
+                        group by a.commodity, c.description
+                        order by totalVolume desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                @Param("carrier") String carrier, @Param("originAirport") String originAirport);
+
+    //Top Commodity - Total Number of Weight Count for Country
+    @Query("""
+            select CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, SUM(a.stdVol) AS totalVolume, c.description
+                        from   AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.carrier = :carrier
+                        and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+                        group by a.commodity, c.description
+                        order by totalVolume desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                @Param("carrier") String carrier, @Param("country") String country);
+
+    //Top Commodity - Total Number of Weight Count for Continent
+    @Query("""
+            select CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, SUM(a.stdVol) AS totalVolume, c.description
+                        from   AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.carrier = :carrier
+                        and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+                        group by a.commodity, c.description
+                        order by totalVolume desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                  @Param("carrier") String carrier, @Param("continent") String continent);
+
+    //Top Commodity - Total Number of Weight Count for Region
+    @Query("""
+            select CASE
+                    WHEN commodity = ' ' THEN '0000'
+                    ELSE commodity
+                END as commodity, SUM(a.stdVol) AS totalVolume, c.description
+                        from   AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.carrier = :carrier
+                        and a.origin in (select b.code from CityCountryMaster b where b.continent in (select r.continent from RegionMaster r where r.regionName =:region))
+                        group by a.commodity, c.description
+                        order by totalVolume desc
+                LIMIT 5
+            """)
+    List<Object[]> getTopCommodityVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                               @Param("carrier") String carrier, @Param("region") String region);
+
 }
