@@ -113,7 +113,7 @@ public class TopAgentsServiceImpl implements TopAgentsService{
         if(topObjects != null) {
             for (Object[] array : topObjects) {
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
-                topAgentsResponseDTO.setCorporation((String) array[2]);
+                topAgentsResponseDTO.setAccNo((String) array[2]);
                 Number value = (Number) array[3];
                 topAgentsResponseDTO.setValue(value.longValue());
                 topAgentsResponseDTO.setValueType(valueType);
