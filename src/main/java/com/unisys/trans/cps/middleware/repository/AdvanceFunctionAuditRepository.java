@@ -690,4 +690,180 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     List<Object[]> getTopCommodityVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("region") String region);
 
+
+    @Query("""
+            select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a , ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.origin=:originAirport 
+            and a.carrier=:carrier
+            group by a.productCode,p.description
+            order by TOPPRODUCTS desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,@Param("carrier") String carrier,@Param("originAirport") String originAirport);
+
+    @Query("""
+            select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+            group by a.productCode,p.description
+            order by TOPPRODUCTS desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,@Param("carrier") String carrier,@Param("country") String country);
+
+    @Query("""
+            select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a , ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+            and a.carrier=:carrier
+            group by a.productCode,p.description
+            order by TOPPRODUCTS desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,@Param("carrier") String carrier,@Param("continent") String continent);
+
+
+    @Query("""
+            select a.productCode ,p.description, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
+            and a.carrier=:carrier
+            group by a.productCode,p.description
+            order by TOPPRODUCTS desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate ,@Param("carrier") String carrier, @Param("region") String region);
+
+
+    @Query("""
+            select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.origin=:originAirport
+            group by a.productCode,p.description
+            order by totalWeight desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                               @Param("carrier") String carrier,@Param("originAirport") String originAirport);
+
+
+    @Query("""
+            select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a ,ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+            group by a.productCode,p.description
+            order by totalWeight desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                               @Param("carrier") String carrier, @Param("country") String country);
+
+
+    @Query("""
+            select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a ,ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+            group by a.productCode,p.description
+            order by totalWeight desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                 @Param("carrier") String carrier, @Param("continent") String continent);
+
+
+
+
+    @Query("""
+            select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
+            group by a.productCode,p.description
+            order by totalWeight desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                              @Param("carrier") String carrier, @Param("region") String region);
+
+
+    @Query("""
+            select a.productCode,p.description, SUM(a.stdVol) AS totalVolume
+            from AdvanceFunctionAudit a ,ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.origin=:originAirport
+            group by a.productCode,p.description
+            order by totalVolume desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                               @Param("carrier") String carrier,@Param("originAirport") String originAirport);
+
+
+    @Query("""
+            select a.productCode,p.description, SUM(a.stdVol) AS totalVolume
+            from   AdvanceFunctionAudit a,ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+            group by a.productCode,p.description
+            order by totalVolume desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                               @Param("carrier") String carrier, @Param("country") String country);
+
+
+
+    @Query("""
+            select a.productCode,p.description, SUM(a.stdVol) AS totalVolume
+            from   AdvanceFunctionAudit a,ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+            group by a.productCode,p.description
+            order by totalVolume desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                 @Param("carrier") String carrier, @Param("continent") String continent);
+
+    @Query("""
+            select a.productCode,p.description, SUM(a.stdVol) AS totalVolume
+            from   AdvanceFunctionAudit a ,ProductType p 
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
+            group by a.productCode,p.description
+            order by totalVolume desc LIMIT 5
+            """)
+    List<Object[]> getTopProductsVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                              @Param("carrier") String carrier, @Param("region") String region);
+
 }
