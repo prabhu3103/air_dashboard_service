@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TopAgentsResponseDTO {
 
-    private Long branchId;
-
-    private String carrier;
-
     private String corporation;
 
-    private Long totalNoOfCounts;
+    private String valueType;
+
+    private Long value;
+
+    private String unit;
 }
