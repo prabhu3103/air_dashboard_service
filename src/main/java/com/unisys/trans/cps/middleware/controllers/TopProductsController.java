@@ -6,6 +6,7 @@ import com.unisys.trans.cps.middleware.models.ResponseEntity;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.MessageEntry;
 import com.unisys.trans.cps.middleware.models.response.TopProductResponseDTO;
+import com.unisys.trans.cps.middleware.services.pointOfSalesService.PointOfSalesService;
 import com.unisys.trans.cps.middleware.services.topProductService.TopProductsService;
 import com.unisys.trans.cps.middleware.utilities.CpsAuditUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -21,18 +22,17 @@ import java.util.List;
 @RequestMapping("/v1")
 public class TopProductsController {
 
-    @Autowired
-    private CpsAuditUtils auditUtils;
-
-    @Autowired
     private TopProductsService topProductService;
 
+    public TopProductsController( TopProductsService topProductService) {
+        this.topProductService = topProductService;
+    }
 
-    @PostMapping(value = "/topproducts", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/topproducts", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     ResponseEntity<List<TopProductResponseDTO>> getTopProducts(AirlineDashboardRequest airlineDashboardRequest) {
 
-        log.info("getTopAgents Request Payload: {} ", airlineDashboardRequest);
+        log.info("getTopProducts Request Payload: {} ", airlineDashboardRequest);
 
         ResponseEntity<List<TopProductResponseDTO>> response = new ResponseEntity<>();
 
