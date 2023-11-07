@@ -27,7 +27,7 @@ public class TopAgentsController {
 
     @GetMapping(value = "/topagents", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<TopAgentsResponseDTO>> getTopAgents(@Valid @RequestBody AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<List<TopAgentsResponseDTO>> getTopAgents(AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("Airline Strategic Dashboard Request Payload: {} ", airlineDashboardRequest);
 

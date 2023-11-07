@@ -24,7 +24,7 @@ public class TopLanesController {
     }
     @GetMapping(value = "/toplanes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<TopLanesResponseDTO>> getTopLanes(@Valid @RequestBody AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<List<TopLanesResponseDTO>> getTopLanes(AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("getTopLanes Request Payload: {} ", airlineDashboardRequest);
 

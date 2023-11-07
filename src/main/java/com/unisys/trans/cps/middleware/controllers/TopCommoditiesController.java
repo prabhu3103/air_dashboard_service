@@ -26,7 +26,7 @@ public class TopCommoditiesController {
 
     @GetMapping(value = "/topcommodities", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List<TopCommoditiesResponseDTO>> topCommodities(@Valid @RequestBody AirlineDashboardRequest airlineDashboardRequest) {
+    public ResponseEntity<List<TopCommoditiesResponseDTO>> topCommodities(AirlineDashboardRequest airlineDashboardRequest) {
         log.info("Inside topCommodities method..");
         ResponseEntity<List<TopCommoditiesResponseDTO>> response = new ResponseEntity<>();
         log.info("Area by : " + airlineDashboardRequest.getAreaBy());

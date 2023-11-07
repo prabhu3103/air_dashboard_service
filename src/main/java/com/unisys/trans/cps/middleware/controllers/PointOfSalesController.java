@@ -26,7 +26,7 @@ public class PointOfSalesController {
 
     @GetMapping(value = "/pointofsales", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<PointOfSalesResponseDTO>> getPointOfSales(@Valid @RequestBody AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<List<PointOfSalesResponseDTO>> getPointOfSales(AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("getPointOfSales Request Payload: {} ", airlineDashboardRequest);
 
