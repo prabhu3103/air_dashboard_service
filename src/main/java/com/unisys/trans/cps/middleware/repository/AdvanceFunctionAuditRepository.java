@@ -693,8 +693,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode, COUNT(*) AS TOPPRODUCTS
-            from   AdvanceFunctionAudit a
+            from   AdvanceFunctionAudit a , ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.origin=:originAirport 
             and a.carrier=:carrier
             group by a.productCode
@@ -704,8 +706,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode, COUNT(*) AS TOPPRODUCTS
-            from   AdvanceFunctionAudit a
+            from   AdvanceFunctionAudit a, ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.carrier=:carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
             group by a.productCode
@@ -715,8 +719,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode, COUNT(*) AS TOPPRODUCTS
-            from   AdvanceFunctionAudit a
+            from   AdvanceFunctionAudit a , ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
             and a.carrier=:carrier
             group by a.productCode
@@ -727,8 +733,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode , COUNT(*) AS TOPPRODUCTS
-            from   AdvanceFunctionAudit a
+            from   AdvanceFunctionAudit a, ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
             and a.carrier=:carrier
             group by a.productCode
@@ -739,8 +747,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode , SUM(a.stdWeight) AS totalWeight
-            from   AdvanceFunctionAudit a
+            from   AdvanceFunctionAudit a,ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.carrier=:carrier
             and a.origin=:originAirport
             group by a.productCode
@@ -752,8 +762,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode , SUM(a.stdWeight) AS totalWeight
-            from   AdvanceFunctionAudit a
+            from   AdvanceFunctionAudit a ,ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
             group by a.productCode
@@ -765,8 +777,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode , SUM(a.stdWeight) AS totalWeight
-            from   AdvanceFunctionAudit a
+            from   AdvanceFunctionAudit a ,ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
             group by a.productCode
@@ -780,8 +794,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode , SUM(a.stdWeight) AS totalWeight
-            from   AdvanceFunctionAudit a
+            from   AdvanceFunctionAudit a,ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.carrier = :carrier
             and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
             group by a.productCode
@@ -793,8 +809,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode, SUM(a.stdVol) AS totalVolume
-            from AdvanceFunctionAudit a
+            from AdvanceFunctionAudit a ,ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.carrier = :carrier
             and a.origin=:originAirport
             group by a.productCode
@@ -806,8 +824,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode, SUM(a.stdVol) AS totalVolume
-            from   AdvanceFunctionAudit a
+            from   AdvanceFunctionAudit a,ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
             group by a.productCode
@@ -820,8 +840,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode, SUM(a.stdVol) AS totalVolume
-            from   AdvanceFunctionAudit a
+            from   AdvanceFunctionAudit a,ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
             group by a.productCode
@@ -832,8 +854,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select a.productCode, SUM(a.stdVol) AS totalVolume
-            from   AdvanceFunctionAudit a
+            from   AdvanceFunctionAudit a ,ProductType p 
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.carrier = :carrier
             and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
             group by a.productCode
