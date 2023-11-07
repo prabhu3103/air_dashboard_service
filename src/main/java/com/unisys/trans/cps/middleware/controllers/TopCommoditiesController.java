@@ -1,20 +1,16 @@
 package com.unisys.trans.cps.middleware.controllers;
 
-import com.unisys.trans.cps.middleware.constants.AuditAction;
 import com.unisys.trans.cps.middleware.exception.CpsException;
 import com.unisys.trans.cps.middleware.models.ResponseEntity;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.MessageEntry;
 import com.unisys.trans.cps.middleware.models.response.TopCommoditiesResponseDTO;
 import com.unisys.trans.cps.middleware.services.topCommoditiesService.TopCommodityService;
-import com.unisys.trans.cps.middleware.utilities.CpsAuditUtils;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -22,12 +18,11 @@ import java.util.List;
 @RequestMapping("/v1")
 public class TopCommoditiesController {
 
-    @Autowired
-    private CpsAuditUtils auditUtils;
-
-    @Autowired
     private TopCommodityService topCommodityService;
 
+    public TopCommoditiesController( TopCommodityService topCommodityService) {
+        this.topCommodityService = topCommodityService;
+    }
 
     @GetMapping(value = "/topcommodities", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

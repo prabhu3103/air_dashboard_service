@@ -5,11 +5,9 @@ import com.unisys.trans.cps.middleware.models.ResponseEntity;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.MessageEntry;
 import com.unisys.trans.cps.middleware.models.response.TopLanesResponseDTO;
-import com.unisys.trans.cps.middleware.services.topLanesService.TopLanesServiceImpl;
-import com.unisys.trans.cps.middleware.utilities.CpsAuditUtils;
+import com.unisys.trans.cps.middleware.services.topLanesService.TopLanesService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,17 +18,15 @@ import java.util.List;
 @RequestMapping("/v1")
 public class TopLanesController {
 
-    @Autowired
-    private CpsAuditUtils auditUtils;
-
-    @Autowired
-    private TopLanesServiceImpl topLanesService;
-
-    @PostMapping(value = "/toplanes", produces = MediaType.APPLICATION_JSON_VALUE)
+    private TopLanesService topLanesService;
+    public TopLanesController( TopLanesService topLanesService) {
+        this.topLanesService = topLanesService;
+    }
+    @GetMapping(value = "/toplanes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<TopLanesResponseDTO>> getTopAgents(@Valid @RequestBody AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<List<TopLanesResponseDTO>> getTopLanes(@Valid @RequestBody AirlineDashboardRequest airlineDashboardRequest) {
 
-        log.info("getTopAgents Request Payload: {} ", airlineDashboardRequest);
+        log.info("getTopLanes Request Payload: {} ", airlineDashboardRequest);
 
         ResponseEntity<List<TopLanesResponseDTO>> response = new ResponseEntity<>();
 

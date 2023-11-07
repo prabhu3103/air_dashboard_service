@@ -10,4 +10,6 @@ public class AirlineDashboardConstants {
     public static final String AREA_BY_CONTINENT = "continent";
 
     public static final String AREA_BY_REGION = "region";
+
+    public static final Long LONG_ZERO = 0L;
 }
