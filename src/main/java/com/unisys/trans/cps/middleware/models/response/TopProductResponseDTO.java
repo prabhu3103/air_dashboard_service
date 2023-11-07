@@ -7,6 +7,8 @@ public class TopProductResponseDTO {
 
     private  String  ProductCode;
 
+    private  String productDescription;
+
     private String valueType;
 
     private Long value;

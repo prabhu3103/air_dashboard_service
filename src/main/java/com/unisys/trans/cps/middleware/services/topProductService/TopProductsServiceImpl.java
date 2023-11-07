@@ -112,7 +112,8 @@ public class TopProductsServiceImpl implements TopProductsService {
             TopProductResponseDTO topProductResponseDTO = new TopProductResponseDTO();
 
             topProductResponseDTO.setProductCode((String) array[0]);
-            Number value = (Number) array[1];
+            topProductResponseDTO.setProductDescription((String) array[1]);
+            Number value = (Number) array[2];
             topProductResponseDTO.setValue(value.longValue());
             topProductResponseDTO.setValueType(valueType);
 
