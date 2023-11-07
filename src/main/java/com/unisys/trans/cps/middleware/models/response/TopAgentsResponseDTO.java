@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TopAgentsResponseDTO {
 
-    private String corporation;
+    private String accNo;
 
     private String valueType;
 
