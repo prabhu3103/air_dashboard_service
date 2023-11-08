@@ -133,7 +133,7 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
             topDomesticInternationalResponseDTO.setValueType(valueType);
             topDomesticInternationalResponseDTO.setUnit(stdUnit);
             topDomesticInternationalResponseDTO.setMomData(1.1f);
-            topDomesticInternationalResponseDTO.setYoyData(1.1f);
+            topDomesticInternationalResponseDTO.setYoyData(-1.1f);
             topDomesticInternationalResponseDTOS.add(topDomesticInternationalResponseDTO);
         }
         response.setTopDomesticInternationalResponseDTOList(topDomesticInternationalResponseDTOS);
@@ -156,7 +156,7 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                 topDomesticInternationalResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
                 totalValue+=value.longValue();
                 topDomesticInternationalResponseDTO.setMomData(1.1f);
-                topDomesticInternationalResponseDTO.setYoyData(1.1f);
+                topDomesticInternationalResponseDTO.setYoyData(-1.1f);
                 topDomesticInternationalResponseDTOS.add(topDomesticInternationalResponseDTO);
 
             }

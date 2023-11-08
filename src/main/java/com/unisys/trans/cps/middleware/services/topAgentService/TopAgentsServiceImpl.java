@@ -125,7 +125,7 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 topAgentsResponseDTO.setValueType(valueType);
                 topAgentsResponseDTO.setUnit(stdUnit);
                 topAgentsResponseDTO.setMomData(1.1f);
-                topAgentsResponseDTO.setYoyData(1.1f);
+                topAgentsResponseDTO.setYoyData(-1.1f);
                 response.add(topAgentsResponseDTO);
             }
         }
@@ -141,7 +141,7 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 topAgentsResponseDTO.setValue(value.longValue());
                 topAgentsResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 topAgentsResponseDTO.setMomData(1.1f);
-                topAgentsResponseDTO.setYoyData(1.1f);
+                topAgentsResponseDTO.setYoyData(-1.1f);
                 response.add(topAgentsResponseDTO);
             }
         }
