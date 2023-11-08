@@ -128,11 +128,8 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                 topCommoditiesResponseDTO.setCommodityDesc((String) array[2]);
                 topCommoditiesResponseDTO.setValueType(valueType);
                 topCommoditiesResponseDTO.setUnit(stdUnit);
-
-                log.info("Commodity : " + topCommoditiesResponseDTO.getCommodity());
-                log.info("Value : " + topCommoditiesResponseDTO.getValue());
-                log.info("Description : " + topCommoditiesResponseDTO.getCommodityDesc());
-
+                topCommoditiesResponseDTO.setMomData(1.1f);
+                topCommoditiesResponseDTO.setYoyData(-1.1f);
                 response.add(topCommoditiesResponseDTO);
             }
         }
@@ -149,11 +146,8 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                 topCommoditiesResponseDTO.setCommodityDesc((String) array[2]);
                 topCommoditiesResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 topCommoditiesResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
-
-                log.info("Commodity : " + topCommoditiesResponseDTO.getCommodity());
-                log.info("Value : " + topCommoditiesResponseDTO.getValue());
-                log.info("Description : " + topCommoditiesResponseDTO.getCommodityDesc());
-
+                topCommoditiesResponseDTO.setMomData(1.1f);
+                topCommoditiesResponseDTO.setYoyData(-1.1f);
                 response.add(topCommoditiesResponseDTO);
             }
         }

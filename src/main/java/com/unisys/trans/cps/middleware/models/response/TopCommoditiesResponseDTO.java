@@ -15,4 +15,8 @@ public class TopCommoditiesResponseDTO {
 
     private String unit;
 
+    private float momData;
+
+    private float yoyData;
+
 }
