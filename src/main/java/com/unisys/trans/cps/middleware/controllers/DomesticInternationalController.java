@@ -1,34 +1,51 @@
 package com.unisys.trans.cps.middleware.controllers;
 
-import com.unisys.trans.cps.middleware.constants.AuditAction;
+import com.unisys.trans.cps.middleware.exception.CpsException;
 import com.unisys.trans.cps.middleware.models.ResponseEntity;
-import com.unisys.trans.cps.middleware.utilities.CpsAuditUtils;
+import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
+import com.unisys.trans.cps.middleware.models.response.DomesticInternationalResponseDTO;
+import com.unisys.trans.cps.middleware.models.response.MessageEntry;
+import com.unisys.trans.cps.middleware.models.response.TopDomesticInternationalResponseDTO;
+import com.unisys.trans.cps.middleware.services.topDomesticInternationalService.TopDomesticInternationalService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping("/v1")
 public class DomesticInternationalController {
 
-  /*  @Autowired
-    private CpsAuditUtils auditUtils;
+    @Autowired
+    private TopDomesticInternationalService topDomesticInternationalService;
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/demo", produces = MediaType.APPLICATION_JSON_VALUE)
+    public DomesticInternationalController( TopDomesticInternationalService topDomesticInternationalService) {
+        this.topDomesticInternationalService = topDomesticInternationalService;
+    }
+
+    @GetMapping(value = "/domesticinternational", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity getDemo() {
+    ResponseEntity<DomesticInternationalResponseDTO> getTopDomesticInternationalAgents(AirlineDashboardRequest airlineDashboardRequest) {
 
-        log.info("Inside getDemo method of DemoController");
-        ResponseEntity<String> response = new ResponseEntity<>();
-        response.setSuccessFlag(true);
-        auditUtils.feedAudit(AuditAction.CREATE_AUDIT.perform(), response, null, Arrays.asList("086"));
-        response.setResponse(new String("Demo Working Fine"));
-        response.setErrorList(null);
+        log.info("Airline Strategic Dashboard Request Payload: {} ", airlineDashboardRequest);
+
+        ResponseEntity<DomesticInternationalResponseDTO> response = new ResponseEntity<>();
+
+        try {
+            DomesticInternationalResponseDTO responseDTO = topDomesticInternationalService.getTopDomesticInternational(airlineDashboardRequest);
+            response.setResponse(responseDTO);
+            response.setSuccessFlag(true);
+
+        } catch (CpsException e) {
+            response.setSuccessFlag(false);
+            response.setErrorList(List.of(new MessageEntry("ERR009", "ERR", e.getMessage())));
+        } catch (Exception e) {
+            response.setSuccessFlag(false);
+            response.setErrorList(List.of(new MessageEntry("ERR010", "ERR", e.getMessage())));
+        }
         return response;
-    }*/
+    }
 }

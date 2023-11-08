@@ -866,4 +866,538 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     List<Object[]> getTopProductsVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                               @Param("carrier") String carrier, @Param("region") String region);
 
+    //Top Domestic and International - Total Number of Booking Count for AirPort
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                                 AND a.CARRIER = :carrier
+                                 AND a.ORG = :origin
+                             ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                             @Param("carrier") String carrier, @Param("origin") String origin);
+
+
+    //Top Domestic and International - Total Number of Booking Count for Country
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                              and a.CARRIER = :carrier
+                              and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE=:origin)
+                              ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                             @Param("carrier") String carrier, @Param("origin") String origin);
+
+
+    //Top Domestic and International - Total Number of Booking Count for Continent
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                              and a.CARRIER = :carrier
+                              and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE b.CONTINENT=:origin)
+                              ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                               @Param("carrier") String carrier, @Param("origin") String origin);
+
+    //Top Domestic and International - Total Number of Booking Count for Region
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.CARRIER = :carrier
+                               and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE
+                               b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))
+                               ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                            @Param("carrier") String carrier, @Param("origin") String origin);
+
+    //Top Domestic and International - Total Number of Volume for AirPort
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.VOLUME) AS totalValue
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.CARRIER = :carrier
+                               and a.ORG = :origin
+                               ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                            @Param("carrier") String carrier, @Param("origin") String origin);
+
+    //Top Domestic and International - Total Number of Volume for Country
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.VOLUME) AS totalValue
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.CARRIER = :carrier
+                               and a.ORG in(SELECT b.C0DE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE:origin)
+                               ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                            @Param("carrier") String carrier, @Param("origin") String origin);
+
+
+    //Top Domestic and International - Total Number of Volume for Continent
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.VOLUME) AS totalValue
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE where a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.CARRIER = :carrier
+                               and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT:origin)
+                               ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                              @Param("carrier") String carrier, @Param("origin") String origin);
+
+    //Top Domestic and International - Total Number of Volume for Region
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.VOLUME) AS totalValue
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.CARRIER = :carrier
+                               and a.ORG IN(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE
+                               b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))
+                               ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                           @Param("carrier") String carrier, @Param("origin") String origin);
+
+    //Top Domestic and International - Total Number of Weight for AirPort
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.WEIGHT) AS totalValue
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.CARRIER = :carrier
+                               and a.ORG = :origin
+                               ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                            @Param("carrier") String carrier, @Param("origin") String origin);
+
+    //Top Domestic and International - Total Number of Weight for Country
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.WEIGHT) AS totalValue
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.CARRIER = :carrier
+                               and a.ORG in(SELECT B.CODE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE:origin)
+                               ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                            @Param("carrier") String carrier, @Param("origin") String origin);
+
+    //Top Domestic and International - Total Number of Weight for Continent
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.WEIGHT) AS totalValue
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.CARRIER = :carrier
+                               and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT:origin)
+                               ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                              @Param("carrier") String carrier, @Param("origin") String origin);
+
+    //Top Domestic and International - Total Number of Weight for Region
+    @Query(value ="""
+            WITH AllCategories AS (
+                               SELECT 'false' AS category
+                               UNION ALL
+                               SELECT 'true'
+                             )
+                             
+                             SELECT
+                               ac.category,
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.WEIGHT) AS totalValue
+                             FROM AllCategories ac
+                             LEFT JOIN (
+                               SELECT
+                                 a.*,
+                                 (CASE
+                                   WHEN a.ORG NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                     SELECT b.CODE
+                                     FROM CITYCOUNTRYMASTER b
+                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                 END) AS category
+                               FROM ADVANCE_FUNCTION_AUDIT a
+                               JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
+                               WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.CARRIER = :carrier
+                               and a.ORG IN(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE
+                               b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))
+                               ) AS CategoryCTE
+                             ON ac.category = CategoryCTE.category
+                             GROUP BY ac.category
+                             ORDER BY category_count""",nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                           @Param("carrier") String carrier, @Param("origin") String origin);
+
 }
