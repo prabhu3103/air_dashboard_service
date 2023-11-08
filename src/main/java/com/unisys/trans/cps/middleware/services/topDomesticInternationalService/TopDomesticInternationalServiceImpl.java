@@ -5,7 +5,6 @@ import com.unisys.trans.cps.middleware.exception.CpsException;
 import com.unisys.trans.cps.middleware.models.entity.AirlineHostCountryMaster;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.DomesticInternationalResponseDTO;
-import com.unisys.trans.cps.middleware.models.response.TopAgentsResponseDTO;
 import com.unisys.trans.cps.middleware.models.response.TopDomesticInternationalResponseDTO;
 import com.unisys.trans.cps.middleware.repository.AdvanceFunctionAuditRepository;
 import com.unisys.trans.cps.middleware.services.AirlineHostCountryMasterService;
@@ -133,7 +132,8 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
             }
             topDomesticInternationalResponseDTO.setValueType(valueType);
             topDomesticInternationalResponseDTO.setUnit(stdUnit);
-
+            topDomesticInternationalResponseDTO.setMomData(1.1f);
+            topDomesticInternationalResponseDTO.setYoyData(1.1f);
             topDomesticInternationalResponseDTOS.add(topDomesticInternationalResponseDTO);
         }
         response.setTopDomesticInternationalResponseDTOList(topDomesticInternationalResponseDTOS);
@@ -155,6 +155,8 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                 topDomesticInternationalResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 topDomesticInternationalResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
                 totalValue+=value.longValue();
+                topDomesticInternationalResponseDTO.setMomData(1.1f);
+                topDomesticInternationalResponseDTO.setYoyData(1.1f);
                 topDomesticInternationalResponseDTOS.add(topDomesticInternationalResponseDTO);
 
             }

@@ -18,4 +18,8 @@ public class TopDomesticInternationalResponseDTO {
 
     private String unit;
 
+    private float momData;
+
+    private float yoyData;
+
 }
