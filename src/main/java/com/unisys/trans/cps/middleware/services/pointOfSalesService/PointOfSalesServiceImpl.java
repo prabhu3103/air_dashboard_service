@@ -134,8 +134,6 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
                 }else{
                     aPOSResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
                 }
-                aPOSResponseDTO.setYoyData(AirlineDashboardConstants.DEFAULT_VALUE);
-                aPOSResponseDTO.setMomData(AirlineDashboardConstants.DEFAULT_VALUE);
                 aPOSResponseDTOList.add(aPOSResponseDTO);
             }
             // Iterate through the date range and create an empty object for missing dates
@@ -147,8 +145,6 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
                     POSResponseDTO aPOSResponseDTO = new POSResponseDTO();
                     aPOSResponseDTO.setEventDate(currentDateStr);
                     aPOSResponseDTO.setValue(AirlineDashboardConstants.LONG_ZERO);
-                    aPOSResponseDTO.setYoyData(AirlineDashboardConstants.DEFAULT_VALUE);
-                    aPOSResponseDTO.setMomData(AirlineDashboardConstants.DEFAULT_VALUE);
                     aPOSResponseDTO.setValueType(valueType);
                     aPOSResponseDTOList.add(aPOSResponseDTO);
                 }
@@ -156,6 +152,8 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
                 currentDate = currentDate.plusDays(1);
             }
             response.setTotalValue(totalValue);
+            response.setYoyData(AirlineDashboardConstants.DEFAULT_NEGATIVE_VALUE);
+            response.setMomData(AirlineDashboardConstants.DEFAULT_VALUE);
             response.setPosList(aPOSResponseDTOList);
 
         }

@@ -9,5 +9,9 @@ public class PointOfSalesResponseDTO {
 
     private Long totalValue;
 
+    private float momData;
+
+    private float yoyData;
+
     List<POSResponseDTO> posList;
 }
