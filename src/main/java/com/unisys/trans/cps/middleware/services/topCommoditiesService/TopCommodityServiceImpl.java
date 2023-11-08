@@ -130,6 +130,11 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                 topCommoditiesResponseDTO.setUnit(stdUnit);
                 topCommoditiesResponseDTO.setMomData(1.1f);
                 topCommoditiesResponseDTO.setYoyData(-1.1f);
+
+                log.info("Commodity : " + topCommoditiesResponseDTO.getCommodity());
+                log.info("Value : " + topCommoditiesResponseDTO.getValue());
+                log.info("Description : " + topCommoditiesResponseDTO.getCommodityDesc());
+
                 response.add(topCommoditiesResponseDTO);
             }
         }
@@ -148,6 +153,11 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                 topCommoditiesResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
                 topCommoditiesResponseDTO.setMomData(1.1f);
                 topCommoditiesResponseDTO.setYoyData(-1.1f);
+
+                log.info("Commodity : " + topCommoditiesResponseDTO.getCommodity());
+                log.info("Value : " + topCommoditiesResponseDTO.getValue());
+                log.info("Description : " + topCommoditiesResponseDTO.getCommodityDesc());
+
                 response.add(topCommoditiesResponseDTO);
             }
         }
