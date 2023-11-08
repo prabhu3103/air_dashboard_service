@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface PointOfSalesService {
 
-    List<PointOfSalesResponseDTO> getPointOfSales(AirlineDashboardRequest airlineDashboardRequest);
+    PointOfSalesResponseDTO getPointOfSales(AirlineDashboardRequest airlineDashboardRequest);
 }

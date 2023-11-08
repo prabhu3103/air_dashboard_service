@@ -19,7 +19,6 @@ import java.util.List;
 @RequestMapping("/v1")
 public class DomesticInternationalController {
 
-    @Autowired
     private TopDomesticInternationalService topDomesticInternationalService;
 
     public DomesticInternationalController( TopDomesticInternationalService topDomesticInternationalService) {

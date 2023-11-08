@@ -26,14 +26,14 @@ public class PointOfSalesController {
 
     @GetMapping(value = "/pointofsales", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<PointOfSalesResponseDTO>> getPointOfSales(AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<PointOfSalesResponseDTO> getPointOfSales(AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("getPointOfSales Request Payload: {} ", airlineDashboardRequest);
 
-        ResponseEntity<List<PointOfSalesResponseDTO>> response = new ResponseEntity<>();
+        ResponseEntity<PointOfSalesResponseDTO> response = new ResponseEntity<>();
 
         try {
-            List<PointOfSalesResponseDTO> pointOfSalesResponse = aPointOfSalesService.getPointOfSales(airlineDashboardRequest);
+            PointOfSalesResponseDTO pointOfSalesResponse = aPointOfSalesService.getPointOfSales(airlineDashboardRequest);
             response.setResponse(pointOfSalesResponse);
             response.setSuccessFlag(true);
 
