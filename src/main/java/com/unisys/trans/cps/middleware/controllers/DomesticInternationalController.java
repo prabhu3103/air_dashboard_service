@@ -7,6 +7,7 @@ import com.unisys.trans.cps.middleware.models.response.DomesticInternationalResp
 import com.unisys.trans.cps.middleware.models.response.MessageEntry;
 import com.unisys.trans.cps.middleware.models.response.TopDomesticInternationalResponseDTO;
 import com.unisys.trans.cps.middleware.services.topDomesticInternationalService.TopDomesticInternationalService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/airline-dashboard")
 public class DomesticInternationalController {
 
     private TopDomesticInternationalService topDomesticInternationalService;
@@ -25,9 +26,9 @@ public class DomesticInternationalController {
         this.topDomesticInternationalService = topDomesticInternationalService;
     }
 
-    @GetMapping(value = "/domesticinternational", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/domestic-international", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<DomesticInternationalResponseDTO> getTopDomesticInternationalAgents(AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<DomesticInternationalResponseDTO> getTopDomesticInternationalAgents(@Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("Airline Strategic Dashboard Request Payload: {} ", airlineDashboardRequest);
 
@@ -40,10 +41,10 @@ public class DomesticInternationalController {
 
         } catch (CpsException e) {
             response.setSuccessFlag(false);
-            response.setErrorList(List.of(new MessageEntry("ERR009", "ERR", e.getMessage())));
+            response.setErrorList(List.of(new MessageEntry("ERR001", "ERR", e.getMessage())));
         } catch (Exception e) {
             response.setSuccessFlag(false);
-            response.setErrorList(List.of(new MessageEntry("ERR010", "ERR", e.getMessage())));
+            response.setErrorList(List.of(new MessageEntry("ERR002", "ERR", e.getMessage())));
         }
         return response;
     }

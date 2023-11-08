@@ -8,15 +8,17 @@ import com.unisys.trans.cps.middleware.models.response.TopAgentsResponseDTO;
 import com.unisys.trans.cps.middleware.services.topAgentService.TopAgentsService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/airline-dashboard")
 public class TopAgentsController {
 
     private TopAgentsService topAgentsService;
@@ -24,9 +26,9 @@ public class TopAgentsController {
         this.topAgentsService = topAgentsService;
     }
 
-    @GetMapping(value = "/topagents", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/top-agents", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<TopAgentsResponseDTO>> getTopAgents(AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<List<TopAgentsResponseDTO>> getTopAgents(@Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("Airline Strategic Dashboard Request Payload: {} ", airlineDashboardRequest);
 
@@ -39,10 +41,10 @@ public class TopAgentsController {
 
         } catch (CpsException e) {
             response.setSuccessFlag(false);
-            response.setErrorList(List.of(new MessageEntry("ERR009", "ERR", e.getMessage())));
+            response.setErrorList(List.of(new MessageEntry("ERR005", "ERR", e.getMessage())));
         } catch (Exception e) {
             response.setSuccessFlag(false);
-            response.setErrorList(List.of(new MessageEntry("ERR010", "ERR", e.getMessage())));
+            response.setErrorList(List.of(new MessageEntry("ERR006", "ERR", e.getMessage())));
         }
         return response;
     }

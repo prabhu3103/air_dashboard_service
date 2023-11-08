@@ -15,18 +15,18 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/airline-dashboard")
 public class PointOfSalesController {
 
     private final PointOfSalesService aPointOfSalesService;
 
-    public PointOfSalesController( PointOfSalesService aPointOfSalesService) {
+    public PointOfSalesController(@Valid PointOfSalesService aPointOfSalesService) {
         this.aPointOfSalesService = aPointOfSalesService;
     }
 
-    @GetMapping(value = "/pointofsales", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/point-of-sales", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<PointOfSalesResponseDTO> getPointOfSales(AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<PointOfSalesResponseDTO> getPointOfSales(@Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("getPointOfSales Request Payload: {} ", airlineDashboardRequest);
 
@@ -39,10 +39,10 @@ public class PointOfSalesController {
 
         } catch (CpsException e) {
             response.setSuccessFlag(false);
-            response.setErrorList(List.of(new MessageEntry("ERR009", "ERR", e.getMessage())));
+            response.setErrorList(List.of(new MessageEntry("ERR003", "ERR", e.getMessage())));
         } catch (Exception e) {
             response.setSuccessFlag(false);
-            response.setErrorList(List.of(new MessageEntry("ERR010", "ERR", e.getMessage())));
+            response.setErrorList(List.of(new MessageEntry("ERR004", "ERR", e.getMessage())));
         }
         return response;
     }

@@ -1,25 +1,24 @@
 package com.unisys.trans.cps.middleware.controllers;
 
-import com.unisys.trans.cps.middleware.constants.AuditAction;
 import com.unisys.trans.cps.middleware.exception.CpsException;
 import com.unisys.trans.cps.middleware.models.ResponseEntity;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.MessageEntry;
 import com.unisys.trans.cps.middleware.models.response.TopProductResponseDTO;
-import com.unisys.trans.cps.middleware.services.pointOfSalesService.PointOfSalesService;
 import com.unisys.trans.cps.middleware.services.topProductService.TopProductsService;
-import com.unisys.trans.cps.middleware.utilities.CpsAuditUtils;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/airline-dashboard")
 public class TopProductsController {
 
     private TopProductsService topProductService;
@@ -28,9 +27,9 @@ public class TopProductsController {
         this.topProductService = topProductService;
     }
 
-    @GetMapping(value = "/topproducts", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/top-products", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<TopProductResponseDTO>> getTopProducts(AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<List<TopProductResponseDTO>> getTopProducts(@Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("getTopProducts Request Payload: {} ", airlineDashboardRequest);
 
@@ -43,10 +42,10 @@ public class TopProductsController {
 
         } catch (CpsException e) {
             response.setSuccessFlag(false);
-            response.setErrorList(List.of(new MessageEntry("ERR009", "ERR", e.getMessage())));
+            response.setErrorList(List.of(new MessageEntry("ERR011", "ERR", e.getMessage())));
         } catch (Exception e) {
             response.setSuccessFlag(false);
-            response.setErrorList(List.of(new MessageEntry("ERR010", "ERR", e.getMessage())));
+            response.setErrorList(List.of(new MessageEntry("ERR012", "ERR", e.getMessage())));
         }
         return response;
     }

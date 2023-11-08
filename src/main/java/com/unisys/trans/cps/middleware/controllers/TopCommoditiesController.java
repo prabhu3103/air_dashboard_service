@@ -15,7 +15,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/airline-dashboard")
 public class TopCommoditiesController {
 
     private TopCommodityService topCommodityService;
@@ -24,9 +24,9 @@ public class TopCommoditiesController {
         this.topCommodityService = topCommodityService;
     }
 
-    @GetMapping(value = "/topcommodities", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/top-commodities", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List<TopCommoditiesResponseDTO>> topCommodities(AirlineDashboardRequest airlineDashboardRequest) {
+    public ResponseEntity<List<TopCommoditiesResponseDTO>> topCommodities(@Valid AirlineDashboardRequest airlineDashboardRequest) {
         log.info("Inside topCommodities method..");
         ResponseEntity<List<TopCommoditiesResponseDTO>> response = new ResponseEntity<>();
         log.info("Area by : " + airlineDashboardRequest.getAreaBy());
@@ -38,10 +38,10 @@ public class TopCommoditiesController {
 
         } catch (CpsException e) {
             response.setSuccessFlag(false);
-            response.setErrorList(List.of(new MessageEntry("ERR009", "ERR", e.getMessage())));
+            response.setErrorList(List.of(new MessageEntry("ERR007", "ERR", e.getMessage())));
         } catch (Exception e) {
             response.setSuccessFlag(false);
-            response.setErrorList(List.of(new MessageEntry("ERR010", "ERR", e.getMessage())));
+            response.setErrorList(List.of(new MessageEntry("ERR008", "ERR", e.getMessage())));
         }
 
         return response;

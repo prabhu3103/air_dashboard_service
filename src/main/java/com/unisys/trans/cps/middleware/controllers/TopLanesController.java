@@ -15,16 +15,16 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/v1")
+@RequestMapping("/v1/airline-dashboard")
 public class TopLanesController {
 
     private TopLanesService topLanesService;
     public TopLanesController( TopLanesService topLanesService) {
         this.topLanesService = topLanesService;
     }
-    @GetMapping(value = "/toplanes", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/top-lanes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<TopLanesResponseDTO>> getTopLanes(AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<List<TopLanesResponseDTO>> getTopLanes(@Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("getTopLanes Request Payload: {} ", airlineDashboardRequest);
 
