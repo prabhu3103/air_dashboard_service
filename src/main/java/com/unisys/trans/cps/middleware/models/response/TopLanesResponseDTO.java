@@ -14,4 +14,9 @@ public class TopLanesResponseDTO {
     private Long value;
 
     private String unit;
+
+    private float momData;
+
+    private float yoyData;
+
 }

@@ -124,6 +124,8 @@ public class TopLanesServiceImpl implements TopLanesService {
                 topLanesResponseDTO.setValue(value.longValue());
                 topLanesResponseDTO.setValueType(valueType);
                 topLanesResponseDTO.setUnit(stdUnit);
+                topLanesResponseDTO.setMomData(1.1f);
+                topLanesResponseDTO.setYoyData(1.1f);
                 response.add(topLanesResponseDTO);
             }
         }
@@ -139,6 +141,8 @@ public class TopLanesServiceImpl implements TopLanesService {
                 topLanesResponseDTO.setValue(value.longValue());
                 topLanesResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 topLanesResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
+                topLanesResponseDTO.setMomData(1.1f);
+                topLanesResponseDTO.setYoyData(1.1f);
                 response.add(topLanesResponseDTO);
             }
         }
