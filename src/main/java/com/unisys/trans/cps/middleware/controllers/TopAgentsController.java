@@ -19,7 +19,6 @@ import java.util.List;
 @RequestMapping("/v1")
 public class TopAgentsController {
 
-    @Autowired
     private TopAgentsService topAgentsService;
     public TopAgentsController( TopAgentsService topAgentsService) {
         this.topAgentsService = topAgentsService;

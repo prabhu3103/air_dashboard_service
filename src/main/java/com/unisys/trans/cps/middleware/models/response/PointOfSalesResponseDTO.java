@@ -2,14 +2,12 @@ package com.unisys.trans.cps.middleware.models.response;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class PointOfSalesResponseDTO {
 
-    private String valueType;
+    private Long totalValue;
 
-    private Long value;
-
-    private String unit;
-
-    private String eventDate;
+    List<POSResponseDTO> posList;
 }
