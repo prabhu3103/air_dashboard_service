@@ -2,9 +2,11 @@ package com.unisys.trans.cps.middleware.services.topLanesService;
 
 import com.unisys.trans.cps.middleware.constants.AirlineDashboardConstants;
 import com.unisys.trans.cps.middleware.exception.CpsException;
+import com.unisys.trans.cps.middleware.models.entity.AirlineHostCountryMaster;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.TopLanesResponseDTO;
 import com.unisys.trans.cps.middleware.repository.AdvanceFunctionAuditRepository;
+import com.unisys.trans.cps.middleware.services.AirlineHostCountryMasterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class TopLanesServiceImpl implements TopLanesService {
 
     @Autowired
     private AdvanceFunctionAuditRepository advanceFunctionAuditRepository;
+
+    @Autowired
+    AirlineHostCountryMasterService masterService;
 
     @Override
     public List<TopLanesResponseDTO> getTopLanes(AirlineDashboardRequest airlineDashboardRequest) {
@@ -42,61 +47,63 @@ public class TopLanesServiceImpl implements TopLanesService {
                 switch (areaBy) {
                     case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesBookingAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
+                        buildResponseDTO(response, topObjects);
                     }
                     case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesBookingCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
+                        buildResponseDTO(response, topObjects);
                     }
                     case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesBookingContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
+                        buildResponseDTO(response, topObjects);
                     }
                     case AirlineDashboardConstants.AREA_BY_REGION -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_BOOKING);
+                        buildResponseDTO(response, topObjects);
                     }
                 }
 
             } else if (airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_WEIGHT)) {
+                AirlineHostCountryMaster masterRecord = masterService.findByCarrierCode(airlineDashboardRequest.getCarrier());
 
                 switch (areaBy) {
                     case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesWeightAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
+                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit());
                     }
                     case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesWeightCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
+                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit());
                     }
                     case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesWeightContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
+                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit());
                     }
                     case AirlineDashboardConstants.AREA_BY_REGION -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT);
+                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit());
                     }
                 }
 
             } else if (airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_VOLUME)) {
+                AirlineHostCountryMaster masterRecord = masterService.findByCarrierCode(airlineDashboardRequest.getCarrier());
 
                 switch (areaBy) {
                     case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesVolumeAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
+                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit());
                     }
                     case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesVolumeCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
+                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit());
                     }
                     case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesVolumeContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
+                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit());
                     }
                     case AirlineDashboardConstants.AREA_BY_REGION -> {
                         topObjects = advanceFunctionAuditRepository.getTopLanesVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME);
+                        buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit());
                     }
                 }
             }
@@ -107,7 +114,7 @@ public class TopLanesServiceImpl implements TopLanesService {
         return response;
     }
 
-    private void buildResponseDTO(List<TopLanesResponseDTO> response, List<Object[]> topObjects, String valueType) {
+    private void buildResponseDTO(List<TopLanesResponseDTO> response, List<Object[]> topObjects, String valueType, String stdUnit) {
         if(topObjects != null) {
             for (Object[] array : topObjects) {
                 TopLanesResponseDTO topLanesResponseDTO = new TopLanesResponseDTO();
@@ -116,6 +123,22 @@ public class TopLanesServiceImpl implements TopLanesService {
                 Number value = (Number) array[2];
                 topLanesResponseDTO.setValue(value.longValue());
                 topLanesResponseDTO.setValueType(valueType);
+                topLanesResponseDTO.setUnit(stdUnit);
+                response.add(topLanesResponseDTO);
+            }
+        }
+    }
+
+    private void buildResponseDTO(List<TopLanesResponseDTO> response, List<Object[]> topObjects) {
+        if(topObjects != null) {
+            for (Object[] array : topObjects) {
+                TopLanesResponseDTO topLanesResponseDTO = new TopLanesResponseDTO();
+                topLanesResponseDTO.setOrigin((String) array[0]);
+                topLanesResponseDTO.setDestination((String) array[1]);
+                Number value = (Number) array[2];
+                topLanesResponseDTO.setValue(value.longValue());
+                topLanesResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
+                topLanesResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
                 response.add(topLanesResponseDTO);
             }
         }
