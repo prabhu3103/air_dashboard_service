@@ -13,7 +13,4 @@ public class POSResponseDTO {
 
     private String eventDate;
 
-    private float momData;
-
-    private float yoyData;
 }
