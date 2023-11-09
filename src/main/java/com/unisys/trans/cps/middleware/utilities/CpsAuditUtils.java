@@ -89,7 +89,7 @@ public class CpsAuditUtils {
         auditRequestDTO.setServerName(SERVER_NAME);
         auditRequestDTO.setSubFunction(String.valueOf(SubFunction.INQUIRY));
         auditRequestDTO.setTxnStatus(EMPTY_STRING);
-        /* TODO : Need to change once the login module is ready to use */
+        /* Need to change once the login module is ready to use */
         auditRequestDTO.setUserId("BiswalT");
         auditRequestDTO.setBranchId(10010);
 
