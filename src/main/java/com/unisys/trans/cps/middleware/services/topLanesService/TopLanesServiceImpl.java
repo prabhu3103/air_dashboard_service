@@ -61,6 +61,8 @@ public class TopLanesServiceImpl implements TopLanesService {
                         topObjects = advanceFunctionAuditRepository.getTopLanesBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         buildResponseDTO(response, topObjects);
                     }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
 
             } else if (airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_WEIGHT)) {
@@ -83,6 +85,8 @@ public class TopLanesServiceImpl implements TopLanesService {
                         topObjects = advanceFunctionAuditRepository.getTopLanesWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit());
                     }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
 
             } else if (airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_VOLUME)) {
@@ -105,6 +109,8 @@ public class TopLanesServiceImpl implements TopLanesService {
                         topObjects = advanceFunctionAuditRepository.getTopLanesVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit());
                     }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
             }
         }catch (Exception exception){

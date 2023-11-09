@@ -64,6 +64,8 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                         topObjects = advanceFunctionAuditRepository.getTopCommodityBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         buildResponseDTO(response, topObjects);
                     }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
 
             } else if (airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_WEIGHT)) {
@@ -86,6 +88,8 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                         topObjects = advanceFunctionAuditRepository.getTopCommodityWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit());
                     }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
 
             } else if (airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_VOLUME)) {
@@ -108,6 +112,8 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                         topObjects = advanceFunctionAuditRepository.getTopCommodityVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         buildResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit());
                     }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
             }
         }catch (Exception exception){

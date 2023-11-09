@@ -1,6 +1,7 @@
 package com.unisys.trans.cps.middleware.services.pointOfSalesService;
 
 import com.unisys.trans.cps.middleware.constants.AirlineDashboardConstants;
+import com.unisys.trans.cps.middleware.exception.CpsException;
 import com.unisys.trans.cps.middleware.models.entity.AirlineHostCountryMaster;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.POSResponseDTO;
@@ -60,6 +61,8 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
                     posObjects = advanceFunctionAuditRepository.getPointOfSalesBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, airlineDashboardRequest.getStartDate(), airlineDashboardRequest.getEndDate(), AirlineDashboardConstants.INFO_TYPE_BOOKING, null);
                 }
+                default ->
+                        throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
             }
         }
 
@@ -82,6 +85,8 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
                     posObjects = advanceFunctionAuditRepository.getPointOfSalesVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, airlineDashboardRequest.getStartDate(), airlineDashboardRequest.getEndDate(), AirlineDashboardConstants.INFO_TYPE_VOLUME, standardUnit.getStdVolumeUnit());
                 }
+                default ->
+                        throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
             }
         }
 
@@ -104,6 +109,8 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
                     posObjects = advanceFunctionAuditRepository.getPointOfSalesWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildPOSResponseDTO(response, posObjects, airlineDashboardRequest.getStartDate(), airlineDashboardRequest.getEndDate(), AirlineDashboardConstants.INFO_TYPE_WEIGHT, standardUnit.getStdWeightUnit());
                 }
+                default ->
+                        throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
             }
         }
         return response;

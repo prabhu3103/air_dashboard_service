@@ -62,6 +62,8 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                     topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopDomesticInternationalResponseDTO(response, topObjects);
                 }
+                default ->
+                        throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
             }
         }
 
@@ -84,6 +86,8 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                     topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION, masterRecord.getStdVolumeUnit());
                 }
+                default ->
+                        throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
             }
         }
 
@@ -106,6 +110,8 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                     topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                     buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION, masterRecord.getStdWeightUnit());
                 }
+                default ->
+                        throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
             }
         }
         }catch (Exception exception){

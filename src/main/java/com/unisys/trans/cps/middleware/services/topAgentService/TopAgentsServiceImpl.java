@@ -62,6 +62,8 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                         topObjects = advanceFunctionAuditRepository.getTopAgentsBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         buildTopAgentsResponseDTO(response, topObjects);
                     }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
             }
 
@@ -84,6 +86,8 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                         topObjects = advanceFunctionAuditRepository.getTopAgentsVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION,masterRecord.getStdVolumeUnit());
                     }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
             }
 
@@ -106,6 +110,8 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                         topObjects = advanceFunctionAuditRepository.getTopAgentsWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION,masterRecord.getStdWeightUnit());
                     }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
             }
         }catch (Exception exception){
