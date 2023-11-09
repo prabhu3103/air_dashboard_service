@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class TopProductResponseDTO {
 
-    private  String  ProductCode;
+    private  String  productCode;
 
     private  String productDescription;
 

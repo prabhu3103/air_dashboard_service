@@ -2,6 +2,8 @@ package com.unisys.trans.cps.middleware.constants;
 
 public class AirlineDashboardConstants {
 
+    private AirlineDashboardConstants() {
+    }
     public static final String INFO_TYPE_BOOKING = "BookingCount";
     public static final String INFO_TYPE_WEIGHT = "Weight";
     public static final String INFO_TYPE_VOLUME = "volume";
