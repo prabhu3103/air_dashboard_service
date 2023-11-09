@@ -27,10 +27,10 @@ public class ResponseEntity<T> implements Serializable {
     private boolean successFlag;
 
     /* T is the generic type for  all the model classes respective to Business */
-    private T response;
+    private transient T response;
 
     /* List of all the validation error based on business requirement */
-    private List<MessageEntry> errorList;
+    private transient List<MessageEntry> errorList;
 
     public ResponseEntity() {
         super();
