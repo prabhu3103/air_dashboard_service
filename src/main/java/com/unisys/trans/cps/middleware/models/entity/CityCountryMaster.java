@@ -25,4 +25,7 @@ public class CityCountryMaster implements Serializable {
 
     @Column(name = "CONTINENT")
     private String continent;
+
+    @Column(name = "CITYDISPLAYNAME")
+    private String cityDisplayName;
 }

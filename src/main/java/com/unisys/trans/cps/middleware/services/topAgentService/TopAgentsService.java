@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface TopAgentsService {
 
-    List<TopAgentsResponseDTO> getTopAgents(AirlineDashboardRequest airlineDashboardRequest);
+    List<TopAgentsResponseDTO> getTopAccounts(AirlineDashboardRequest airlineDashboardRequest);
 }

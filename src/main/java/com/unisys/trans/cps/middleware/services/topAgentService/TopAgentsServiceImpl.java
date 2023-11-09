@@ -29,7 +29,7 @@ public class TopAgentsServiceImpl implements TopAgentsService{
     AirlineHostCountryMasterService masterService;
 
     @Override
-    public List<TopAgentsResponseDTO> getTopAgents(AirlineDashboardRequest airlineDashboardRequest) {
+    public List<TopAgentsResponseDTO> getTopAccounts(AirlineDashboardRequest airlineDashboardRequest) {
 
         LocalDate localDateStart = LocalDate.parse(airlineDashboardRequest.getStartDate(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate localDateEnd = LocalDate.parse(airlineDashboardRequest.getEndDate(), DateTimeFormatter.ISO_LOCAL_DATE);

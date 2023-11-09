@@ -5,13 +5,16 @@ import com.unisys.trans.cps.middleware.models.ResponseEntity;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.DomesticInternationalResponseDTO;
 import com.unisys.trans.cps.middleware.models.response.MessageEntry;
-import com.unisys.trans.cps.middleware.models.response.TopDomesticInternationalResponseDTO;
 import com.unisys.trans.cps.middleware.services.topDomesticInternationalService.TopDomesticInternationalService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -28,7 +31,9 @@ public class DomesticInternationalController {
 
     @GetMapping(value = "/domestic-international", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<DomesticInternationalResponseDTO> getTopDomesticInternationalAgents(@Valid AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<DomesticInternationalResponseDTO> getTopDomesticInternationalAgents(
+            @AuthenticationPrincipal Jwt principal,
+            @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("Airline Strategic Dashboard Request Payload: {} ", airlineDashboardRequest);
 

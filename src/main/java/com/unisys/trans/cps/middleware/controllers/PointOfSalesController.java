@@ -9,6 +9,8 @@ import com.unisys.trans.cps.middleware.services.pointOfSalesService.PointOfSales
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,7 +22,9 @@ public class PointOfSalesController {
 
     private final PointOfSalesService aPointOfSalesService;
 
-    public PointOfSalesController(@Valid PointOfSalesService aPointOfSalesService) {
+    public PointOfSalesController(
+            @AuthenticationPrincipal Jwt principal,
+            @Valid PointOfSalesService aPointOfSalesService) {
         this.aPointOfSalesService = aPointOfSalesService;
     }
 

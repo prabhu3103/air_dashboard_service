@@ -9,6 +9,8 @@ import com.unisys.trans.cps.middleware.services.topLanesService.TopLanesService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +26,9 @@ public class TopLanesController {
     }
     @GetMapping(value = "/top-lanes", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<TopLanesResponseDTO>> getTopLanes(@Valid AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<List<TopLanesResponseDTO>> getTopLanes(
+            @AuthenticationPrincipal Jwt principal,
+            @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("getTopLanes Request Payload: {} ", airlineDashboardRequest);
 

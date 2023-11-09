@@ -46,6 +46,11 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant-path-matcher
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/CPS_realm
 
 # swagger-ui custom path
 springdoc:
