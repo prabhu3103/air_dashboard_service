@@ -22,15 +22,15 @@ public class PointOfSalesController {
 
     private final PointOfSalesService aPointOfSalesService;
 
-    public PointOfSalesController(
-            @AuthenticationPrincipal Jwt principal,
-            @Valid PointOfSalesService aPointOfSalesService) {
+    public PointOfSalesController(@Valid PointOfSalesService aPointOfSalesService) {
         this.aPointOfSalesService = aPointOfSalesService;
     }
 
     @GetMapping(value = "/point-of-sales", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<PointOfSalesResponseDTO> getPointOfSales(@Valid AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<PointOfSalesResponseDTO> getPointOfSales(
+            @AuthenticationPrincipal Jwt principal,
+            @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("getPointOfSales Request Payload: {} ", airlineDashboardRequest);
 
