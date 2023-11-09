@@ -9,6 +9,8 @@ import com.unisys.trans.cps.middleware.services.topProductService.TopProductsSer
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -29,7 +31,9 @@ public class TopProductsController {
 
     @GetMapping(value = "/top-products", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<TopProductResponseDTO>> getTopProducts(@Valid AirlineDashboardRequest airlineDashboardRequest) {
+    ResponseEntity<List<TopProductResponseDTO>> getTopProducts(
+            @AuthenticationPrincipal Jwt principal,
+            @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("getTopProducts Request Payload: {} ", airlineDashboardRequest);
 

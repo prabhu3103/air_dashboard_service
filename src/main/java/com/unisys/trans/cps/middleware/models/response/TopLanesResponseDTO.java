@@ -15,6 +15,10 @@ public class TopLanesResponseDTO {
 
     private String unit;
 
+    private String orgName;
+
+    private String destName;
+
     private float momData;
 
     private float yoyData;

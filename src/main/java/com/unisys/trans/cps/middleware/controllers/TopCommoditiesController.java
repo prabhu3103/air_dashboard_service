@@ -9,6 +9,8 @@ import com.unisys.trans.cps.middleware.services.topCommoditiesService.TopCommodi
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +28,9 @@ public class TopCommoditiesController {
 
     @GetMapping(value = "/top-commodities", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<List<TopCommoditiesResponseDTO>> topCommodities(@Valid AirlineDashboardRequest airlineDashboardRequest) {
+    public ResponseEntity<List<TopCommoditiesResponseDTO>> topCommodities(
+            @AuthenticationPrincipal Jwt principal,
+            @Valid AirlineDashboardRequest airlineDashboardRequest) {
         log.info("Inside topCommodities method..");
         ResponseEntity<List<TopCommoditiesResponseDTO>> response = new ResponseEntity<>();
         log.info("Area by : " + airlineDashboardRequest.getAreaBy());

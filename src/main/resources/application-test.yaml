@@ -46,6 +46,11 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant-path-matcher
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://172.18.160.190:8080/realms/cpstestloginrealm
 
 # swagger-ui custom path
 springdoc:
