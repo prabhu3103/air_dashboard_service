@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -31,17 +32,21 @@ public class DomesticInternationalController {
 
     @GetMapping(value = "/domestic-international", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<DomesticInternationalResponseDTO> getTopDomesticInternationalAgents(
+    ResponseEntity<List<DomesticInternationalResponseDTO>> getTopDomesticInternationalAgents(
             @AuthenticationPrincipal Jwt principal,
             @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("Airline Strategic Dashboard Request Payload: {} ", airlineDashboardRequest);
 
-        ResponseEntity<DomesticInternationalResponseDTO> response = new ResponseEntity<>();
+        ResponseEntity<List<DomesticInternationalResponseDTO>> response = new ResponseEntity<>();
+        List<DomesticInternationalResponseDTO> domesticInternationalResponseDTOS = new ArrayList<>();
 
         try {
             DomesticInternationalResponseDTO responseDTO = topDomesticInternationalService.getTopDomesticInternational(airlineDashboardRequest);
-            response.setResponse(responseDTO);
+            if(responseDTO.getTotalValue()!=0){
+                domesticInternationalResponseDTOS.add(responseDTO);
+            }
+            response.setResponse(domesticInternationalResponseDTOS);
             response.setSuccessFlag(true);
 
         } catch (CpsException e) {
