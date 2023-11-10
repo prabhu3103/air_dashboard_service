@@ -22,22 +22,22 @@ public class PointOfSalesController {
 
     private final PointOfSalesService aPointOfSalesService;
 
-    public PointOfSalesController(@Valid PointOfSalesService aPointOfSalesService) {
+    public PointOfSalesController(PointOfSalesService aPointOfSalesService) {
         this.aPointOfSalesService = aPointOfSalesService;
     }
 
     @GetMapping(value = "/point-of-sales", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<PointOfSalesResponseDTO> getPointOfSales(
+    ResponseEntity<List<PointOfSalesResponseDTO>> getPointOfSales(
             @AuthenticationPrincipal Jwt principal,
             @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("getPointOfSales Request Payload: {} ", airlineDashboardRequest);
 
-        ResponseEntity<PointOfSalesResponseDTO> response = new ResponseEntity<>();
+        ResponseEntity <List<PointOfSalesResponseDTO>> response = new ResponseEntity<>();
 
         try {
-            PointOfSalesResponseDTO pointOfSalesResponse = aPointOfSalesService.getPointOfSales(airlineDashboardRequest);
+            List<PointOfSalesResponseDTO> pointOfSalesResponse = aPointOfSalesService.getPointOfSales(airlineDashboardRequest);
             response.setResponse(pointOfSalesResponse);
             response.setSuccessFlag(true);
 

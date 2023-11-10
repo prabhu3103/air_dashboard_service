@@ -28,7 +28,7 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
     AirlineHostCountryMasterService masterService;
 
     @Override
-    public PointOfSalesResponseDTO getPointOfSales(AirlineDashboardRequest airlineDashboardRequest) {
+    public List<PointOfSalesResponseDTO> getPointOfSales(AirlineDashboardRequest airlineDashboardRequest) {
 
 
         LocalDate localDateStart = LocalDate.parse(airlineDashboardRequest.getStartDate(), DateTimeFormatter.ISO_LOCAL_DATE);
@@ -38,7 +38,7 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
         LocalDateTime startDate = LocalDateTime.of(localDateStart, midnight);
         LocalDateTime endDate = LocalDateTime.of(localDateEnd, midnight);
 
-        PointOfSalesResponseDTO response = new PointOfSalesResponseDTO();
+        List<PointOfSalesResponseDTO> response = new ArrayList<>();
         String areaBy = airlineDashboardRequest.getAreaBy().toLowerCase();
         List<Object[]> posObjects;
 
@@ -116,11 +116,12 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
         return response;
     }
 
-    private void buildPOSResponseDTO(PointOfSalesResponseDTO response, List<Object[]> posObjects, String startDate, String endDate, String valueType, String standardUnit) {
-        if(posObjects != null){
+    private void buildPOSResponseDTO(List<PointOfSalesResponseDTO> response, List<Object[]> posObjects, String startDate, String endDate, String valueType, String standardUnit) {
+        if(posObjects != null && posObjects.size() > AirlineDashboardConstants.LONG_ZERO.intValue()){
             List<POSResponseDTO> aPOSResponseDTOList =  new ArrayList<>();
+            PointOfSalesResponseDTO aPointOfSalesResponseDTO = new PointOfSalesResponseDTO();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            Long totalValue = 0L;
+            Long totalValue = AirlineDashboardConstants.LONG_ZERO;
             List<String> data = new ArrayList<>();
             for (Object[] array : posObjects) {
                 POSResponseDTO aPOSResponseDTO = new POSResponseDTO();
@@ -153,15 +154,17 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
                     aPOSResponseDTO.setEventDate(currentDateStr);
                     aPOSResponseDTO.setValue(AirlineDashboardConstants.LONG_ZERO);
                     aPOSResponseDTO.setValueType(valueType);
+                    aPOSResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
                     aPOSResponseDTOList.add(aPOSResponseDTO);
                 }
                 // Move to the next date
                 currentDate = currentDate.plusDays(1);
             }
-            response.setTotalValue(totalValue);
-            response.setYoyData(AirlineDashboardConstants.DEFAULT_NEGATIVE_VALUE);
-            response.setMomData(AirlineDashboardConstants.DEFAULT_VALUE);
-            response.setPosList(aPOSResponseDTOList);
+            aPointOfSalesResponseDTO.setTotalValue(totalValue);
+            aPointOfSalesResponseDTO.setYoyData(AirlineDashboardConstants.DEFAULT_NEGATIVE_VALUE);
+            aPointOfSalesResponseDTO.setMomData(AirlineDashboardConstants.DEFAULT_VALUE);
+            aPointOfSalesResponseDTO.setPosList(aPOSResponseDTOList);
+            response.add(aPointOfSalesResponseDTO);
 
         }
     }
