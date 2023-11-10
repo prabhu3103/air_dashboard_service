@@ -5,7 +5,7 @@ import com.unisys.trans.cps.middleware.models.ResponseEntity;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.MessageEntry;
 import com.unisys.trans.cps.middleware.models.response.TopCommoditiesResponseDTO;
-import com.unisys.trans.cps.middleware.services.topCommoditiesService.TopCommodityService;
+import com.unisys.trans.cps.middleware.services.topcommoditiesservice.TopCommodityService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

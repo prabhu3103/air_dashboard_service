@@ -1,4 +1,4 @@
-package com.unisys.trans.cps.middleware.services.pointOfSalesService;
+package com.unisys.trans.cps.middleware.services.pointofsalesservice;
 
 import com.unisys.trans.cps.middleware.constants.AirlineDashboardConstants;
 import com.unisys.trans.cps.middleware.exception.CpsException;

@@ -1,4 +1,4 @@
-package com.unisys.trans.cps.middleware.services.topLanesService;
+package com.unisys.trans.cps.middleware.services.toplanesservice;
 
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.TopLanesResponseDTO;

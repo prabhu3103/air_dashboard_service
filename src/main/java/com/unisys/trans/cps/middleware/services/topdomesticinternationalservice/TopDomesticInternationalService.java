@@ -1,4 +1,4 @@
-package com.unisys.trans.cps.middleware.services.topDomesticInternationalService;
+package com.unisys.trans.cps.middleware.services.topdomesticinternationalservice;
 
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.DomesticInternationalResponseDTO;

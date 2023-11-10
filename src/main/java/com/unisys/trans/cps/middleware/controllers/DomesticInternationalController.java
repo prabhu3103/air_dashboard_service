@@ -5,7 +5,7 @@ import com.unisys.trans.cps.middleware.models.ResponseEntity;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.DomesticInternationalResponseDTO;
 import com.unisys.trans.cps.middleware.models.response.MessageEntry;
-import com.unisys.trans.cps.middleware.services.topDomesticInternationalService.TopDomesticInternationalService;
+import com.unisys.trans.cps.middleware.services.topdomesticinternationalservice.TopDomesticInternationalService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;

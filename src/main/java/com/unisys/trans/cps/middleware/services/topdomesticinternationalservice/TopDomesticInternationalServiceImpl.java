@@ -1,4 +1,4 @@
-package com.unisys.trans.cps.middleware.services.topDomesticInternationalService;
+package com.unisys.trans.cps.middleware.services.topdomesticinternationalservice;
 
 import com.unisys.trans.cps.middleware.constants.AirlineDashboardConstants;
 import com.unisys.trans.cps.middleware.exception.CpsException;
