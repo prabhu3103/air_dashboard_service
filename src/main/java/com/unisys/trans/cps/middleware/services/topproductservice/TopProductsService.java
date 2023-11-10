@@ -1,4 +1,4 @@
-package com.unisys.trans.cps.middleware.services.topProductService;
+package com.unisys.trans.cps.middleware.services.topproductservice;
 
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
 import com.unisys.trans.cps.middleware.models.response.TopProductResponseDTO;
