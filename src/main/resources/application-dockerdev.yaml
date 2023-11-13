@@ -50,7 +50,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://172.18.160.190:8080/realms/cpstestloginrealm
+          issuer-uri: http://ustr-mvm-4322.na.uis.unisys.com:8180/realms/devcpsrealm
 
 # swagger-ui custom path
 springdoc:
