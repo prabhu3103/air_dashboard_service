@@ -886,18 +886,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                  AND a.CARRIER = :carrier
@@ -931,18 +931,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                               and a.CARRIER = :carrier
@@ -976,18 +976,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                               and a.CARRIER = :carrier
@@ -1020,18 +1020,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
@@ -1065,18 +1065,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
@@ -1109,18 +1109,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
@@ -1154,18 +1154,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE where a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
@@ -1198,18 +1198,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
@@ -1243,18 +1243,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
@@ -1287,18 +1287,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
@@ -1331,18 +1331,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
@@ -1375,18 +1375,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.ORG = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) OR a.DEST NOT IN (
                                      SELECT b.CODE
                                      FROM CITYCOUNTRYMASTER b
                                      JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCE_FUNCTION_AUDIT a ON a.DEST = b.CODE
+                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
                                      WHERE c.CARRIERCODE = :carrier
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCE_FUNCTION_AUDIT a
+                               FROM ADVANCEFUNCTIONAUDIT a
                                JOIN BRANCHPROFILE d ON a.BRANCHID = d.BRANCHID
                                WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
