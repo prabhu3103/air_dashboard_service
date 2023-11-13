@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
-@Table(name = "ADVANCE_FUNCTION_AUDIT")
+@Table(name = "ADVANCEFUNCTIONAUDIT")
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
