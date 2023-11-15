@@ -33,10 +33,11 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
 
         LocalDate localDateStart = LocalDate.parse(airlineDashboardRequest.getStartDate(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate localDateEnd = LocalDate.parse(airlineDashboardRequest.getEndDate(), DateTimeFormatter.ISO_LOCAL_DATE);
-        LocalTime midnight = LocalTime.MIDNIGHT;
+        LocalTime timeNow = LocalTime.now();
+        LocalTime midnight = LocalTime.MIDNIGHT.minusMinutes(1L);
 
         LocalDateTime startDate = LocalDateTime.of(localDateStart, midnight);
-        LocalDateTime endDate = LocalDateTime.of(localDateEnd, midnight);
+        LocalDateTime endDate = LocalDateTime.of(localDateEnd, timeNow);
 
         DomesticInternationalResponseDTO response = new DomesticInternationalResponseDTO();
         String areaBy = airlineDashboardRequest.getAreaBy().toLowerCase();

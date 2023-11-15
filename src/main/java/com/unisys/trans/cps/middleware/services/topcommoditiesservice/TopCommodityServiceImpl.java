@@ -34,10 +34,11 @@ public class TopCommodityServiceImpl implements TopCommodityService{
 
         LocalDate localDateStart = LocalDate.parse(airlineDashboardRequest.getStartDate(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate localDateEnd = LocalDate.parse(airlineDashboardRequest.getEndDate(), DateTimeFormatter.ISO_LOCAL_DATE);
-        LocalTime midnight = LocalTime.now();
+        LocalTime timeNow = LocalTime.now();
+        LocalTime midnight = LocalTime.MIDNIGHT.minusMinutes(1L);
 
         LocalDateTime startDate = LocalDateTime.of(localDateStart, midnight);
-        LocalDateTime endDate = LocalDateTime.of(localDateEnd, midnight);
+        LocalDateTime endDate = LocalDateTime.of(localDateEnd, timeNow);
 
         List<TopCommoditiesResponseDTO> response = new ArrayList<>();
         String areaBy = airlineDashboardRequest.getAreaBy().toLowerCase();
