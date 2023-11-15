@@ -36,10 +36,11 @@ public class TopLanesServiceImpl implements TopLanesService {
 
         LocalDate localDateStart = LocalDate.parse(airlineDashboardRequest.getStartDate(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate localDateEnd = LocalDate.parse(airlineDashboardRequest.getEndDate(), DateTimeFormatter.ISO_LOCAL_DATE);
-        LocalTime midnight = LocalTime.now();
+        LocalTime midnight = LocalTime.MIDNIGHT;
+        LocalTime midnightMinusOne = LocalTime.MIDNIGHT.minusMinutes(1L);
 
         LocalDateTime startDate = LocalDateTime.of(localDateStart, midnight);
-        LocalDateTime endDate = LocalDateTime.of(localDateEnd, midnight);
+        LocalDateTime endDate = LocalDateTime.of(localDateEnd, midnightMinusOne);
 
         List<TopLanesResponseDTO> response = new ArrayList<>();
         String areaBy = airlineDashboardRequest.getAreaBy().toLowerCase();
