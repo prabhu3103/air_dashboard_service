@@ -27,26 +27,32 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Booking Count for Country
     @Query("""
-            select a.origin, a.destination, COUNT(*) AS TOPLANE
-            from   AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
-            group by a.origin,a.destination
-            order by TOPLANE desc LIMIT 5
+            SELECT a.origin, a.destination, COUNT(*) AS TOPLANE
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            WHERE a.eventDate >= :startDate
+            AND a.eventDate <= :endDate
+            AND a.carrier = :carrier
+            AND b.countryCode = :country
+            GROUP BY a.origin, a.destination
+            ORDER BY TOPLANE DESC
+            LIMIT 5
             """)
     List<Object[]> getTopLanesBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("country") String country);
 
     //Top Lanes - Total Number of Booking Count for Continent
     @Query("""
-            select a.origin, a.destination, COUNT(*) AS TOPLANE
-            from   AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
-            group by a.origin,a.destination
-            order by TOPLANE desc LIMIT 5
+            SELECT a.origin, a.destination, COUNT(*) AS TOPLANE
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            WHERE a.eventDate >= :startDate
+            AND a.eventDate <= :endDate
+            AND a.carrier = :carrier
+            AND b.continent = :continent
+            GROUP BY a.origin, a.destination
+            ORDER BY TOPLANE DESC
+            LIMIT 5
             """)
     List<Object[]> getTopLanesBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("continent") String continent);
@@ -54,13 +60,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Booking Count for Region
     @Query("""
-            select a.origin, a.destination, COUNT(*) AS TOPLANE
-            from   AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.carrier = :carrier
-            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
-            group by a.origin,a.destination
-            order by TOPLANE desc LIMIT 5
+            SELECT a.origin, a.destination, COUNT(*) AS TOPLANE
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            JOIN RegionMaster c ON b.continent = c.continent
+            WHERE a.eventDate >= :startDate
+            AND a.eventDate <= :endDate
+            AND a.carrier = :carrier
+            AND c.regionName = :region
+            GROUP BY a.origin, a.destination
+            ORDER BY TOPLANE DESC
+            LIMIT 5
             """)
     List<Object[]> getTopLanesBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("region") String region);
@@ -83,12 +93,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Lanes - Total Number of Weight  for Country
     @Query("""
             select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight
-            from   AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
-            group by a.origin,a.destination
-            order by totalWeight desc LIMIT 5
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            WHERE a.eventDate >= :startDate
+            AND a.eventDate <= :endDate
+            AND a.carrier = :carrier
+            AND b.countryCode = :country
+            GROUP BY a.origin, a.destination
+            ORDER BY totalWeight DESC
+            LIMIT 5
             """)
     List<Object[]> getTopLanesWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("country") String country);
@@ -96,12 +109,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Lanes - Total Number of Weight  for Continent
     @Query("""
             select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight
-            from   AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
-            group by a.origin,a.destination
-            order by totalWeight desc LIMIT 5
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            WHERE a.eventDate >= :startDate
+            AND a.eventDate <= :endDate
+            AND a.carrier = :carrier
+            AND b.continent = :continent
+            GROUP BY a.origin, a.destination
+            ORDER BY totalWeight DESC
+            LIMIT 5
             """)
     List<Object[]> getTopLanesWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                               @Param("carrier") String carrier, @Param("continent") String continent);
@@ -109,12 +125,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Lanes - Total Number of Weight  for Region
     @Query("""
             select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight
-            from   AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.carrier = :carrier
-            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
-            group by a.origin,a.destination
-            order by totalWeight desc LIMIT 5
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            JOIN RegionMaster c ON b.continent = c.continent
+            WHERE a.eventDate >= :startDate
+            AND a.eventDate <= :endDate
+            AND a.carrier = :carrier
+            AND c.regionName = :region
+            GROUP BY a.origin, a.destination
+            ORDER BY totalWeight DESC
+            LIMIT 5
             """)
     List<Object[]> getTopLanesWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                            @Param("carrier") String carrier, @Param("region") String region);
@@ -136,12 +156,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Lanes - Total Number of Volume  for Country
     @Query("""
             select a.origin, a.destination, SUM(a.stdVol) AS totalVolume
-            from   AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
-            group by a.origin,a.destination
-            order by totalVolume desc LIMIT 5
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            WHERE a.eventDate >= :startDate
+            AND a.eventDate <= :endDate
+            AND a.carrier = :carrier
+            AND b.countryCode = :country
+            GROUP BY a.origin, a.destination
+            ORDER BY totalVolume DESC
+            LIMIT 5
             """)
     List<Object[]> getTopLanesVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("country") String country);
@@ -149,12 +172,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Lanes - Total Number of Volume  for Continent
     @Query("""
             select a.origin, a.destination, SUM(a.stdVol) AS totalVolume
-            from   AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
-            group by a.origin,a.destination
-            order by totalVolume desc LIMIT 5
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            WHERE a.eventDate >= :startDate
+            AND a.eventDate <= :endDate
+            AND a.carrier = :carrier
+            AND b.continent = :continent
+            GROUP BY a.origin, a.destination
+            ORDER BY totalVolume DESC
+            LIMIT 5
             """)
     List<Object[]> getTopLanesVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                               @Param("carrier") String carrier, @Param("continent") String continent);
@@ -162,12 +188,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Lanes - Total Number of Volume  for Region
     @Query("""
             select a.origin, a.destination, SUM(a.stdVol) AS totalVolume
-            from   AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.carrier = :carrier
-            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
-            group by a.origin,a.destination
-            order by totalVolume desc LIMIT 5
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            JOIN RegionMaster c ON b.continent = c.continent
+            WHERE a.eventDate >= :startDate
+            AND a.eventDate <= :endDate
+            AND a.carrier = :carrier
+            AND c.regionName = :region
+            GROUP BY a.origin, a.destination
+            ORDER BY totalVolume DESC
+            LIMIT 5
             """)
     List<Object[]> getTopLanesVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                            @Param("carrier") String carrier, @Param("region") String region);
