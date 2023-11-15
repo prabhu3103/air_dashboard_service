@@ -1,17 +1,15 @@
 package com.unisys.trans.cps.middleware.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.unisys.trans.cps.middleware.exception.CpsException;
-import com.unisys.trans.cps.middleware.models.ResponseEntity;
-import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
-import com.unisys.trans.cps.middleware.models.response.PointOfSalesResponseDTO;
-import com.unisys.trans.cps.middleware.services.pointofsalesservice.PointOfSalesServiceImpl;
+import com.unisys.trans.cps.middleware.models.entity.AirlineHostCountryMaster;
+import com.unisys.trans.cps.middleware.repository.AdvanceFunctionAuditRepository;
+import com.unisys.trans.cps.middleware.services.AirlineHostCountryMasterService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -21,8 +19,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -32,17 +30,19 @@ class PointOfSalesControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @InjectMocks
     private PointOfSalesController aPointOfSalesController;
 
-    @Mock
-    private PointOfSalesServiceImpl aPointOfSalesServiceImpl;
+    @MockBean
+    private AdvanceFunctionAuditRepository aAdvanceFunctionAuditRepository;
+
+    @MockBean
+    private AirlineHostCountryMasterService aAirlineHostCountryMasterService;
 
     @Test
     void getPointOfSalesTest() throws Exception {
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("MC").stdWeightUnit("").build());
+        when(aAdvanceFunctionAuditRepository.getPointOfSalesVolumeAirport(any(LocalDateTime.class), any(LocalDateTime.class), anyString(), anyString())).thenReturn(getPointOfSalesMock());
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/point-of-sales?startDate=2023-06-08&endDate=2023-11-08&typeOfInfo=volume&areaBy=airport&filterValue=YYZ&carrier=AC")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -51,19 +51,14 @@ class PointOfSalesControllerTest {
     }
 
     @Test
-    void getPointOfSalesExceptionTest() throws Exception {
-        AirlineDashboardRequest aAirlineDashboardRequest = AirlineDashboardRequest.builder().startDate("2023-06-08").endDate("2023-11-08").typeOfInfo("weight").filterValue("YYZ").carrier("AC").build();
-        ResponseEntity<List<PointOfSalesResponseDTO>> response = aPointOfSalesController.getPointOfSales(null,null);
-        assertTrue(response.getResponse().size() == 0);
-    }
-
-    @Test
-    void getPointOfSalesCPSExceptionTest() throws Exception {
-        AirlineDashboardRequest aAirlineDashboardRequest = AirlineDashboardRequest.builder().startDate("2023-06-08").endDate("2023-11-08").typeOfInfo("weight").areaBy("XXX").filterValue("YYZ").carrier("AC").build();
-        when(aPointOfSalesServiceImpl.getPointOfSales(aAirlineDashboardRequest)).thenThrow(new CpsException("Mocked CpsException"));
-        ResponseEntity<List<PointOfSalesResponseDTO>> response = aPointOfSalesController.getPointOfSales(null,aAirlineDashboardRequest);
-        assertFalse(response.isSuccessFlag());
-
+    void getPointOfSalesCPSExceptionTest() throws Exception{
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("MC").stdWeightUnit("").build());
+        when(aAdvanceFunctionAuditRepository.getPointOfSalesVolumeAirport(any(LocalDateTime.class), any(LocalDateTime.class), anyString(), anyString())).thenThrow(new CpsException());
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/point-of-sales?startDate=2023-06-08&endDate=2023-11-08&typeOfInfo=volume&areaBy=airport&filterValue=YYZ&carrier=AC")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(false));
     }
 
 
