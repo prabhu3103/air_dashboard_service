@@ -72,7 +72,6 @@ class PointOfSalesServiceImplTest {
         when(aAdvanceFunctionAuditRepository.getPointOfSalesBookingAirport(any(LocalDateTime.class), any(LocalDateTime.class), anyString(), anyString())).thenReturn(getPointOfSalesMock());
         try{
             response = aPointOfSalesServiceImpl.getPointOfSales(AirlineDashboardRequest.builder().startDate("2023-06-08").endDate("2023-11-08").typeOfInfo("BookingCount").areaBy("XXX").filterValue("YYZ").carrier("AC").build());
-           // assertNull(response);
         }catch(Exception exception){
             assertNull( response);
         }
@@ -117,7 +116,6 @@ class PointOfSalesServiceImplTest {
         when(aAdvanceFunctionAuditRepository.getPointOfSalesVolumeAirport(any(LocalDateTime.class), any(LocalDateTime.class), anyString(), anyString())).thenReturn(getPointOfSalesMock());
         try{
             response = aPointOfSalesServiceImpl.getPointOfSales(AirlineDashboardRequest.builder().startDate("2023-06-08").endDate("2023-11-08").typeOfInfo("volume").areaBy("XXX").filterValue("YYZ").carrier("AC").build());
-            // assertNull(response);
         }catch(Exception exception){
             assertNull( response);
         }
@@ -163,7 +161,6 @@ class PointOfSalesServiceImplTest {
         when(aAdvanceFunctionAuditRepository.getPointOfSalesWeightAirport(any(LocalDateTime.class), any(LocalDateTime.class), anyString(), anyString())).thenReturn(getPointOfSalesMock());
         try{
             response = aPointOfSalesServiceImpl.getPointOfSales(AirlineDashboardRequest.builder().startDate("2023-06-08").endDate("2023-11-08").typeOfInfo("weight").areaBy("XXX").filterValue("YYZ").carrier("AC").build());
-            // assertNull(response);
         }catch(Exception exception){
             assertNull( response);
         }
