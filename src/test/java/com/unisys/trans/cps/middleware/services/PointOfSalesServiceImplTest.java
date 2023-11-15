@@ -126,7 +126,7 @@ class PointOfSalesServiceImplTest {
     // Tests for Weight
     @Test
     void getPointOfSalesWeightAirportTest(){
-        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("MC").stdWeightUnit("").build());
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("").stdWeightUnit("KG").build());
         when(aAdvanceFunctionAuditRepository.getPointOfSalesWeightAirport(any(LocalDateTime.class), any(LocalDateTime.class), anyString(), anyString())).thenReturn(getPointOfSalesMock());
         List<PointOfSalesResponseDTO> response = aPointOfSalesServiceImpl.getPointOfSales(AirlineDashboardRequest.builder().startDate("2023-06-08").endDate("2023-11-08").typeOfInfo("weight").areaBy("airport").filterValue("YYZ").carrier("AC").build());
         assertNotNull(response);
@@ -134,7 +134,7 @@ class PointOfSalesServiceImplTest {
 
     @Test
     void getPointOfSalesWeightCountryTest(){
-        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("MC").stdWeightUnit("").build());
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("").stdWeightUnit("KG").build());
         when(aAdvanceFunctionAuditRepository.getPointOfSalesWeightCountry(any(LocalDateTime.class), any(LocalDateTime.class), anyString(), anyString())).thenReturn(getPointOfSalesMock());
         List<PointOfSalesResponseDTO> response = aPointOfSalesServiceImpl.getPointOfSales(AirlineDashboardRequest.builder().startDate("2023-06-08").endDate("2023-11-08").typeOfInfo("weight").areaBy("country").filterValue("US").carrier("AC").build());
         assertNotNull(response);
@@ -142,7 +142,7 @@ class PointOfSalesServiceImplTest {
 
     @Test
     void getPointOfSalesWeightContinentTest(){
-        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("MC").stdWeightUnit("").build());
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("").stdWeightUnit("KG").build());
         when(aAdvanceFunctionAuditRepository.getPointOfSalesWeightContinent(any(LocalDateTime.class), any(LocalDateTime.class), anyString(), anyString())).thenReturn(getPointOfSalesMock());
         List<PointOfSalesResponseDTO> response = aPointOfSalesServiceImpl.getPointOfSales(AirlineDashboardRequest.builder().startDate("2023-06-08").endDate("2023-11-08").typeOfInfo("weight").areaBy("continent").filterValue("YYZ").carrier("AC").build());
         assertNotNull(response);
@@ -150,7 +150,7 @@ class PointOfSalesServiceImplTest {
 
     @Test
     void getPointOfSalesWeightRegionTest(){
-        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("MC").stdWeightUnit("").build());
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("").stdWeightUnit("KG").build());
         when(aAdvanceFunctionAuditRepository.getPointOfSalesWeightRegion(any(LocalDateTime.class), any(LocalDateTime.class), anyString(), anyString())).thenReturn(getPointOfSalesMock());
         List<PointOfSalesResponseDTO> response = aPointOfSalesServiceImpl.getPointOfSales(AirlineDashboardRequest.builder().startDate("2023-06-08").endDate("2023-11-08").typeOfInfo("weight").areaBy("region").filterValue("YYZ").carrier("AC").build());
         assertNotNull(response);
@@ -159,7 +159,7 @@ class PointOfSalesServiceImplTest {
     @Test
     void getPointOfSalesWeightAirportErrorTest(){
         List<PointOfSalesResponseDTO> response = null ;
-        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("MC").stdWeightUnit("").build());
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AC").stdVolumeUnit("").stdWeightUnit("KG").build());
         when(aAdvanceFunctionAuditRepository.getPointOfSalesWeightAirport(any(LocalDateTime.class), any(LocalDateTime.class), anyString(), anyString())).thenReturn(getPointOfSalesMock());
         try{
             response = aPointOfSalesServiceImpl.getPointOfSales(AirlineDashboardRequest.builder().startDate("2023-06-08").endDate("2023-11-08").typeOfInfo("weight").areaBy("XXX").filterValue("YYZ").carrier("AC").build());
