@@ -350,8 +350,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Booking Count for Airport
     @Query("""
-            select a.eventDate AS day, COUNT(*) as bookingCount
-            from   AdvanceFunctionAudit a
+            select a.eventDate as day, count(*) as bookingCount
+            from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :originAirport
@@ -363,11 +363,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Booking Count for Country
     @Query("""
-            select a.eventDate AS day, COUNT(*) as bookingCount
-            from   AdvanceFunctionAudit a
+            select a.eventDate as day, count(*) as bookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+            and b.countryCode = :country
             group by a.eventDate
             order by day desc
             """)
@@ -376,11 +377,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Booking Count for Continent
     @Query("""
-            select a.eventDate AS day,COUNT(*) as bookingCount
-            from   AdvanceFunctionAudit a
+            select a.eventDate as day,count(*) as bookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+            and b.continent = :continent
             group by a.eventDate
             order by day desc
             """)
@@ -390,11 +392,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Booking Count for Region
     @Query("""
-            select a.eventDate AS day,COUNT(*) as bookingCount
+            select a.eventDate as day,count(*) as bookingCount
             from   AdvanceFunctionAudit a
+            join CityCountryMaster b on a.origin = b.code
+            join RegionMaster c on b.continent = c.continent
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
+            and c.regionName = :region
             group by a.eventDate
             order by day desc
             """)
@@ -404,8 +408,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Weight Count for Airport
     @Query("""
-            select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
-            from   AdvanceFunctionAudit a
+            select a.eventDate as day, sum(a.stdWeight) as totalWeight
+            from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
             and a.origin = :originAirport
@@ -418,11 +422,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Weight  for Country
     @Query("""
-            select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
-            from   AdvanceFunctionAudit a
+            select a.eventDate as day, sum(a.stdWeight) as totalWeight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+            and b.countryCode = :country
             group by a.eventDate
             order by day desc
             """)
@@ -431,11 +436,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Weight for Continent
     @Query("""
-            select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
-            from   AdvanceFunctionAudit a
+            select a.eventDate as day, sum(a.stdWeight) as totalWeight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+            and b.continent = :continent
             group by a.eventDate
             order by day desc
             """)
@@ -444,11 +450,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Weight  for Region
     @Query("""
-            select a.eventDate AS day, SUM(a.stdWeight) AS totalWeight
-            from   AdvanceFunctionAudit a
+            select a.eventDate as day, sum(a.stdWeight) as totalWeight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.origin = b.code
+            join RegionMaster c on b.continent = c.continent
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
+            and c.regionName = :region
             group by a.eventDate
             order by day desc
             """)
@@ -458,7 +466,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Volume  for Airport
     @Query("""
-            select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
+            select a.eventDate as day, sum(a.stdVol) as totalVolume
             from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
@@ -471,11 +479,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Volume  for Country
     @Query("""
-            select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
-            from   AdvanceFunctionAudit a
+            select a.eventDate as day, sum(a.stdVol) as totalVolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.countryCode=:country)
+            and b.countryCode = :country
             group by a.eventDate
             order by day desc
             """)
@@ -484,11 +493,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Volume  for Continent
     @Query("""
-            select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
-            from   AdvanceFunctionAudit a
+            select a.eventDate as day, sum(a.stdVol) as totalVolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where b.continent=:continent)
+            and b.continent=:continent
             group by a.eventDate
             order by day desc
             """)
@@ -497,11 +507,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Volume  for Region
     @Query("""
-            select a.eventDate AS day, SUM(a.stdVol) AS totalVolume
-            from   AdvanceFunctionAudit a
+            select a.eventDate as day, sum(a.stdVol) as totalVolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.origin = b.code
+            join RegionMaster c on b.continent = c.continent
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.carrier = :carrier
-            and a.origin in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
+            and c.regionName = :region
             group by a.eventDate
             order by day desc
             """)
