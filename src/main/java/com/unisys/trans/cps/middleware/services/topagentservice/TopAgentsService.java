@@ -1,11 +1,9 @@
 package com.unisys.trans.cps.middleware.services.topagentservice;
 
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
-import com.unisys.trans.cps.middleware.models.response.TopAgentsResponseDTO;
-
-import java.util.List;
+import com.unisys.trans.cps.middleware.models.response.AgentResponseDTO;
 
 public interface TopAgentsService {
 
-    List<TopAgentsResponseDTO> getTopAccounts(AirlineDashboardRequest airlineDashboardRequest);
+    AgentResponseDTO getTopAccounts(AirlineDashboardRequest airlineDashboardRequest);
 }
