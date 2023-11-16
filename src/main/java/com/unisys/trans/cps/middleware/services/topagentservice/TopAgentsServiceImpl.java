@@ -4,6 +4,7 @@ import com.unisys.trans.cps.middleware.constants.AirlineDashboardConstants;
 import com.unisys.trans.cps.middleware.exception.CpsException;
 import com.unisys.trans.cps.middleware.models.entity.AirlineHostCountryMaster;
 import com.unisys.trans.cps.middleware.models.request.AirlineDashboardRequest;
+import com.unisys.trans.cps.middleware.models.response.AgentResponseDTO;
 import com.unisys.trans.cps.middleware.models.response.TopAgentsResponseDTO;
 import com.unisys.trans.cps.middleware.repository.AdvanceFunctionAuditRepository;
 import com.unisys.trans.cps.middleware.services.AirlineHostCountryMasterService;
@@ -29,7 +30,7 @@ public class TopAgentsServiceImpl implements TopAgentsService{
     AirlineHostCountryMasterService masterService;
 
     @Override
-    public List<TopAgentsResponseDTO> getTopAccounts(AirlineDashboardRequest airlineDashboardRequest) {
+    public AgentResponseDTO getTopAccounts(AirlineDashboardRequest airlineDashboardRequest) {
 
         LocalDate localDateStart = LocalDate.parse(airlineDashboardRequest.getStartDate(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate localDateEnd = LocalDate.parse(airlineDashboardRequest.getEndDate(), DateTimeFormatter.ISO_LOCAL_DATE);
@@ -39,7 +40,7 @@ public class TopAgentsServiceImpl implements TopAgentsService{
         LocalDateTime startDate = LocalDateTime.of(localDateStart, midnight);
         LocalDateTime endDate = LocalDateTime.of(localDateEnd, midnightMinusOne);
 
-        List<TopAgentsResponseDTO> response = new ArrayList<>();
+        AgentResponseDTO response = new AgentResponseDTO();
         String areaBy = airlineDashboardRequest.getAreaBy().toLowerCase();
         List<Object[]> topObjects;
 
@@ -122,35 +123,50 @@ public class TopAgentsServiceImpl implements TopAgentsService{
         return response;
     }
 
-    private void buildTopAgentsResponseDTO(List<TopAgentsResponseDTO> response, List<Object[]> topObjects, String valueType, String stdUnit) {
+    private void buildTopAgentsResponseDTO(AgentResponseDTO response, List<Object[]> topObjects, String valueType, String stdUnit) {
+        List<TopAgentsResponseDTO> topAgentsResponseDTOS = new ArrayList<>();
         if(topObjects != null) {
+            Long newAccount = 0L;
             for (Object[] array : topObjects) {
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
                 topAgentsResponseDTO.setAccNo((String) array[2]);
                 Number value = (Number) array[3];
                 topAgentsResponseDTO.setValue(value.longValue());
+                if(array[3] !=null) {
+                    topAgentsResponseDTO.setValue(10L);
+                }
+                else{
+                    topAgentsResponseDTO.setValue(0L);
+                }
                 topAgentsResponseDTO.setValueType(valueType);
                 topAgentsResponseDTO.setUnit(stdUnit);
                 topAgentsResponseDTO.setMomData(1.1f);
                 topAgentsResponseDTO.setYoyData(-1.1f);
-                response.add(topAgentsResponseDTO);
+                topAgentsResponseDTOS.add(topAgentsResponseDTO);
+
             }
+            response.setTopAgentsResponseDTOList(topAgentsResponseDTOS);
+            response.setNewAccount(newAccount);
         }
     }
 
-    private void buildTopAgentsResponseDTO(List<TopAgentsResponseDTO> response, List<Object[]> topObjects) {
-
+    private void buildTopAgentsResponseDTO(AgentResponseDTO response, List<Object[]> topObjects) {
         if(topObjects != null) {
+            List<TopAgentsResponseDTO> topAgentsResponseDTOS = new ArrayList<>();
+            Long newAccount = 0L;
             for (Object[] array : topObjects) {
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
                 topAgentsResponseDTO.setAccNo((String) array[2]);
                 Number value = (Number) array[3];
                 topAgentsResponseDTO.setValue(value.longValue());
                 topAgentsResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
+                newAccount+=value.longValue();
                 topAgentsResponseDTO.setMomData(1.1f);
                 topAgentsResponseDTO.setYoyData(-1.1f);
-                response.add(topAgentsResponseDTO);
+                topAgentsResponseDTOS.add(topAgentsResponseDTO);
             }
+            response.setTopAgentsResponseDTOList(topAgentsResponseDTOS);
+            response.setNewAccount(newAccount);
         }
     }
 }
