@@ -7,7 +7,7 @@ public class POSResponseDTO {
     
     private String valueType;
 
-    private Long value;
+    private float value;
 
     private String unit;
 
