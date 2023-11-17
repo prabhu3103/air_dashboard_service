@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class DomesticInternationalResponseDTO {
 
-    private Long totalValue;
+    private float totalValue;
 
     List<TopDomesticInternationalResponseDTO> topDomesticInternationalResponseDTOList;
 
