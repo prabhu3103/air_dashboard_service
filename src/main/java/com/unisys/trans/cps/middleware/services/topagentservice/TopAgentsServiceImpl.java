@@ -131,7 +131,7 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
                 topAgentsResponseDTO.setAccNo((String) array[2]);
                 Number value = (Number) array[3];
-                topAgentsResponseDTO.setValue(value.longValue());
+                topAgentsResponseDTO.setValue(value.floatValue());
                 topAgentsResponseDTO.setValueType(valueType);
                 topAgentsResponseDTO.setUnit(stdUnit);
                 topAgentsResponseDTO.setMomData(1.1f);
@@ -152,7 +152,7 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
                 topAgentsResponseDTO.setAccNo((String) array[2]);
                 Number value = (Number) array[3];
-                topAgentsResponseDTO.setValue(value.longValue());
+                topAgentsResponseDTO.setValue(value.floatValue());
                 topAgentsResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 newAccount+=value.longValue();
                 topAgentsResponseDTO.setMomData(1.1f);

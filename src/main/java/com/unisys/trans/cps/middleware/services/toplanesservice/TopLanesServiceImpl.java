@@ -135,7 +135,7 @@ public class TopLanesServiceImpl implements TopLanesService {
                 topLanesResponseDTO.setOrgName(displayNameMap.get((String)array[0]));
                 topLanesResponseDTO.setDestName(displayNameMap.get((String)array[1]));
                 Number value = (Number) array[2];
-                topLanesResponseDTO.setValue(value.longValue());
+                topLanesResponseDTO.setValue(value.floatValue());
                 topLanesResponseDTO.setValueType(valueType);
                 topLanesResponseDTO.setUnit(stdUnit);
                 topLanesResponseDTO.setMomData(1.1f);
@@ -155,7 +155,7 @@ public class TopLanesServiceImpl implements TopLanesService {
                 topLanesResponseDTO.setOrgName(displayNameMap.get((String)array[0]));
                 topLanesResponseDTO.setDestName(displayNameMap.get((String)array[1]));
                 Number value = (Number) array[2];
-                topLanesResponseDTO.setValue(value.longValue());
+                topLanesResponseDTO.setValue(value.floatValue());
                 topLanesResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 topLanesResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
                 topLanesResponseDTO.setMomData(1.1f);

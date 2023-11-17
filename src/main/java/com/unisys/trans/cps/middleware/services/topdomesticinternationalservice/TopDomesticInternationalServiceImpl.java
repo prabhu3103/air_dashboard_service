@@ -131,7 +131,7 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
             topDomesticInternationalResponseDTO.setIntl(Boolean.valueOf(intl));
             if(array[2] !=null) {
                 Number value = (Number) array[2];
-                topDomesticInternationalResponseDTO.setValue(value.longValue());
+                topDomesticInternationalResponseDTO.setValue(value.floatValue());
                 totalValue+=value.longValue();
             }
             else{
@@ -158,7 +158,7 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                 String intl = (String)array[0];
                 topDomesticInternationalResponseDTO.setIntl(Boolean.valueOf(intl));
                 Number value = (Number) array[1];
-                topDomesticInternationalResponseDTO.setValue(value.longValue());
+                topDomesticInternationalResponseDTO.setValue(value.floatValue());
                 topDomesticInternationalResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 topDomesticInternationalResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
                 totalValue+=value.longValue();

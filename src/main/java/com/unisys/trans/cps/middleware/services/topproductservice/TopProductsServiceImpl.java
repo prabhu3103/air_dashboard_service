@@ -128,7 +128,7 @@ public class TopProductsServiceImpl implements TopProductsService {
             topProductResponseDTO.setProductCode((String) array[0]);
             topProductResponseDTO.setProductDescription((String) array[1]);
             Number value = (Number) array[2];
-            topProductResponseDTO.setValue(value.longValue());
+            topProductResponseDTO.setValue(value.floatValue());
             topProductResponseDTO.setValueType(valueType);
             topProductResponseDTO.setUnit(stdUnit);
             topProductResponseDTO.setMomData(1.1f);
@@ -143,7 +143,7 @@ public class TopProductsServiceImpl implements TopProductsService {
             topProductResponseDTO.setProductCode((String) array[0]);
             topProductResponseDTO.setProductDescription((String) array[1]);
             Number value = (Number) array[2];
-            topProductResponseDTO.setValue(value.longValue());
+            topProductResponseDTO.setValue(value.floatValue());
             topProductResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
             topProductResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
             topProductResponseDTO.setMomData(1.1f);

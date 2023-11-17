@@ -129,7 +129,7 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                 TopCommoditiesResponseDTO topCommoditiesResponseDTO = new TopCommoditiesResponseDTO();
                 topCommoditiesResponseDTO.setCommodity((String) array[0]);
                 Number value = (Number) array[1];
-                topCommoditiesResponseDTO.setValue(value.longValue());
+                topCommoditiesResponseDTO.setValue(value.floatValue());
                 topCommoditiesResponseDTO.setCommodityDesc((String) array[2]);
                 topCommoditiesResponseDTO.setValueType(valueType);
                 topCommoditiesResponseDTO.setUnit(stdUnit);
@@ -147,7 +147,7 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                 TopCommoditiesResponseDTO topCommoditiesResponseDTO = new TopCommoditiesResponseDTO();
                 topCommoditiesResponseDTO.setCommodity((String) array[0]);
                 Number value = (Number) array[1];
-                topCommoditiesResponseDTO.setValue(value.longValue());
+                topCommoditiesResponseDTO.setValue(value.floatValue());
                 topCommoditiesResponseDTO.setCommodityDesc((String) array[2]);
                 topCommoditiesResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 topCommoditiesResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
