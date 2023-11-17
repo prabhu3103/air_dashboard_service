@@ -126,18 +126,12 @@ public class TopAgentsServiceImpl implements TopAgentsService{
     private void buildTopAgentsResponseDTO(AgentResponseDTO response, List<Object[]> topObjects, String valueType, String stdUnit) {
         List<TopAgentsResponseDTO> topAgentsResponseDTOS = new ArrayList<>();
         if(topObjects != null) {
-            Long newAccount = 0L;
+            Long newAccount = 5L;
             for (Object[] array : topObjects) {
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
                 topAgentsResponseDTO.setAccNo((String) array[2]);
                 Number value = (Number) array[3];
                 topAgentsResponseDTO.setValue(value.longValue());
-                if(array[3] !=null) {
-                    topAgentsResponseDTO.setValue(10L);
-                }
-                else{
-                    topAgentsResponseDTO.setValue(0L);
-                }
                 topAgentsResponseDTO.setValueType(valueType);
                 topAgentsResponseDTO.setUnit(stdUnit);
                 topAgentsResponseDTO.setMomData(1.1f);
