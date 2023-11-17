@@ -31,9 +31,7 @@ public class TopCommoditiesController {
     public ResponseEntity<List<TopCommoditiesResponseDTO>> topCommodities(
             @AuthenticationPrincipal Jwt principal,
             @Valid AirlineDashboardRequest airlineDashboardRequest) {
-        log.info("Inside topCommodities method..");
         ResponseEntity<List<TopCommoditiesResponseDTO>> response = new ResponseEntity<>();
-        log.info("Area by : " + airlineDashboardRequest.getAreaBy());
 
         try {
             List<TopCommoditiesResponseDTO> topCommoditiesResponse = topCommodityService.getTopCommodities(airlineDashboardRequest);

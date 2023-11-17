@@ -30,7 +30,6 @@ public class TopCommodityServiceImpl implements TopCommodityService{
 
     @Override
     public List<TopCommoditiesResponseDTO> getTopCommodities(AirlineDashboardRequest airlineDashboardRequest) {
-        log.info("inside getTopCommodities impl method..");
 
         LocalDate localDateStart = LocalDate.parse(airlineDashboardRequest.getStartDate(), DateTimeFormatter.ISO_LOCAL_DATE);
         LocalDate localDateEnd = LocalDate.parse(airlineDashboardRequest.getEndDate(), DateTimeFormatter.ISO_LOCAL_DATE);
@@ -46,11 +45,10 @@ public class TopCommodityServiceImpl implements TopCommodityService{
 
         try {
             if (airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_BOOKING)) {
-                log.info("BookingCount if condition..");
+
                 switch (areaBy) {
                     case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
                         topObjects = advanceFunctionAuditRepository.getTopCommodityBookingAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        log.info("topObjects : " + topObjects);
                         buildResponseDTO(response, topObjects);
                     }
                     case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
@@ -137,11 +135,6 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                 topCommoditiesResponseDTO.setUnit(stdUnit);
                 topCommoditiesResponseDTO.setMomData(1.1f);
                 topCommoditiesResponseDTO.setYoyData(-1.1f);
-
-                log.info("Commodity : " + topCommoditiesResponseDTO.getCommodity());
-                log.info("Value : " + topCommoditiesResponseDTO.getValue());
-                log.info("Description : " + topCommoditiesResponseDTO.getCommodityDesc());
-
                 response.add(topCommoditiesResponseDTO);
             }
         }
