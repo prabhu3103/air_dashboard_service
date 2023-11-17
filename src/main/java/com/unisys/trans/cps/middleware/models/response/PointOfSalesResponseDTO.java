@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class PointOfSalesResponseDTO {
 
-    private Long totalValue;
+    private float totalValue;
 
     private float momData;
 

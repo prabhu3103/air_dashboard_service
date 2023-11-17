@@ -1003,7 +1003,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                               and a.CARRIER = :carrier
                               and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE=:origin)
                               ) AS CategoryCTE
@@ -1046,7 +1046,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                               and a.CARRIER = :carrier
                               and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE b.CONTINENT=:origin)
                               ) AS CategoryCTE
@@ -1088,7 +1088,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
                                and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE
                                b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))
@@ -1131,7 +1131,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
                                and a.ORG = :origin
                                ) AS CategoryCTE
@@ -1173,7 +1173,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
                                and a.ORG in(SELECT b.C0DE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE:origin)
                                ) AS CategoryCTE
@@ -1216,7 +1216,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE where a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE where a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
                                and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT:origin)
                                ) AS CategoryCTE
@@ -1258,7 +1258,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
                                and a.ORG IN(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE
                                b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))
@@ -1301,7 +1301,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
                                and a.ORG = :origin
                                ) AS CategoryCTE
@@ -1343,7 +1343,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
                                and a.ORG in(SELECT B.CODE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE:origin)
                                ) AS CategoryCTE
@@ -1385,7 +1385,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
                                and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT:origin)
                                ) AS CategoryCTE
@@ -1427,7 +1427,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.BRANCHID= d.BRANCHID and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.CARRIER = :carrier
                                and a.ORG IN(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE
                                b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))

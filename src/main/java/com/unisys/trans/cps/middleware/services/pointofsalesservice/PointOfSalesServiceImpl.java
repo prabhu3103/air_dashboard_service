@@ -122,7 +122,7 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
             List<POSResponseDTO> aPOSResponseDTOList =  new ArrayList<>();
             PointOfSalesResponseDTO aPointOfSalesResponseDTO = new PointOfSalesResponseDTO();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            Long totalValue = AirlineDashboardConstants.LONG_ZERO;
+            Float totalValue = AirlineDashboardConstants.FLOAT_ZERO.floatValue();
             List<String> data = new ArrayList<>();
             for (Object[] array : posObjects) {
                 POSResponseDTO aPOSResponseDTO = new POSResponseDTO();
@@ -132,8 +132,8 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
                 data.add(formattedDate);
                 if(array[1] != null) {
                     Number value = (Number) array[1];
-                    aPOSResponseDTO.setValue(value.longValue());
-                    totalValue += value.longValue();
+                    aPOSResponseDTO.setValue(value.floatValue());
+                    totalValue += value.floatValue();
                 }else {
                     aPOSResponseDTO.setValue(AirlineDashboardConstants.LONG_ZERO);
                 }

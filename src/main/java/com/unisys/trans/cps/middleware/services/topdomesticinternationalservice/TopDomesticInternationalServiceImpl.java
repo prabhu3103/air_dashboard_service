@@ -124,7 +124,7 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
 
     private void buildTopDomesticInternationalResponseDTO(DomesticInternationalResponseDTO response, List<Object[]> topObjects, String valueType, String stdUnit) {
         List<TopDomesticInternationalResponseDTO> topDomesticInternationalResponseDTOS = new ArrayList<>();
-        Long totalValue = 0L;
+        Float totalValue = AirlineDashboardConstants.FLOAT_ZERO;
         for (Object[] array : topObjects) {
             TopDomesticInternationalResponseDTO topDomesticInternationalResponseDTO = new TopDomesticInternationalResponseDTO();
             String intl = (String)array[0];
@@ -132,10 +132,10 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
             if(array[2] !=null) {
                 Number value = (Number) array[2];
                 topDomesticInternationalResponseDTO.setValue(value.floatValue());
-                totalValue+=value.longValue();
+                totalValue+=value.floatValue();
             }
             else{
-                topDomesticInternationalResponseDTO.setValue(0L);
+                topDomesticInternationalResponseDTO.setValue(AirlineDashboardConstants.FLOAT_ZERO);
             }
             topDomesticInternationalResponseDTO.setValueType(valueType);
             topDomesticInternationalResponseDTO.setUnit(stdUnit);

@@ -15,7 +15,8 @@ public class AirlineDashboardConstants {
 
     public static final String EMPTY_STRING = "";
 
-    public static final Long LONG_ZERO = 0L;
+    public static final Long  LONG_ZERO = 0L;
+    public static final Float  FLOAT_ZERO = 0.0f;
 
     public  static final Float  DEFAULT_VALUE = 1.1f;
 
