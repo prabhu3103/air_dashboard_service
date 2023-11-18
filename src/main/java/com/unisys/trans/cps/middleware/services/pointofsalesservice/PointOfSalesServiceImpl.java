@@ -15,12 +15,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PointOfSalesServiceImpl implements PointOfSalesService {
-
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     @Autowired
     AdvanceFunctionAuditRepository advanceFunctionAuditRepository;
 
@@ -118,55 +118,41 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
     }
 
     private void buildPOSResponseDTO(List<PointOfSalesResponseDTO> response, List<Object[]> posObjects, String startDate, String endDate, String valueType, String standardUnit) {
-        if(posObjects != null && posObjects.size() > AirlineDashboardConstants.LONG_ZERO.intValue()){
-            List<POSResponseDTO> aPOSResponseDTOList =  new ArrayList<>();
-            PointOfSalesResponseDTO aPointOfSalesResponseDTO = new PointOfSalesResponseDTO();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            Float totalValue = AirlineDashboardConstants.FLOAT_ZERO.floatValue();
-            List<String> data = new ArrayList<>();
-            for (Object[] array : posObjects) {
-                POSResponseDTO aPOSResponseDTO = new POSResponseDTO();
-                LocalDateTime localDateTime = (LocalDateTime)  array[0];
-                String formattedDate = localDateTime.format(formatter);
-                aPOSResponseDTO.setEventDate(formattedDate);
-                data.add(formattedDate);
-                if(array[1] != null) {
-                    Number value = (Number) array[1];
-                    aPOSResponseDTO.setValue(value.floatValue());
-                    totalValue += value.floatValue();
-                }else {
-                    aPOSResponseDTO.setValue(AirlineDashboardConstants.LONG_ZERO);
-                }
-                aPOSResponseDTO.setValueType(valueType);
-                if(standardUnit != null){
-                    aPOSResponseDTO.setUnit(standardUnit);
-                }else{
-                    aPOSResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
-                }
-                aPOSResponseDTOList.add(aPOSResponseDTO);
-            }
-            // Iterate through the date range and create an empty object for missing dates
-            LocalDate currentDate = LocalDate.parse(startDate, formatter);
-            LocalDate endDateParsed = LocalDate.parse(endDate, formatter);
-            while (!currentDate.isAfter(endDateParsed)) {
-                String currentDateStr = currentDate.format(formatter);
-                if (!data.contains(currentDateStr)) {
-                    POSResponseDTO aPOSResponseDTO = new POSResponseDTO();
-                    aPOSResponseDTO.setEventDate(currentDateStr);
-                    aPOSResponseDTO.setValue(AirlineDashboardConstants.LONG_ZERO);
-                    aPOSResponseDTO.setValueType(valueType);
-                    aPOSResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
-                    aPOSResponseDTOList.add(aPOSResponseDTO);
-                }
-                // Move to the next date
-                currentDate = currentDate.plusDays(1);
-            }
-            aPointOfSalesResponseDTO.setTotalValue(totalValue);
-            aPointOfSalesResponseDTO.setYoyData(AirlineDashboardConstants.DEFAULT_NEGATIVE_VALUE);
-            aPointOfSalesResponseDTO.setMomData(AirlineDashboardConstants.DEFAULT_VALUE);
-            aPointOfSalesResponseDTO.setPosList(aPOSResponseDTOList);
-            response.add(aPointOfSalesResponseDTO);
 
+        if (posObjects != null && !posObjects.isEmpty()) {
+            Map<String, Number> dataMap = posObjects.stream()
+                    .collect(Collectors.toMap(
+                             array -> ((LocalDateTime) array[0]).format(FORMATTER),
+                             array -> (Optional.ofNullable((Number) array[1]).orElse(AirlineDashboardConstants.FLOAT_ZERO))));
+
+            List<POSResponseDTO> posResponseDTOList = LocalDate.parse(startDate, FORMATTER)
+                    .datesUntil(LocalDate.parse(endDate, FORMATTER).plusDays(1))
+                    .map(date -> {
+                        String formattedDate = date.format(FORMATTER);
+                        Number value = dataMap.getOrDefault(formattedDate, AirlineDashboardConstants.FLOAT_ZERO);
+                        float floatValue = value.floatValue();
+                        POSResponseDTO posResponseDTO = new POSResponseDTO();
+                        posResponseDTO.setEventDate(formattedDate);
+                        posResponseDTO.setValue(floatValue);
+                        posResponseDTO.setValueType(valueType);
+                        posResponseDTO.setUnit(standardUnit != null ? standardUnit : AirlineDashboardConstants.EMPTY_STRING);
+
+                        return posResponseDTO;
+                    })
+                    .sorted(Comparator.comparing(POSResponseDTO::getEventDate))
+                    .toList();
+
+            float totalValue = (float) posResponseDTOList.stream()
+                    .mapToDouble(POSResponseDTO::getValue)
+                    .sum();
+
+            PointOfSalesResponseDTO pointOfSalesResponseDTO = new PointOfSalesResponseDTO();
+            pointOfSalesResponseDTO.setTotalValue(totalValue);
+            pointOfSalesResponseDTO.setYoyData(AirlineDashboardConstants.DEFAULT_NEGATIVE_VALUE);
+            pointOfSalesResponseDTO.setMomData(AirlineDashboardConstants.DEFAULT_VALUE);
+            pointOfSalesResponseDTO.setPosList(posResponseDTOList);
+
+            response.add(pointOfSalesResponseDTO);
         }
     }
 }

@@ -176,16 +176,16 @@ class PointOfSalesServiceImplTest {
     List<Object[]> getPointOfSalesMock(){
         List<Object[]> mockedPosList = new ArrayList<>();
 
-        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 9, 15, 10, 30), 100L});
-        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 10, 28, 14, 45), 200L});
-        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 11, 10, 9, 0), 150L});
+        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 9, 15, 10, 30), 100.0f});
+        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 10, 28, 14, 45), 200.0f});
+        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 11, 10, 9, 0), 150.0f});
 
         return mockedPosList;
     }
 
     List<Object[]> getPointOfSalesMockForEmptyValue(){
         List<Object[]> mockedPosList = new ArrayList<>();
-        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 9, 15, 10, 30), null});
+        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 9, 15, 10, 30), 0});
         return mockedPosList;
     }
 }
