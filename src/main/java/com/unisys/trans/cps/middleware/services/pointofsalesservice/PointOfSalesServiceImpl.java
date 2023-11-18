@@ -142,10 +142,9 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
                     .sorted(Comparator.comparing(POSResponseDTO::getEventDate))
                     .toList();
 
-            float totalValue = posResponseDTOList.stream()
-                    .map(POSResponseDTO::getValue)
-                    .reduce(Float::sum)
-                    .orElse(AirlineDashboardConstants.FLOAT_ZERO);
+            float totalValue = (float) posResponseDTOList.stream()
+                    .mapToDouble(POSResponseDTO::getValue)
+                    .sum();
 
             PointOfSalesResponseDTO pointOfSalesResponseDTO = new PointOfSalesResponseDTO();
             pointOfSalesResponseDTO.setTotalValue(totalValue);
