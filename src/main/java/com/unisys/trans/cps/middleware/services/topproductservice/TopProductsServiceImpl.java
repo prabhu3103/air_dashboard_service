@@ -131,8 +131,8 @@ public class TopProductsServiceImpl implements TopProductsService {
             topProductResponseDTO.setValue(value.floatValue());
             topProductResponseDTO.setValueType(valueType);
             topProductResponseDTO.setUnit(stdUnit);
-            topProductResponseDTO.setMomData(1.1f);
-            topProductResponseDTO.setYoyData(-1.1f);
+            topProductResponseDTO.setMomData((array[3] == null) ? 0.0f : (Float) array[3]);
+            topProductResponseDTO.setYoyData((array[4] == null) ? 0.0f : (Float) array[4]);
             response.add(topProductResponseDTO);
         }
     }
@@ -146,8 +146,8 @@ public class TopProductsServiceImpl implements TopProductsService {
             topProductResponseDTO.setValue(value.floatValue());
             topProductResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
             topProductResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
-            topProductResponseDTO.setMomData(1.1f);
-            topProductResponseDTO.setYoyData(-1.1f);
+            topProductResponseDTO.setMomData((array[3] == null) ? 0.0f : (Float) array[3]);
+            topProductResponseDTO.setYoyData((array[4] == null) ? 0.0f : (Float) array[4]);
             response.add(topProductResponseDTO);
         }
     }
