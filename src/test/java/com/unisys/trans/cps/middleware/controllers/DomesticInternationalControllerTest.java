@@ -1,7 +1,9 @@
 package com.unisys.trans.cps.middleware.controllers;
 
 import com.unisys.trans.cps.middleware.exception.CpsException;
+import com.unisys.trans.cps.middleware.models.entity.AirlineHostCountryMaster;
 import com.unisys.trans.cps.middleware.repository.AdvanceFunctionAuditRepository;
+import com.unisys.trans.cps.middleware.services.AirlineHostCountryMasterService;
 import com.unisys.trans.cps.middleware.services.topdomesticinternationalservice.TopDomesticInternationalService;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.ArrayList;
 import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
@@ -35,6 +39,9 @@ class DomesticInternationalControllerTest {
 
     @Mock
     private TopDomesticInternationalService topDomesticInternationalService;
+
+    @MockBean
+    private AirlineHostCountryMasterService aAirlineHostCountryMasterService;
 
     @Test
     void getTopDomesticInternationalBookingAirportTest() throws Exception {
@@ -114,6 +121,7 @@ class DomesticInternationalControllerTest {
         Object[] mockObject = {"true", 1, 1, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalVolumeAirport(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/domestic-international")
                         .queryParam("startDate", "2010-01-01").
@@ -124,14 +132,15 @@ class DomesticInternationalControllerTest {
                         queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-            //    .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
     @Test
     void getTopDomesticInternationalVolumeCountryTest() throws Exception {
         Object[] mockObject = {"true", 1, 1, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalVolumeCountry(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/domestic-international")
                         .queryParam("startDate", "2010-01-01").
@@ -142,14 +151,15 @@ class DomesticInternationalControllerTest {
                         queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-              //  .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
     @Test
     void getTopDomesticInternationalVolumeContinentTest() throws Exception {
         Object[] mockObject = {"true", 1, 1, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalVolumeContinent(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/domestic-international")
                         .queryParam("startDate", "2010-01-01").
@@ -160,14 +170,15 @@ class DomesticInternationalControllerTest {
                         queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-            //    .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
     @Test
     void getTopDomesticInternationalVolumeRegionTest() throws Exception {
         Object[] mockObject = {"true", 1, 1, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalVolumeRegion(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/domestic-international")
                         .queryParam("startDate", "2010-01-01").
@@ -178,14 +189,15 @@ class DomesticInternationalControllerTest {
                         queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-           //     .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
     @Test
     void getTopDomesticInternationalWeightAirportTest() throws Exception {
         Object[] mockObject = {"true", 1, 1, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalWeightAirport(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/domestic-international")
                         .queryParam("startDate", "2010-01-01").
@@ -196,14 +208,15 @@ class DomesticInternationalControllerTest {
                         queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-            //    .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
     @Test
     void getTopDomesticInternationalWeightCountryTest() throws Exception {
         Object[] mockObject = {"true", 1, 1, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalWeightCountry(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/domestic-international")
                         .queryParam("startDate", "2010-01-01").
@@ -214,14 +227,15 @@ class DomesticInternationalControllerTest {
                         queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-            //    .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
     @Test
     void getTopDomesticInternationalWeightContinentTest() throws Exception {
         Object[] mockObject = {"true", 1, 1, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalWeightContinent(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/domestic-international")
                         .queryParam("startDate", "2010-01-01").
@@ -232,14 +246,15 @@ class DomesticInternationalControllerTest {
                         queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-          //      .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
     @Test
     void getTopDomesticInternationalWeightRegionTest() throws Exception {
         Object[] mockObject = {"true", 1, 1, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalWeightRegion(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/domestic-international")
                         .queryParam("startDate", "2010-01-01").
@@ -250,8 +265,8 @@ class DomesticInternationalControllerTest {
                         queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-            //    .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
 
     @Test
@@ -267,8 +282,8 @@ class DomesticInternationalControllerTest {
                         .queryParam("carrier", "AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-           //     .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(false));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(false));
     }
 
     @Test
@@ -284,8 +299,8 @@ class DomesticInternationalControllerTest {
                         .queryParam("carrier", "AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-            //    .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(false))
-          //      .andExpect(MockMvcResultMatchers.jsonPath("$.response").value(IsNull.nullValue()));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(false))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.response").value(IsNull.nullValue()));
     }
 }

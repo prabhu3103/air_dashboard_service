@@ -1,7 +1,9 @@
 package com.unisys.trans.cps.middleware.controllers;
 
 import com.unisys.trans.cps.middleware.exception.CpsException;
+import com.unisys.trans.cps.middleware.models.entity.AirlineHostCountryMaster;
 import com.unisys.trans.cps.middleware.repository.AdvanceFunctionAuditRepository;
+import com.unisys.trans.cps.middleware.services.AirlineHostCountryMasterService;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -17,16 +19,21 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.ArrayList;
 import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
- class TopCommoditiesControllerTest {
+class TopCommoditiesControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private AdvanceFunctionAuditRepository advanceFunctionAuditRepository;
+
+    @MockBean
+    private AirlineHostCountryMasterService aAirlineHostCountryMasterService;
 
     @Test
     void getTopCommodityBookingAirportTest() throws Exception{
@@ -35,14 +42,14 @@ import static org.mockito.ArgumentMatchers.any;
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityBookingAirport(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-commodities")
-                .queryParam("startDate", "2010-01-01")
-                .queryParam("endDate",  "2023-01-01")
-                .queryParam("typeOfInfo","bookingcount")
-                .queryParam("areaBy","airport")
-                .queryParam("filterValue","BLR")
-                .queryParam("carrier","AI")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
+                        .queryParam("startDate", "2010-01-01")
+                        .queryParam("endDate",  "2023-01-01")
+                        .queryParam("typeOfInfo","bookingcount")
+                        .queryParam("areaBy","airport")
+                        .queryParam("filterValue","BLR")
+                        .queryParam("carrier","AI")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
@@ -109,6 +116,7 @@ import static org.mockito.ArgumentMatchers.any;
         Object[] mockObject = {"0000", 9508.00, "CONSOLIDATED", "weight", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityWeightAirport(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-commodities")
                         .queryParam("startDate", "2010-01-01")
@@ -119,8 +127,8 @@ import static org.mockito.ArgumentMatchers.any;
                         .queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-          //      .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
 
     @Test
@@ -128,6 +136,7 @@ import static org.mockito.ArgumentMatchers.any;
         Object[] mockObject = {"0000", 9508.00, "CONSOLIDATED", "weight", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityWeightCountry(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-commodities")
                         .queryParam("startDate", "2010-01-01")
@@ -138,8 +147,8 @@ import static org.mockito.ArgumentMatchers.any;
                         .queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-         //       .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
 
     @Test
@@ -147,6 +156,7 @@ import static org.mockito.ArgumentMatchers.any;
         Object[] mockObject = {"0000", 9508.00, "CONSOLIDATED", "weight", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityWeightContinent(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-commodities")
                         .queryParam("startDate", "2010-01-01")
@@ -157,8 +167,8 @@ import static org.mockito.ArgumentMatchers.any;
                         .queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-         //       .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
 
     @Test
@@ -166,6 +176,7 @@ import static org.mockito.ArgumentMatchers.any;
         Object[] mockObject = {"0000", 9508.00, "CONSOLIDATED", "weight", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityWeightRegion(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-commodities")
                         .queryParam("startDate", "2010-01-01")
@@ -176,8 +187,8 @@ import static org.mockito.ArgumentMatchers.any;
                         .queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-         //       .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
 
     @Test
@@ -185,6 +196,7 @@ import static org.mockito.ArgumentMatchers.any;
         Object[] mockObject = {"0000", 566.92, "CONSOLIDATED", "volume", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityVolumeAirport(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-commodities")
                         .queryParam("startDate", "2010-01-01")
@@ -195,8 +207,8 @@ import static org.mockito.ArgumentMatchers.any;
                         .queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-       //         .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
 
     @Test
@@ -204,6 +216,7 @@ import static org.mockito.ArgumentMatchers.any;
         Object[] mockObject = {"0000", 566.92, "CONSOLIDATED", "volume", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityVolumeCountry(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-commodities")
                         .queryParam("startDate", "2010-01-01")
@@ -214,8 +227,8 @@ import static org.mockito.ArgumentMatchers.any;
                         .queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-         //       .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
 
     @Test
@@ -223,6 +236,7 @@ import static org.mockito.ArgumentMatchers.any;
         Object[] mockObject = {"0000", 566.92, "CONSOLIDATED", "volume", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityVolumeContinent(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-commodities")
                         .queryParam("startDate", "2010-01-01")
@@ -233,8 +247,8 @@ import static org.mockito.ArgumentMatchers.any;
                         .queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-        //        .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
 
     @Test
@@ -242,6 +256,7 @@ import static org.mockito.ArgumentMatchers.any;
         Object[] mockObject = {"0000", 566.92, "CONSOLIDATED", "volume", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityVolumeRegion(any(), any(), any(), any())).thenReturn(mockObjects);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-commodities")
                         .queryParam("startDate", "2010-01-01")
@@ -252,8 +267,8 @@ import static org.mockito.ArgumentMatchers.any;
                         .queryParam("carrier","AI")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-         //       .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
     }
 
     @Test
