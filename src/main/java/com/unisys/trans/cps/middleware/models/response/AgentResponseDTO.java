@@ -7,7 +7,7 @@ import java.util.List;
 @Data
 public class AgentResponseDTO {
 
-    private Long newAccount;
+    private int newAccount;
 
     List<TopAgentsResponseDTO>  topAgentsResponseDTOList;
 
