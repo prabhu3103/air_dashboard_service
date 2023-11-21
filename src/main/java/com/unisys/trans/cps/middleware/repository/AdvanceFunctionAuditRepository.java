@@ -219,6 +219,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select a.branchID, a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin = :origin
             group by a.branchID, a.carrier, a.accNo order by totalNoOfBookingCount desc LIMIT 5""")
@@ -231,6 +232,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select a.branchID, a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin in(select c.code from CityCountryMaster c where c.countryCode=:origin)
             group by a.branchID, a.carrier, a.accNo order by totalNoOfBookingCount desc LIMIT 5""")
@@ -243,6 +245,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select a.branchID, a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin in(select c.code from CityCountryMaster c where c.continent=:origin)
             group by a.branchID, a.carrier, a.accNo order by totalNoOfBookingCount desc LIMIT 5""")
@@ -254,6 +257,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select a.branchID, a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
             where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.branchID=d.branchId
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where
@@ -267,6 +271,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select a.branchID, a.carrier, a.accNo, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin = :origin
             group by  a.branchID, a.carrier, a.accNo order by totalNoOfVolumeCount desc LIMIT 5""")
@@ -279,6 +284,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select  a.branchID, a.carrier, a.accNo, SUM(a.stdVol)  as totalNoOfVolumeCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin in(select c.code from CityCountryMaster c where c.countryCode=:origin)
             group by a.branchID, a.carrier, a.accNo order by totalNoOfVolumeCount desc LIMIT 5""")
@@ -291,6 +297,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select  a.branchID, a.carrier, a.accNo, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin in(select c.code from CityCountryMaster c where c.continent=:origin)
             group by  a.branchID, a.carrier, a.accNo order by totalNoOfVolumeCount desc LIMIT 5""")
@@ -302,6 +309,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select  a.branchID, a.carrier, a.accNo, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
             where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.branchID=d.branchId
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where
@@ -316,6 +324,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select a.branchID, a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin = :origin
             group by a.branchID, a.carrier, a.accNo order by totalNoOfWeightCount desc LIMIT 5""")
@@ -328,6 +337,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select a.branchID, a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin in(select c.code from CityCountryMaster c where c.countryCode=:origin)
             group by a.branchID, a.carrier, a.accNo order by totalNoOfWeightCount desc LIMIT 5""")
@@ -340,6 +350,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select a.branchID, a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, BranchProfile b
             where a.branchID= b.branchId and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin in(select c.code from CityCountryMaster c where c.continent=:origin)
             group by a.branchID, a.carrier, a.accNo order by totalNoOfWeightCount desc LIMIT 5""")
@@ -351,6 +362,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query("""
             select a.branchID, a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, BranchProfile d
             where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.branchID=d.branchId
             and a.carrier = :carrier
             and a.origin in(select b.code from CityCountryMaster b where
@@ -365,6 +377,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select a.eventDate as day, count(*) as bookingCount
             from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin = :originAirport
             group by a.eventDate
@@ -379,6 +392,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country
             group by a.eventDate
@@ -393,6 +407,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent = :continent
             group by a.eventDate
@@ -409,6 +424,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             join CityCountryMaster b on a.origin = b.code
             join RegionMaster c on b.continent = c.continent
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region
             group by a.eventDate
@@ -423,6 +439,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select a.eventDate as day, sum(a.stdWeight) as totalWeight
             from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin = :originAirport
             group by a.eventDate
@@ -438,6 +455,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country
             group by a.eventDate
@@ -452,6 +470,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent = :continent
             group by a.eventDate
@@ -467,6 +486,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             join CityCountryMaster b on a.origin = b.code
             join RegionMaster c on b.continent = c.continent
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region
             group by a.eventDate
@@ -481,6 +501,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select a.eventDate as day, sum(a.stdVol) as totalVolume
             from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin = :originAirport
             group by a.eventDate
@@ -495,6 +516,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country
             group by a.eventDate
@@ -509,6 +531,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.origin = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent=:continent
             group by a.eventDate
@@ -524,6 +547,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             join CityCountryMaster b on a.origin = b.code
             join RegionMaster c on b.continent = c.continent
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region
             group by a.eventDate
@@ -542,6 +566,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            END as commodity, COUNT(a.commodity) AS COMMODITY_COUNT, c.description
            FROM AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
            where a.eventDate >= :startDate and a.eventDate <= :endDate
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
            and a.carrier = :carrier
            and a.origin = :originAirport
            group by a.commodity, c.description
@@ -562,6 +587,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             	from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
             	join CityCountryMaster b ON a.origin = b.code
             	where a.eventDate >= :startDate and a.eventDate <= :endDate
+            	and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             	and a.carrier = :carrier
             	AND b.countryCode = :country
             	group by a.commodity, c.description
@@ -583,6 +609,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             	from  AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
             	JOIN CityCountryMaster b ON a.origin = b.code
             	where a.eventDate >= :startDate and a.eventDate <= :endDate
+            	and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             	and a.carrier = :carrier
             	AND b.continent = :continent
             	group by a.commodity, c.description
@@ -603,6 +630,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             			JOIN CityCountryMaster b ON a.origin = b.code
             			JOIN RegionMaster r ON b.continent = r.continent
             			where a.eventDate >= :startDate and a.eventDate <= :endDate
+            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             			and a.carrier = :carrier
             			AND r.regionName = :region
             			group by a.commodity, c.description
@@ -620,6 +648,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 END as commodity, SUM(a.stdWeight) AS totalWeight, c.description
                         from   AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
                         where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                         and a.carrier = :carrier
                         and a.origin = :originAirport
                         group by a.commodity, c.description
@@ -640,6 +669,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             			from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
             			JOIN CityCountryMaster b ON a.origin = b.code
             			where a.eventDate >= :startDate and a.eventDate <= :endDate
+            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             			and a.carrier = :carrier
             			AND b.countryCode = :country
             			group by a.commodity, c.description
@@ -660,6 +690,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             			from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
             			JOIN CityCountryMaster b ON a.origin = b.code
             			where a.eventDate >= :startDate and a.eventDate <= :endDate
+            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             			and a.carrier = :carrier
             			AND b.continent = :continent
             			group by a.commodity, c.description
@@ -680,6 +711,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             			JOIN CityCountryMaster b ON a.origin = b.code
             			JOIN RegionMaster r ON b.continent = r.continent
             			where a.eventDate >= :startDate and a.eventDate <= :endDate
+            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             			and a.carrier = :carrier
             			AND r.regionName = :region
             			group by a.commodity, c.description
@@ -698,6 +730,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 END as commodity, SUM(a.stdVol) AS totalVolume, c.description
                         from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
                         where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                         and a.carrier = :carrier
                         and a.origin = :originAirport
                         group by a.commodity, c.description
@@ -717,6 +750,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             			from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
             			JOIN CityCountryMaster b ON a.origin = b.code
             			where a.eventDate >= :startDate and a.eventDate <= :endDate
+            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             			and a.carrier = :carrier
             			AND b.countryCode = :country
             			group by a.commodity, c.description
@@ -736,6 +770,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             			from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
             			JOIN CityCountryMaster b ON a.origin = b.code
             			where a.eventDate >= :startDate and a.eventDate <= :endDate
+            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             			and a.carrier = :carrier
             			AND b.continent = :continent
             			group by a.commodity, c.description
@@ -756,6 +791,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             			JOIN CityCountryMaster b ON a.origin = b.code
                         JOIN RegionMaster r ON b.continent = r.continent
             			where a.eventDate >= :startDate and a.eventDate <= :endDate
+            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             			and a.carrier = :carrier
             			AND r.regionName = :region
             			group by a.commodity, c.description
@@ -773,6 +809,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                     from   dbo.AdvanceFunctionAudit a , dbo.ProductType p
                                     where
             						a.eventDate >= :startDate and a.eventDate <= :endDate
+            						and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                     and a.carrier=p.airline
                                     and a.productCode=p.productType
                                     and a.org=:originAirport
@@ -806,6 +843,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      				from   AdvanceFunctionAudit a, ProductType p
                                      				where
                                      				a.eventDate >= :startDate and a.eventDate <= :endDate
+                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                      				and a.carrier=p.airline
                                      				and a.productCode=p.productType
                                      				and a.carrier=:carrier
@@ -839,6 +877,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      				from   AdvanceFunctionAudit a , ProductType p
                                      				where
                                      			    a.eventDate >= :startDate and a.eventDate <= :endDate
+                                     			    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                      				and a.carrier=p.airline
                                      				and a.productCode=p.productType
                                      				and a.org in(select b.code from CityCountryMaster b where b.continent='NA')
@@ -872,6 +911,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                         (select a.productCode ,p.description, COUNT(*) AS TOPPRODUCTS
             				from   AdvanceFunctionAudit a, ProductType p
             				where a.eventDate >= :startDate and a.eventDate <= :endDate
+            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             				and a.carrier=p.airline
             				and a.productCode=p.productType
             				and a.org in (select b.code from CityCountryMaster b where b.continent in (select c.continent from RegionMaster c where c.regionName =:region))
@@ -905,6 +945,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                                  (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
                                      				from   AdvanceFunctionAudit a,ProductType p
                                      				where a.eventDate >= :startDate and a.eventDate <= :endDate
+                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                      				and a.carrier=p.airline
                                      				and a.productCode=p.productType
                                      				and a.carrier=:carrier
@@ -939,6 +980,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                                  (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
                                      				from   AdvanceFunctionAudit a ,ProductType p where
                                      				a.eventDate >= :startDate and a.eventDate <= :endDate
+                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                      				and a.carrier=p.airline
                                      				and a.productCode=p.productType
                                      				and a.carrier = :carrier
@@ -973,6 +1015,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                                  (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
                                      				from   AdvanceFunctionAudit a ,ProductType p where
                                      				a.eventDate >= :startDate and a.eventDate <= :endDate
+                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                      				and a.carrier=p.airline
                                      				and a.productCode=p.productType
                                      				and a.carrier = :carrier
@@ -1009,6 +1052,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                                  (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
                                      				from   AdvanceFunctionAudit a ,ProductType p where
                                      				a.eventDate >= :startDate and a.eventDate <= :endDate
+                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                      				and a.carrier=p.airline
                                      				and a.productCode=p.productType
                                      				and a.carrier = :carrier
@@ -1043,6 +1087,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                                  (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
                                      				from   AdvanceFunctionAudit a,ProductType p
                                      				where a.eventDate >= :startDate and a.eventDate <= :endDate
+                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                      				and a.carrier=p.airline
                                      				and a.productCode=p.productType
                                      				and a.carrier=:carrier
@@ -1077,6 +1122,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                                  (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
                                      				from   AdvanceFunctionAudit a ,ProductType p where
                                      				a.eventDate >= :startDate and a.eventDate <= :endDate
+                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                      				and a.carrier=p.airline
                                      				and a.productCode=p.productType
                                      				and a.carrier = :carrier
@@ -1112,6 +1158,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                         (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
             				from   AdvanceFunctionAudit a ,ProductType p where
             				a.eventDate >= :startDate and a.eventDate <= :endDate
+            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             				and a.carrier=p.airline
             				and a.productCode=p.productType
             				and a.carrier = :carrier
@@ -1145,6 +1192,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
             from   AdvanceFunctionAudit a ,ProductType p where
             a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier=p.airline
             and a.productCode=p.productType
             and a.carrier = :carrier
@@ -1204,6 +1252,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                  AND a.CARRIER = :carrier
                                  AND a.ORG = :origin
                              ) AS CategoryCTE
@@ -1247,6 +1296,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                               and a.CARRIER = :carrier
                               and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE=:origin)
                               ) AS CategoryCTE
@@ -1290,6 +1340,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                               and a.CARRIER = :carrier
                               and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE b.CONTINENT=:origin)
                               ) AS CategoryCTE
@@ -1332,6 +1383,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
                                and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE
                                b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))
@@ -1375,6 +1427,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
                                and a.ORG = :origin
                                ) AS CategoryCTE
@@ -1417,6 +1470,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
                                and a.ORG in(SELECT b.C0DE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE:origin)
                                ) AS CategoryCTE
@@ -1460,6 +1514,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE where a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
                                and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT:origin)
                                ) AS CategoryCTE
@@ -1502,6 +1557,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
                                and a.ORG IN(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE
                                b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))
@@ -1545,6 +1601,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
                                and a.ORG = :origin
                                ) AS CategoryCTE
@@ -1587,6 +1644,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
                                and a.ORG in(SELECT B.CODE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE:origin)
                                ) AS CategoryCTE
@@ -1629,6 +1687,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
                                and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT:origin)
                                ) AS CategoryCTE
@@ -1671,6 +1730,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ELSE 'false'
                                  END) AS category
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
                                and a.ORG IN(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE
                                b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))
