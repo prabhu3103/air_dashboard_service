@@ -15,6 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,10 +38,12 @@ class TopAccountsControllerTest{
     @Test
     void getTopAccountsBookingAirportTest() throws Exception {
 
-        Object[] mockObject = {"BOM0677I", "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        Object[] mockObjectCurrentMonth = {10};
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsBookingAirport(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -54,10 +58,12 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsBookingCountryTest() throws Exception {
-        Object[] mockObject = {"BOM0677I", "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        Object[] mockObjectCurrentMonth = {10};
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsBookingCountry(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -72,10 +78,12 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsBookingContinentTest() throws Exception {
-        Object[] mockObject = {"BOM0677I", "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        Object[] mockObjectCurrentMonth = {10};
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsBookingContinent(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -90,10 +98,12 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsBookingRegionTest() throws Exception {
-        Object[] mockObject = {"BOM0677I", "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
-        Mockito.when(advanceFunctionAuditRepository.getTopAgentsBookingRegion(any(), any(), any(), any())).thenReturn(mockObjects);
+        Object[] mockObjectCurrentMonth = {10};
+        Mockito.when(advanceFunctionAuditRepository.getTopAgentsBookingContinent(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -108,11 +118,13 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsVolumeAirportTest() throws Exception {
-        Object[] mockObject = {"BOM0677I", "volume", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "volume", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsVolumeAirport(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -127,11 +139,13 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsVolumeCountryTest() throws Exception {
-        Object[] mockObject = {"BOM0677I", "volume", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "volume", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsVolumeCountry(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -146,11 +160,13 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsVolumeContinentTest() throws Exception {
-        Object[] mockObject = {"BOM0677I", "volume", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "volume", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsVolumeContinent(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -165,11 +181,13 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsVolumeRegionTest() throws Exception {
-        Object[] mockObject = {"BOM0677I", "volume", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "volume", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsVolumeRegion(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -184,11 +202,13 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsWeightAirportTest() throws Exception {
-        Object[] mockObject = {"BOM0677I", "weight", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "weight", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsWeightAirport(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -203,11 +223,13 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsWeightCountryTest() throws Exception {
-        Object[] mockObject = {"BOM0677I", "weight", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "weight", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsWeightCountry(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -222,11 +244,13 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsWeightContinentTest() throws Exception {
-        Object[] mockObject = {"BOM0677I", "weight", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "weight", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsWeightContinent(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -241,11 +265,13 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsWeightRegionTest() throws Exception {
-        Object[] mockObject = {"BOM0677I", "weight", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "weight", "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
+        Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsWeightRegion(any(), any(), any(), any())).thenReturn(mockObjects);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
