@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -25,5 +26,8 @@ public class BranchAccount implements Serializable {
 
     @Column(name = "ACCOUNTDESCRIPTION")
     private String accountDescription;
+
+    @Column(name = "ACTIONDATE")
+    private LocalDateTime actionDate;
 
 }

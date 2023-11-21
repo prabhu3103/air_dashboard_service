@@ -1209,7 +1209,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                              ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                              @Param("carrier") String carrier, @Param("origin") String origin);
@@ -1252,7 +1252,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                               ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                              @Param("carrier") String carrier, @Param("origin") String origin);
@@ -1295,7 +1295,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                               ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                                @Param("carrier") String carrier, @Param("origin") String origin);
@@ -1338,7 +1338,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                             @Param("carrier") String carrier, @Param("origin") String origin);
@@ -1380,7 +1380,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                             @Param("carrier") String carrier, @Param("origin") String origin);
@@ -1422,7 +1422,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                             @Param("carrier") String carrier, @Param("origin") String origin);
@@ -1465,7 +1465,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                               @Param("carrier") String carrier, @Param("origin") String origin);
@@ -1508,7 +1508,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                            @Param("carrier") String carrier, @Param("origin") String origin);
@@ -1550,7 +1550,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                             @Param("carrier") String carrier, @Param("origin") String origin);
@@ -1592,7 +1592,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                             @Param("carrier") String carrier, @Param("origin") String origin);
@@ -1634,7 +1634,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                               @Param("carrier") String carrier, @Param("origin") String origin);
@@ -1677,9 +1677,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
-                             ORDER BY category_count""",nativeQuery = true)
+                             ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                            @Param("carrier") String carrier, @Param("origin") String origin);
+
+
+    @Query("""
+            select count(*) from BranchAccount a  where MONTH(a.actionDate)=MONTH(:currentDate)
+            and YEAR(a.actionDate)=YEAR(:currentDate)""")
+
+    Object[] getNewAgentsInCurrentMonth(@Param("currentDate") LocalDateTime currentDate);
 
 }

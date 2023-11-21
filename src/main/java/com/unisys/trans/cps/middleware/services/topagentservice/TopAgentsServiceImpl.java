@@ -125,8 +125,8 @@ public class TopAgentsServiceImpl implements TopAgentsService{
 
     private void buildTopAgentsResponseDTO(AgentResponseDTO response, List<Object[]> topObjects, String valueType, String stdUnit) {
         List<TopAgentsResponseDTO> topAgentsResponseDTOS = new ArrayList<>();
+        Object[] newAccounts = advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(LocalDateTime.now());
         if(topObjects != null) {
-            Long newAccount = 5L;
             for (Object[] array : topObjects) {
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
                 topAgentsResponseDTO.setAccNo((String) array[2]);
@@ -137,30 +137,30 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 topAgentsResponseDTO.setMomData(1.1f);
                 topAgentsResponseDTO.setYoyData(-1.1f);
                 topAgentsResponseDTOS.add(topAgentsResponseDTO);
-
             }
             response.setTopAgentsResponseDTOList(topAgentsResponseDTOS);
-            response.setNewAccount(newAccount);
+            Number value = (Number) newAccounts[0];
+            response.setNewAccount(value.intValue());
         }
     }
 
     private void buildTopAgentsResponseDTO(AgentResponseDTO response, List<Object[]> topObjects) {
         if(topObjects != null) {
             List<TopAgentsResponseDTO> topAgentsResponseDTOS = new ArrayList<>();
-            Long newAccount = 0L;
+            Object[] newAccounts = advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(LocalDateTime.now());
             for (Object[] array : topObjects) {
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
                 topAgentsResponseDTO.setAccNo((String) array[2]);
                 Number value = (Number) array[3];
                 topAgentsResponseDTO.setValue(value.floatValue());
                 topAgentsResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
-                newAccount+=value.longValue();
                 topAgentsResponseDTO.setMomData(1.1f);
                 topAgentsResponseDTO.setYoyData(-1.1f);
                 topAgentsResponseDTOS.add(topAgentsResponseDTO);
             }
             response.setTopAgentsResponseDTOList(topAgentsResponseDTOS);
-            response.setNewAccount(newAccount);
+            Number value = (Number) newAccounts[0];
+            response.setNewAccount(value.intValue());
         }
     }
 }
