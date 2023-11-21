@@ -1472,7 +1472,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
-                               and a.ORG in(SELECT b.C0DE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE:origin)
+                               and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE = :origin)
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
@@ -1516,7 +1516,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                FROM ADVANCEFUNCTIONAUDIT a WHERE where a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
-                               and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT:origin)
+                               and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT = :origin)
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
@@ -1646,7 +1646,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
-                               and a.ORG in(SELECT B.CODE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE:origin)
+                               and a.ORG in(SELECT B.CODE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE = :origin)
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
@@ -1689,7 +1689,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
-                               and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT:origin)
+                               and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT=:origin)
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
