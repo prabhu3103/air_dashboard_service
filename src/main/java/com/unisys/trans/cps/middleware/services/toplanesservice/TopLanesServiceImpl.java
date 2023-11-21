@@ -127,13 +127,12 @@ public class TopLanesServiceImpl implements TopLanesService {
     private void buildResponseDTO(List<TopLanesResponseDTO> response, List<Object[]> topObjects, String valueType, String stdUnit) {
 
         if(topObjects != null) {
-            HashMap<String,String> displayNameMap = getAirportDisplayNames(topObjects);
             for (Object[] array : topObjects) {
                 TopLanesResponseDTO topLanesResponseDTO = new TopLanesResponseDTO();
                 topLanesResponseDTO.setOrigin((String) array[0]);
                 topLanesResponseDTO.setDestination((String) array[1]);
-                topLanesResponseDTO.setOrgName(displayNameMap.get((String)array[0]));
-                topLanesResponseDTO.setDestName(displayNameMap.get((String)array[1]));
+                topLanesResponseDTO.setOrgName((String) array[0]);
+                topLanesResponseDTO.setDestName((String) array[1]);
                 Number value = (Number) array[2];
                 topLanesResponseDTO.setValue(value.floatValue());
                 topLanesResponseDTO.setValueType(valueType);
@@ -147,13 +146,12 @@ public class TopLanesServiceImpl implements TopLanesService {
 
     private void buildResponseDTO(List<TopLanesResponseDTO> response, List<Object[]> topObjects) {
         if(topObjects != null) {
-            HashMap<String,String> displayNameMap = getAirportDisplayNames(topObjects);
             for (Object[] array : topObjects) {
                 TopLanesResponseDTO topLanesResponseDTO = new TopLanesResponseDTO();
                 topLanesResponseDTO.setOrigin((String) array[0]);
                 topLanesResponseDTO.setDestination((String) array[1]);
-                topLanesResponseDTO.setOrgName(displayNameMap.get((String)array[0]));
-                topLanesResponseDTO.setDestName(displayNameMap.get((String)array[1]));
+                topLanesResponseDTO.setOrgName((String) array[0]);
+                topLanesResponseDTO.setDestName((String) array[1]);
                 Number value = (Number) array[2];
                 topLanesResponseDTO.setValue(value.floatValue());
                 topLanesResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
@@ -163,25 +161,5 @@ public class TopLanesServiceImpl implements TopLanesService {
                 response.add(topLanesResponseDTO);
             }
         }
-    }
-
-    private HashMap<String, String> getAirportDisplayNames(List<Object[]> topObjects) {
-        HashMap<String, String> displayNameMap;
-        try {
-            displayNameMap = new HashMap<>();
-            Set<String> airportsList = new HashSet<>();
-            for (Object[] array : topObjects) {
-                airportsList.add((String) array[0]);
-                airportsList.add((String) array[1]);
-            }
-            List<Object[]> cityCountryMaster = cityCountryMasterRepository.findByCodes(airportsList.stream().toList());
-            for (Object[] array : cityCountryMaster) {
-                displayNameMap.put((String) array[0], (String) array[1]);
-            }
-        } catch (Exception exception) {
-            log.error(exception.getMessage());
-            throw new CpsException(exception.getMessage());
-        }
-        return displayNameMap;
     }
 }

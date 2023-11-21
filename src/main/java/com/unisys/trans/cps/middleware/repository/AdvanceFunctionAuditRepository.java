@@ -17,6 +17,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select a.origin, a.destination, COUNT(*) AS TOPLANE
             from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin = :originAirport
             group by a.origin,a.destination
@@ -31,6 +32,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.origin = b.code
             WHERE a.eventDate >= :startDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.eventDate <= :endDate
             AND a.carrier = :carrier
             AND b.countryCode = :country
@@ -47,6 +49,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.origin = b.code
             WHERE a.eventDate >= :startDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.eventDate <= :endDate
             AND a.carrier = :carrier
             AND b.continent = :continent
@@ -65,6 +68,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             JOIN CityCountryMaster b ON a.origin = b.code
             JOIN RegionMaster c ON b.continent = c.continent
             WHERE a.eventDate >= :startDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.eventDate <= :endDate
             AND a.carrier = :carrier
             AND c.regionName = :region
@@ -81,6 +85,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select a.origin, a.destination, SUM(a.stdWeight) AS totalWeight
             from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin = :originAirport
             group by a.origin,a.destination
@@ -96,6 +101,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.origin = b.code
             WHERE a.eventDate >= :startDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.eventDate <= :endDate
             AND a.carrier = :carrier
             AND b.countryCode = :country
@@ -112,6 +118,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.origin = b.code
             WHERE a.eventDate >= :startDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.eventDate <= :endDate
             AND a.carrier = :carrier
             AND b.continent = :continent
@@ -129,6 +136,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             JOIN CityCountryMaster b ON a.origin = b.code
             JOIN RegionMaster c ON b.continent = c.continent
             WHERE a.eventDate >= :startDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.eventDate <= :endDate
             AND a.carrier = :carrier
             AND c.regionName = :region
@@ -145,6 +153,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             select a.origin, a.destination, SUM(a.stdVol) AS totalVolume
             from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.origin = :originAirport
             group by a.origin,a.destination
@@ -159,6 +168,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.origin = b.code
             WHERE a.eventDate >= :startDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.eventDate <= :endDate
             AND a.carrier = :carrier
             AND b.countryCode = :country
@@ -175,6 +185,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.origin = b.code
             WHERE a.eventDate >= :startDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.eventDate <= :endDate
             AND a.carrier = :carrier
             AND b.continent = :continent
@@ -192,6 +203,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             JOIN CityCountryMaster b ON a.origin = b.code
             JOIN RegionMaster c ON b.continent = c.continent
             WHERE a.eventDate >= :startDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.eventDate <= :endDate
             AND a.carrier = :carrier
             AND c.regionName = :region
