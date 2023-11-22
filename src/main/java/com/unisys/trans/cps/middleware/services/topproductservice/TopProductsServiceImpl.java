@@ -131,8 +131,18 @@ public class TopProductsServiceImpl implements TopProductsService {
             topProductResponseDTO.setValue(value.floatValue());
             topProductResponseDTO.setValueType(valueType);
             topProductResponseDTO.setUnit(stdUnit);
-            topProductResponseDTO.setMomData((array[3] == null) ? 0.0f : (Float) array[3]);
-            topProductResponseDTO.setYoyData((array[4] == null) ? 0.0f : (Float) array[4]);
+            if(array[3] != null){
+                Number mom = (Number) array[3];
+                topProductResponseDTO.setMomData(mom.floatValue());
+            }else{
+                topProductResponseDTO.setMomData(0.0f);
+            }
+            if(array[4] != null){
+                Number yoy = (Number) array[4];
+                topProductResponseDTO.setMomData(yoy.floatValue());
+            }else{
+                topProductResponseDTO.setYoyData(0.0f);
+            }
             response.add(topProductResponseDTO);
         }
     }
@@ -146,8 +156,18 @@ public class TopProductsServiceImpl implements TopProductsService {
             topProductResponseDTO.setValue(value.floatValue());
             topProductResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
             topProductResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
-            topProductResponseDTO.setMomData((array[3] == null) ? 0.0f : (Float) array[3]);
-            topProductResponseDTO.setYoyData((array[4] == null) ? 0.0f : (Float) array[4]);
+            if(array[3] != null){
+                Number mom = (Number) array[3];
+                topProductResponseDTO.setMomData(mom.floatValue());
+            }else{
+                topProductResponseDTO.setMomData(0.0f);
+            }
+            if(array[4] != null){
+                Number yoy = (Number) array[4];
+                topProductResponseDTO.setMomData(yoy.floatValue());
+            }else{
+                topProductResponseDTO.setYoyData(0.0f);
+            }
             response.add(topProductResponseDTO);
         }
     }
