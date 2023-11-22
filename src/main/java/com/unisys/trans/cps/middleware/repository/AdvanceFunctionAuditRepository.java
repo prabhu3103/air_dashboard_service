@@ -1513,7 +1513,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE where a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
                                and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT = :origin)
