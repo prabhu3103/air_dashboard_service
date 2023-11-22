@@ -11,6 +11,8 @@ public class AirlineDashboardConstants {
     public static final String AREA_BY_COUNTRY = "country";
     public static final String AREA_BY_CONTINENT = "continent";
 
+    public static final String AFKL_CARRIER = "AF-KL";
+
     public static final String AREA_BY_REGION = "region";
 
     public static final String EMPTY_STRING = "";

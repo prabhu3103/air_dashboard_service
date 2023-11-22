@@ -559,19 +559,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Commodity - Total Number of Booking Count for Airport
     @Query("""
-           SELECT
-           CASE
-           WHEN commodity = ' ' THEN '0000'
-           ELSE commodity
-           END as commodity, COUNT(a.commodity) AS COMMODITY_COUNT, c.description
-           FROM AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
+           select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+           from AdvanceFunctionAudit a
            where a.eventDate >= :startDate and a.eventDate <= :endDate
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
            and a.carrier = :carrier
            and a.origin = :originAirport
-           group by a.commodity, c.description
+           group by a.commodity
            order by COMMODITY_COUNT desc
-           LIMIT 5
+           LIMIT 6
            """)
     List<Object[]> getTopCommodityBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                  @Param("carrier") String carrier, @Param("originAirport") String originAirport);
@@ -580,19 +576,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Commodity - Total Number of Booking Count for Country
     @Query("""
             select
-            	CASE
-            	WHEN commodity = ' ' THEN '0000'
-            	ELSE commodity
-            	END as commodity, COUNT(a.commodity) AS COMMODITY_COUNT, c.description
-            	from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
-            	join CityCountryMaster b ON a.origin = b.code
-            	where a.eventDate >= :startDate and a.eventDate <= :endDate
-            	and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            	and a.carrier = :carrier
-            	AND b.countryCode = :country
-            	group by a.commodity, c.description
-            	order by COMMODITY_COUNT desc
-            LIMIT 5
+            a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b ON a.origin = b.code
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND b.countryCode = :country
+            group by a.commodity
+            order by COMMODITY_COUNT desc
+            LIMIT 6
             """)
     List<Object[]> getTopCommodityBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                  @Param("carrier") String carrier, @Param("country") String country);
@@ -601,20 +594,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Commodity - Total Number of Booking Count for Continent
     @Query("""
             select
-            	CASE
-            		WHEN commodity = ' ' THEN '0000'
-            		ELSE commodity
-            	END as commodity,
-            	COUNT(a.commodity) AS COMMODITY_COUNT, c.description
-            	from  AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
-            	JOIN CityCountryMaster b ON a.origin = b.code
-            	where a.eventDate >= :startDate and a.eventDate <= :endDate
-            	and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            	and a.carrier = :carrier
-            	AND b.continent = :continent
-            	group by a.commodity, c.description
-            	order by COMMODITY_COUNT desc
-                LIMIT 5
+            a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+            from  AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND b.continent = :continent
+            group by a.commodity
+            order by COMMODITY_COUNT desc
+            LIMIT 6
             """)
     List<Object[]> getTopCommodityBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                    @Param("carrier") String carrier, @Param("continent") String continent);
@@ -622,38 +611,33 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Commodity - Total Number of Booking Count for Region
     @Query("""
             select
-            	CASE
-            		WHEN commodity = ' ' THEN '0000'
-            		ELSE commodity
-            	END as commodity, COUNT(a.commodity) AS COMMODITY_COUNT, c.description
-            			from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
-            			JOIN CityCountryMaster b ON a.origin = b.code
-            			JOIN RegionMaster r ON b.continent = r.continent
-            			where a.eventDate >= :startDate and a.eventDate <= :endDate
-            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            			and a.carrier = :carrier
-            			AND r.regionName = :region
-            			group by a.commodity, c.description
-            			order by COMMODITY_COUNT desc
-                LIMIT 5
+            a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+            from AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            JOIN RegionMaster r ON b.continent = r.continent
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND r.regionName = :region
+            group by a.commodity
+            order by COMMODITY_COUNT desc
+            LIMIT 6
             """)
     List<Object[]> getTopCommodityBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("region") String region);
 
     //Top Commodity - Total Number of Weight Count for Airport
     @Query("""
-            select CASE
-                    WHEN commodity = ' ' THEN '0000'
-                    ELSE commodity
-                END as commodity, SUM(a.stdWeight) AS totalWeight, c.description
-                        from   AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
-                        where a.eventDate >= :startDate and a.eventDate <= :endDate
-                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                        and a.carrier = :carrier
-                        and a.origin = :originAirport
-                        group by a.commodity, c.description
-                        order by totalWeight desc
-                LIMIT 5
+            select
+            a.commodity, SUM(a.stdWeight) AS totalWeight
+            from AdvanceFunctionAudit a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.origin = :originAirport
+            group by a.commodity
+            order by totalWeight desc
+            LIMIT 6
             """)
     List<Object[]> getTopCommodityWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("originAirport") String originAirport);
@@ -662,19 +646,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Commodity - Total Number of Weight Count for Country
     @Query("""
             select
-            	CASE
-            		WHEN commodity = ' ' THEN '0000'
-            		ELSE commodity
-            	END as commodity, SUM(a.stdWeight) AS totalWeight, c.description
-            			from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
-            			JOIN CityCountryMaster b ON a.origin = b.code
-            			where a.eventDate >= :startDate and a.eventDate <= :endDate
-            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            			and a.carrier = :carrier
-            			AND b.countryCode = :country
-            			group by a.commodity, c.description
-            			order by totalWeight desc
-                LIMIT 5
+            a.commodity, SUM(a.stdWeight) AS totalWeight
+            from AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND b.countryCode = :country
+            group by a.commodity
+            order by totalWeight desc
+            LIMIT 6
             """)
     List<Object[]> getTopCommodityWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("country") String country);
@@ -683,19 +664,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Commodity - Total Number of Weight Count for Continent
     @Query("""
             select
-            	CASE
-            		WHEN commodity = ' ' THEN '0000'
-            		ELSE commodity
-            	END as commodity, SUM(a.stdWeight) AS totalWeight, c.description
-            			from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
-            			JOIN CityCountryMaster b ON a.origin = b.code
-            			where a.eventDate >= :startDate and a.eventDate <= :endDate
-            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            			and a.carrier = :carrier
-            			AND b.continent = :continent
-            			group by a.commodity, c.description
-            			order by totalWeight desc
-                LIMIT 5
+            a.commodity, SUM(a.stdWeight) AS totalWeight
+            from AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND b.continent = :continent
+            group by a.commodity
+            order by totalWeight desc
+            LIMIT 6
             """)
     List<Object[]> getTopCommodityWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                   @Param("carrier") String carrier, @Param("continent") String continent);
@@ -703,20 +681,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Commodity - Total Number of Weight Count for Region
     @Query("""
             select
-            	CASE
-            		WHEN commodity = ' ' THEN '0000'
-            		ELSE commodity
-            	END as commodity, SUM(a.stdWeight) AS totalWeight, c.description
-            			from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
-            			JOIN CityCountryMaster b ON a.origin = b.code
-            			JOIN RegionMaster r ON b.continent = r.continent
-            			where a.eventDate >= :startDate and a.eventDate <= :endDate
-            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            			and a.carrier = :carrier
-            			AND r.regionName = :region
-            			group by a.commodity, c.description
-            			order by totalWeight desc
-                LIMIT 5
+            a.commodity, SUM(a.stdWeight) AS totalWeight
+            from AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            JOIN RegionMaster r ON b.continent = r.continent
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND r.regionName = :region
+            group by a.commodity
+            order by totalWeight desc
+            LIMIT 6
             """)
     List<Object[]> getTopCommodityWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("region") String region);
@@ -724,18 +699,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Commodity - Total Number of Volume Count for Airport
     @Query("""
-            select CASE
-                    WHEN commodity = ' ' THEN '0000'
-                    ELSE commodity
-                END as commodity, SUM(a.stdVol) AS totalVolume, c.description
-                        from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
-                        where a.eventDate >= :startDate and a.eventDate <= :endDate
-                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                        and a.carrier = :carrier
-                        and a.origin = :originAirport
-                        group by a.commodity, c.description
-                        order by totalVolume desc
-                LIMIT 5
+            select
+            a.commodity, SUM(a.stdVol) AS totalVolume
+            from AdvanceFunctionAudit a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.origin = :originAirport
+            group by a.commodity
+            order by totalVolume desc
+            LIMIT 6
             """)
     List<Object[]> getTopCommodityVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("originAirport") String originAirport);
@@ -743,19 +716,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Commodity - Total Number of volume Count for Country
     @Query("""
             select
-            	CASE
-            		WHEN commodity = ' ' THEN '0000'
-            		ELSE commodity
-            	END as commodity, SUM(a.stdVol) AS totalVolume, c.description
-            			from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
-            			JOIN CityCountryMaster b ON a.origin = b.code
-            			where a.eventDate >= :startDate and a.eventDate <= :endDate
-            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            			and a.carrier = :carrier
-            			AND b.countryCode = :country
-            			group by a.commodity, c.description
-            			order by totalVolume desc
-                LIMIT 5
+            a.commodity, SUM(a.stdVol) AS totalVolume
+            from AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND b.countryCode = :country
+            group by a.commodity
+            order by totalVolume desc
+            LIMIT 6
             """)
     List<Object[]> getTopCommodityVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("country") String country);
@@ -763,19 +733,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Commodity - Total Number of volume Count for Continent
     @Query("""
             select
-            	CASE
-            		WHEN commodity = ' ' THEN '0000'
-            		ELSE commodity
-            	END as commodity, SUM(a.stdVol) AS totalVolume, c.description
-            			from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
-            			JOIN CityCountryMaster b ON a.origin = b.code
-            			where a.eventDate >= :startDate and a.eventDate <= :endDate
-            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            			and a.carrier = :carrier
-            			AND b.continent = :continent
-            			group by a.commodity, c.description
-            			order by totalVolume desc
-                LIMIT 5
+            a.commodity, SUM(a.stdVol) AS totalVolume
+            from AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND b.continent = :continent
+            group by a.commodity
+            order by totalVolume desc
+            LIMIT 6
             """)
     List<Object[]> getTopCommodityVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                   @Param("carrier") String carrier, @Param("continent") String continent);
@@ -783,20 +750,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Commodity - Total Number of volume Count for Region
     @Query("""
             select
-            	CASE
-            		WHEN commodity = ' ' THEN '0000'
-            		ELSE commodity
-            	END as commodity, SUM(a.stdVol) AS totalVolume, c.description
-            			from AdvanceFunctionAudit a inner join Commodity c on a.commodity = c.code
-            			JOIN CityCountryMaster b ON a.origin = b.code
-                        JOIN RegionMaster r ON b.continent = r.continent
-            			where a.eventDate >= :startDate and a.eventDate <= :endDate
-            			and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            			and a.carrier = :carrier
-            			AND r.regionName = :region
-            			group by a.commodity, c.description
-            			order by totalVolume desc
-                LIMIT 5
+            a.commodity, SUM(a.stdVol) AS totalVolume
+            from AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.origin = b.code
+            JOIN RegionMaster r ON b.continent = r.continent
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND r.regionName = :region
+            group by a.commodity
+            order by totalVolume desc
+            LIMIT 6
             """)
     List<Object[]> getTopCommodityVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("region") String region);
