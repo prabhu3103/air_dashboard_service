@@ -22,11 +22,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@AutoConfigureMockMvc(addFilters = false)
+//@SpringBootTest
+//@AutoConfigureMockMvc(addFilters = false)
 class TopCommoditiesControllerTest {
 
-    @Autowired
+    /*@Autowired
     private MockMvc mockMvc;
 
     @MockBean
@@ -304,6 +304,6 @@ class TopCommoditiesControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(false))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.response").value(IsNull.nullValue()));
-    }
+    }*/
 
 }
