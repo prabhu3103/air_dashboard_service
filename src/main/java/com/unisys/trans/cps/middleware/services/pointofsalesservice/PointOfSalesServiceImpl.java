@@ -124,30 +124,31 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
                     .collect(Collectors.toMap(
                              array -> ((LocalDateTime) array[0]).format(FORMATTER),
                              array -> (Optional.ofNullable((Number) array[1]).orElse(AirlineDashboardConstants.FLOAT_ZERO))));
-
+            float[] maxPosValue = {Float.MIN_VALUE};
+            float[] totalValue = {AirlineDashboardConstants.FLOAT_ZERO};
             List<POSResponseDTO> posResponseDTOList = LocalDate.parse(startDate, FORMATTER)
                     .datesUntil(LocalDate.parse(endDate, FORMATTER).plusDays(1))
                     .map(date -> {
                         String formattedDate = date.format(FORMATTER);
                         Number value = dataMap.getOrDefault(formattedDate, AirlineDashboardConstants.FLOAT_ZERO);
-                        float floatValue = value.floatValue();
+                        float posValue = value.floatValue();
+                        totalValue[0] += posValue;
                         POSResponseDTO posResponseDTO = new POSResponseDTO();
                         posResponseDTO.setEventDate(formattedDate);
-                        posResponseDTO.setValue(floatValue);
+                        posResponseDTO.setValue(posValue);
                         posResponseDTO.setValueType(valueType);
                         posResponseDTO.setUnit(standardUnit != null ? standardUnit : AirlineDashboardConstants.EMPTY_STRING);
-
+                        if (posValue > maxPosValue[0]) {
+                            maxPosValue[0] = posValue;
+                        }
                         return posResponseDTO;
                     })
                     .sorted(Comparator.comparing(POSResponseDTO::getEventDate))
                     .toList();
 
-            float totalValue = (float) posResponseDTOList.stream()
-                    .mapToDouble(POSResponseDTO::getValue)
-                    .sum();
-
             PointOfSalesResponseDTO pointOfSalesResponseDTO = new PointOfSalesResponseDTO();
-            pointOfSalesResponseDTO.setTotalValue(totalValue);
+            pointOfSalesResponseDTO.setTotalValue(totalValue[0]);
+            pointOfSalesResponseDTO.setMaxValue(maxPosValue[0]);
             pointOfSalesResponseDTO.setYoyData(AirlineDashboardConstants.DEFAULT_NEGATIVE_VALUE);
             pointOfSalesResponseDTO.setMomData(AirlineDashboardConstants.DEFAULT_VALUE);
             pointOfSalesResponseDTO.setPosList(posResponseDTOList);
