@@ -31,21 +31,16 @@ public class TopAccountsController {
 
     @GetMapping(value = "/top-accounts", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    ResponseEntity<List<AgentResponseDTO>> getTopAccounts(
+    ResponseEntity<AgentResponseDTO> getTopAccounts(
             @AuthenticationPrincipal Jwt principal,
             @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
         log.info("Airline Strategic Dashboard Request Payload: {} ", airlineDashboardRequest);
-
-        ResponseEntity<List<AgentResponseDTO>> response = new ResponseEntity<>();
-        List<AgentResponseDTO> agentResponseDTOS = new ArrayList<>();
+        ResponseEntity<AgentResponseDTO> response = new ResponseEntity<>();
 
         try {
             AgentResponseDTO responseDTO = topAgentsService.getTopAccounts(airlineDashboardRequest);
-            if(responseDTO.getNewAccount()!=0){
-                agentResponseDTOS.add(responseDTO);
-            }
-            response.setResponse(agentResponseDTOS);
+            response.setResponse(responseDTO);
             response.setSuccessFlag(true);
 
         } catch (CpsException e) {
