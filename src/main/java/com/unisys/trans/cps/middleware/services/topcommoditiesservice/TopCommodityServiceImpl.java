@@ -315,7 +315,7 @@ public class TopCommodityServiceImpl implements TopCommodityService{
 
         //Merging Empty String commodity count with commodity=0000 and removing commodity=000
         if(topObjects != null && !topObjects.isEmpty()) {
-            int addCount = 0;
+            float addCount = 0.0f;
             for (Object[] array : topObjects) {
                 String str = (String) array[0];
                 if(!str.equalsIgnoreCase("0000")) {
@@ -324,11 +324,11 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                         result1.put((String) array[0], value);
                     }else{
                         Number value = (Number) array[1];
-                        addCount += value.intValue();
+                        addCount += value.floatValue();
                     }
                 }else{
                     Number value = (Number) array[1];
-                    addCount += value.intValue();
+                    addCount += value.floatValue();
                 }
             }
             result1.put(" ", addCount);
