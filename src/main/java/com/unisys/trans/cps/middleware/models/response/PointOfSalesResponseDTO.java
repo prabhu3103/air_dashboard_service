@@ -9,6 +9,8 @@ public class PointOfSalesResponseDTO {
 
     private float totalValue;
 
+    private float maxValue;
+
     private float momData;
 
     private float yoyData;
