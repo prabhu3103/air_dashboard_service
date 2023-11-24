@@ -1369,7 +1369,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                              
                              SELECT
                                ac.category,
-                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.VOLUME) AS totalValue
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDVOLUME) AS totalValue
                              FROM AllCategories ac
                              LEFT JOIN (
                                SELECT
@@ -1412,7 +1412,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                              
                              SELECT
                                ac.category,
-                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.VOLUME) AS totalValue
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDVOLUME) AS totalValue
                              FROM AllCategories ac
                              LEFT JOIN (
                                SELECT
@@ -1456,7 +1456,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                              
                              SELECT
                                ac.category,
-                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.VOLUME) AS totalValue
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDVOLUME) AS totalValue
                              FROM AllCategories ac
                              LEFT JOIN (
                                SELECT
@@ -1499,7 +1499,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                              
                              SELECT
                                ac.category,
-                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.VOLUME) AS totalValue
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDVOLUME) AS totalValue
                              FROM AllCategories ac
                              LEFT JOIN (
                                SELECT
@@ -1543,7 +1543,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                              
                              SELECT
                                ac.category,
-                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.WEIGHT) AS totalValue
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDWEIGHT) AS totalValue
                              FROM AllCategories ac
                              LEFT JOIN (
                                SELECT
@@ -1586,7 +1586,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                              
                              SELECT
                                ac.category,
-                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.WEIGHT) AS totalValue
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDWEIGHT) AS totalValue
                              FROM AllCategories ac
                              LEFT JOIN (
                                SELECT
@@ -1629,7 +1629,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                              
                              SELECT
                                ac.category,
-                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.WEIGHT) AS totalValue
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDWEIGHT) AS totalValue
                              FROM AllCategories ac
                              LEFT JOIN (
                                SELECT
@@ -1672,7 +1672,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                              
                              SELECT
                                ac.category,
-                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.WEIGHT) AS totalValue
+                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDWEIGHT) AS totalValue
                              FROM AllCategories ac
                              LEFT JOIN (
                                SELECT
