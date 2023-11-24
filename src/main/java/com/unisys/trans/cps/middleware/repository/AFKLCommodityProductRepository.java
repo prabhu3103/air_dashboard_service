@@ -12,8 +12,8 @@ import java.util.List;
 public interface AFKLCommodityProductRepository extends JpaRepository<AFKLCommodityProduct, String> {
 
     @Query("""
-           select c.commodity, c.productDesc from AFKLCommodityProduct c
-           where c.commodity IN :codes
+           select c.commodityCode, c.commodity from AFKLCommodityProduct c
+           where c.commodityCode IN :codes
            and c.carrier = :carrier
            order by c.commodity
            LIMIT 1
