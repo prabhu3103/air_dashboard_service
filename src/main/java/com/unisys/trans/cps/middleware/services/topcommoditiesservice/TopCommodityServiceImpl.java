@@ -62,7 +62,6 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                             for (Object[] array : topObjects)
                                 codes.add((String) array[0]);
                         }
-                        log.info("codes :=" + codes);
                         if(airlineDashboardRequest.getCarrier().equalsIgnoreCase(AirlineDashboardConstants.AFKL_CARRIER))
                             topObjects1 = afklCommodityProductRepository.getTopAFKLCommodityDescription(codes, airlineDashboardRequest.getCarrier());
                         else
@@ -251,7 +250,8 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                     addCount += value.intValue();
                 }
             }
-            result1.put(" ", addCount);
+            if(addCount > 0)
+                result1.put(" ", addCount);
         }
 
         // Sorting the LinkedHashMap by values in descending order
@@ -266,7 +266,7 @@ public class TopCommodityServiceImpl implements TopCommodityService{
 
         }
 
-        if(topObjects1 != null && !topObjects.isEmpty()) {
+        if(topObjects1 != null && !topObjects1.isEmpty()) {
             for (Object[] array : topObjects1)
                 result2.put((String) array[0], (String) array[1]);
         }
@@ -331,7 +331,8 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                     addCount += value.floatValue();
                 }
             }
-            result1.put(" ", addCount);
+            if(addCount > 0)
+                result1.put(" ", addCount);
         }
 
         // Sorting the LinkedHashMap by values in descending order
@@ -346,7 +347,7 @@ public class TopCommodityServiceImpl implements TopCommodityService{
 
         }
 
-        if(topObjects1 != null && !topObjects.isEmpty()) {
+        if(topObjects1 != null && !topObjects1.isEmpty()) {
             for (Object[] array : topObjects1)
                 result2.put((String) array[0], (String) array[1]);
         }
