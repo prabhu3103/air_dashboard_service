@@ -233,7 +233,7 @@ public class TopCommodityServiceImpl implements TopCommodityService{
         Map<String, String> result2 = new LinkedHashMap<>();
 
         //Merging Empty String commodity count with commodity=0000 and removing commodity=000
-        if(topObjects != null && !topObjects.isEmpty() && !topObjects1.isEmpty()) {
+        if(topObjects != null && !topObjects.isEmpty()) {
             int addCount = 0;
             for (Object[] array : topObjects) {
                 String str = (String) array[0];

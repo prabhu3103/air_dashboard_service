@@ -2,7 +2,9 @@ package com.unisys.trans.cps.middleware.controllers;
 
 import com.unisys.trans.cps.middleware.exception.CpsException;
 import com.unisys.trans.cps.middleware.models.entity.AirlineHostCountryMaster;
+import com.unisys.trans.cps.middleware.repository.AFKLCommodityProductRepository;
 import com.unisys.trans.cps.middleware.repository.AdvanceFunctionAuditRepository;
+import com.unisys.trans.cps.middleware.repository.CommodityRepository;
 import com.unisys.trans.cps.middleware.services.AirlineHostCountryMasterService;
 import org.hamcrest.core.IsNull;
 import org.junit.jupiter.api.Test;
@@ -22,22 +24,29 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-//@SpringBootTest
-//@AutoConfigureMockMvc(addFilters = false)
+@SpringBootTest
+@AutoConfigureMockMvc(addFilters = false)
 class TopCommoditiesControllerTest {
 
-    /*@Autowired
+    @Autowired
     private MockMvc mockMvc;
 
     @MockBean
     private AdvanceFunctionAuditRepository advanceFunctionAuditRepository;
 
     @MockBean
+    private CommodityRepository commodityRepository;
+
+    @MockBean
+    private AFKLCommodityProductRepository afklCommodityProductRepository;
+
+
+    @MockBean
     private AirlineHostCountryMasterService aAirlineHostCountryMasterService;
 
     @Test
     void getTopCommodityBookingAirportTest() throws Exception{
-        Object[] mockObject = {"0000", 29, "GENERAL FREIGHT OF ALL KINDS", "BookingCount", null, 1.1, 1.1};
+        Object[] mockObject = {"0000", 29, "BookingCount", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityBookingAirport(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -55,8 +64,48 @@ class TopCommoditiesControllerTest {
     }
 
     @Test
+    void getTopCommodityDescriptionTest() throws Exception{
+        Object[] mockObject = {"0007", "MIXED PRODUCE"};
+        List<Object[]> mockObjects = new ArrayList<>();
+        mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
+        Mockito.when(afklCommodityProductRepository.getTopAFKLCommodityDescription (any(), any())).thenReturn(mockObjects);
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-commodities")
+                        .queryParam("startDate", "2010-01-01")
+                        .queryParam("endDate",  "2023-01-01")
+                        .queryParam("typeOfInfo","bookingcount")
+                        .queryParam("areaBy","airport")
+                        .queryParam("filterValue","AKL")
+                        .queryParam("carrier","NZ")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+    }
+
+    @Test
+    void getTopAFKLCommodityDescriptionTest() throws Exception{
+        Object[] mockObject = {"ACFT", "AIRCRAFT PARTS"};
+        List<Object[]> mockObjects = new ArrayList<>();
+        mockObjects.add(mockObject);
+        when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
+        Mockito.when(advanceFunctionAuditRepository.getTopCommodityVolumeRegion(any(), any(), any(), any())).thenReturn(mockObjects);
+        mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-commodities")
+                        .queryParam("startDate", "2010-01-01")
+                        .queryParam("endDate",  "2023-01-01")
+                        .queryParam("typeOfInfo","bookingcount")
+                        .queryParam("areaBy","airport")
+                        .queryParam("filterValue","AMS")
+                        .queryParam("carrier","AF-KL")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+    }
+
+    @Test
     void getTopCommodityBookingCountryTest() throws Exception{
-        Object[] mockObject = {"0000", 29, "GENERAL FREIGHT OF ALL KINDS", "BookingCount", null, 1.1, 1.1};
+        Object[] mockObject = {"0000", 29, "BookingCount", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityBookingCountry(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -94,7 +143,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityBookingRegionTest() throws Exception{
-        Object[] mockObject = {"0000", 29, "GENERAL FREIGHT OF ALL KINDS", "BookingCount", null, 1.1, 1.1};
+        Object[] mockObject = {"0000", 29, "BookingCount", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityBookingRegion(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -113,7 +162,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityWeightAirportTest() throws Exception{
-        Object[] mockObject = {"0000", 9508.00, "CONSOLIDATED", "weight", null, 1.1, 1.1};
+        Object[] mockObject = {"0000", 9508.00, "weight", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
@@ -133,7 +182,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityWeightCountryTest() throws Exception{
-        Object[] mockObject = {"0000", 9508.00, "CONSOLIDATED", "weight", null, 1.1, 1.1};
+        Object[] mockObject = {"0000", 9508.00, "weight", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
@@ -153,7 +202,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityWeightContinentTest() throws Exception{
-        Object[] mockObject = {"0000", 9508.00, "CONSOLIDATED", "weight", null, 1.1, 1.1};
+        Object[] mockObject = {"0000", 9508.00, "weight", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
@@ -173,7 +222,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityWeightRegionTest() throws Exception{
-        Object[] mockObject = {"0000", 9508.00, "CONSOLIDATED", "weight", null, 1.1, 1.1};
+        Object[] mockObject = {"0000", 9508.00, "weight", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
@@ -193,7 +242,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityVolumeAirportTest() throws Exception{
-        Object[] mockObject = {"0000", 566.92, "CONSOLIDATED", "volume", null, 1.1, 1.1};
+        Object[] mockObject = {"0000", 566.92, "volume", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
@@ -213,7 +262,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityVolumeCountryTest() throws Exception{
-        Object[] mockObject = {"0000", 566.92, "CONSOLIDATED", "volume", null, 1.1, 1.1};
+        Object[] mockObject = {"0000", 566.92, "volume", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
@@ -233,7 +282,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityVolumeContinentTest() throws Exception{
-        Object[] mockObject = {"0000", 566.92, "CONSOLIDATED", "volume", null, 1.1, 1.1};
+        Object[] mockObject = {"0000", 566.92, "volume", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
@@ -253,7 +302,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityVolumeRegionTest() throws Exception{
-        Object[] mockObject = {"0000", 566.92, "CONSOLIDATED", "volume", null, 1.1, 1.1};
+        Object[] mockObject = {"0000", 566.92, "volume", null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
@@ -304,6 +353,6 @@ class TopCommoditiesControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(false))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.response").value(IsNull.nullValue()));
-    }*/
+    }
 
 }
