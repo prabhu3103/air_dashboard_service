@@ -38,7 +38,7 @@ class TopAccountsControllerTest{
     @Test
     void getTopAccountsBookingAirportTest() throws Exception {
 
-        Object[] mockObject = {10, "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
@@ -58,7 +58,7 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsBookingCountryTest() throws Exception {
-        Object[] mockObject = {10, "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
@@ -78,7 +78,7 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsBookingContinentTest() throws Exception {
-        Object[] mockObject = {10, "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
@@ -98,7 +98,7 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsBookingRegionTest() throws Exception {
-        Object[] mockObject = {10, "BookingCount", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
@@ -118,7 +118,7 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsVolumeAirportTest() throws Exception {
-        Object[] mockObject = {10, "volume", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
@@ -139,7 +139,7 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsVolumeCountryTest() throws Exception {
-        Object[] mockObject = {10, "volume", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
@@ -160,7 +160,7 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsVolumeContinentTest() throws Exception {
-        Object[] mockObject = {10, "volume", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
@@ -181,7 +181,7 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsVolumeRegionTest() throws Exception {
-        Object[] mockObject = {10, "volume", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
@@ -202,7 +202,7 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsWeightAirportTest() throws Exception {
-        Object[] mockObject = {10, "weight", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
@@ -223,7 +223,7 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsWeightCountryTest() throws Exception {
-        Object[] mockObject = {10, "weight", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
@@ -244,7 +244,7 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsWeightContinentTest() throws Exception {
-        Object[] mockObject = {10, "weight", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
@@ -265,7 +265,7 @@ class TopAccountsControllerTest{
     }
     @Test
     void getTopAccountsWeightRegionTest() throws Exception {
-        Object[] mockObject = {10, "weight", "BOM0677I", 2, null, 1.1, 1.1};
+        Object[] mockObject = {10, "BOM0677I", 2, null, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
