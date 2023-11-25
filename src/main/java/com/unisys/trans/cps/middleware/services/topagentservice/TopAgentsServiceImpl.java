@@ -129,8 +129,8 @@ public class TopAgentsServiceImpl implements TopAgentsService{
         if(topObjects != null) {
             for (Object[] array : topObjects) {
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
-                topAgentsResponseDTO.setAccNo((String) array[2]);
-                Number value = (Number) array[3];
+                topAgentsResponseDTO.setAccNo((String) array[1]);
+                Number value = (Number) array[2];
                 topAgentsResponseDTO.setValue(value.floatValue());
                 topAgentsResponseDTO.setValueType(valueType);
                 topAgentsResponseDTO.setUnit(stdUnit);
@@ -150,8 +150,8 @@ public class TopAgentsServiceImpl implements TopAgentsService{
             Object[] newAccounts = advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(LocalDateTime.now());
             for (Object[] array : topObjects) {
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
-                topAgentsResponseDTO.setAccNo((String) array[2]);
-                Number value = (Number) array[3];
+                topAgentsResponseDTO.setAccNo((String) array[1]);
+                Number value = (Number) array[2];
                 topAgentsResponseDTO.setValue(value.floatValue());
                 topAgentsResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 topAgentsResponseDTO.setMomData(1.1f);
