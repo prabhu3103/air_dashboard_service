@@ -230,41 +230,43 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Booking Count for Country
     @Query("""
-            select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b
+            where a.origin = b.code
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and a.origin in(select c.code from CityCountryMaster c where c.countryCode=:origin)
+            and b.countryCode = :country
             group by a.carrier, a.accNo order by totalNoOfBookingCount desc LIMIT 5""")
 
     List<Object[]> getTopAgentsBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                              @Param("carrier") String carrier, @Param("origin") String origin);
+                                              @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Agents - Total Number of Booking Count for Continent
     @Query("""
-            select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b
+            where a.origin = b.code
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and a.origin in(select c.code from CityCountryMaster c where c.continent=:origin)
+            and b.continent = :continent
             group by a.carrier, a.accNo order by totalNoOfBookingCount desc LIMIT 5""")
 
     List<Object[]> getTopAgentsBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                @Param("carrier") String carrier, @Param("origin") String origin);
+                                                @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Agents - Total Number of Booking Count for Region
     @Query("""
             select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-            where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
+            where a.origin = b.code and b.continent = c.continent
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where
-            b.continent in(select c.continent from RegionMaster c where c.regionName= :origin))
+            and c.regionName = :region
             group by a.carrier, a.accNo order by totalNoOfBookingCount desc LIMIT 5""")
 
     List<Object[]> getTopAgentsBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                             @Param("carrier") String carrier, @Param("origin") String origin);
+                                             @Param("carrier") String carrier, @Param("region") String region);
 
     //Top Agents - Total Number of Volume for AirPort
     @Query("""
@@ -281,41 +283,43 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Volume for Country
     @Query("""
-            select a.carrier, a.accNo, SUM(a.stdVol)  as totalNoOfVolumeCount from AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            select a.carrier, a.accNo, SUM(a.stdVol)  as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b
+            where a.origin = b.code
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and a.origin in(select c.code from CityCountryMaster c where c.countryCode=:origin)
+            and b.countryCode = :country
             group by a.carrier, a.accNo order by totalNoOfVolumeCount desc LIMIT 5""")
 
     List<Object[]> getTopAgentsVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                             @Param("carrier") String carrier, @Param("origin") String origin);
+                                             @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Agents - Total Number of Volume for Continent
     @Query("""
-            select a.carrier, a.accNo, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            select a.carrier, a.accNo, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b
+            where a.origin = b.code
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and a.origin in(select c.code from CityCountryMaster c where c.continent=:origin)
+            and b.continent = :continent
             group by a.carrier, a.accNo order by totalNoOfVolumeCount desc LIMIT 5""")
 
     List<Object[]> getTopAgentsVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                               @Param("carrier") String carrier, @Param("origin") String origin);
+                                               @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Agents - Total Number of Volume for Region
     @Query("""
             select  a.carrier, a.accNo, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-            where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
+            where a.origin = b.code and b.continent = c.continent
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where
-            b.continent in(select c.continent from RegionMaster c where c.regionName= :origin))
+            and c.regionName = :region
             group by a.carrier, a.accNo order by totalNoOfVolumeCount desc LIMIT 5""")
 
     List<Object[]> getTopAgentsVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                            @Param("carrier") String carrier, @Param("origin") String origin);
+                                            @Param("carrier") String carrier, @Param("region") String region);
 
 
     //Top Agents - Total Number of Weight for AirPort
@@ -333,41 +337,43 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Weight for Country
     @Query("""
-            select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b
+            where a.origin = b.code
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and a.origin in(select c.code from CityCountryMaster c where c.countryCode=:origin)
+            and b.countryCode = :country
             group by a.carrier, a.accNo order by totalNoOfWeightCount desc LIMIT 5""")
 
     List<Object[]> getTopAgentsWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                             @Param("carrier") String carrier, @Param("origin") String origin);
+                                             @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Agents - Total Number of Weight for Continent
     @Query("""
-            select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b
+            where a.origin = b.code
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and a.origin in(select c.code from CityCountryMaster c where c.continent=:origin)
+            and b.continent = :continent
             group by a.carrier, a.accNo order by totalNoOfWeightCount desc LIMIT 5""")
 
     List<Object[]> getTopAgentsWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                               @Param("carrier") String carrier, @Param("origin") String origin);
+                                               @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Agents - Total Number of Weight for Region
     @Query("""
             select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-            where a.origin = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
+            where a.origin = b.code and b.continent = c.continent
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and a.origin in(select b.code from CityCountryMaster b where
-            b.continent in(select c.continent from RegionMaster c where c.regionName = :origin))
+            and c.regionName = :region
             group by a.carrier, a.accNo order by totalNoOfWeightCount desc LIMIT 5""")
 
     List<Object[]> getTopAgentsWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                            @Param("carrier") String carrier, @Param("origin") String origin);
+                                            @Param("carrier") String carrier, @Param("region") String region);
 
     //Point Of Sales - Total Number of Booking Count for Airport
     @Query("""
@@ -1256,17 +1262,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                               and a.CARRIER = :carrier
-                              and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE=:origin)
+                              and b.COUNTRYCODE = :country
                               ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
                              ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                             @Param("carrier") String carrier, @Param("origin") String origin);
+                                                             @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Domestic and International - Total Number of Booking Count for Continent
@@ -1300,17 +1306,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                               and a.CARRIER = :carrier
-                              and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE b.CONTINENT=:origin)
+                              and b.CONTINENT=:continent
                               ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
                              ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                               @Param("carrier") String carrier, @Param("origin") String origin);
+                                                               @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Domestic and International - Total Number of Booking Count for Region
     @Query(value ="""
@@ -1343,18 +1349,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                               and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
-                               and a.ORG IN (SELECT b.CODE FROM  CITYCOUNTRYMASTER b WHERE
-                               b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))
+                               and e.REGIONNAME= :region
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
                              ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                            @Param("carrier") String carrier, @Param("origin") String origin);
+                                                            @Param("carrier") String carrier, @Param("region") String region);
 
     //Top Domestic and International - Total Number of Volume for AirPort
     @Query(value ="""
@@ -1430,17 +1436,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b  WHERE a.ORG = b.CODE and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
-                               and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE = :origin)
+                              and b.COUNTRYCODE = :country
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
                              ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                            @Param("carrier") String carrier, @Param("origin") String origin);
+                                                            @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Domestic and International - Total Number of Volume for Continent
@@ -1474,17 +1480,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
-                               and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT = :origin)
+                               and b.CONTINENT=:continent
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
                              ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                              @Param("carrier") String carrier, @Param("origin") String origin);
+                                                              @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Domestic and International - Total Number of Volume for Region
     @Query(value ="""
@@ -1517,18 +1523,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE a.ORG = b.CODE and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
-                               and a.ORG IN(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE
-                               b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))
+                               and e.REGIONNAME= :region
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
                              ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                           @Param("carrier") String carrier, @Param("origin") String origin);
+                                                           @Param("carrier") String carrier, @Param("region") String region);
 
     //Top Domestic and International - Total Number of Weight for AirPort
     @Query(value ="""
@@ -1604,17 +1609,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
-                               and a.ORG in(SELECT B.CODE FROM CITYCOUNTRYMASTER b WHERE b.COUNTRYCODE = :origin)
+                               and b.COUNTRYCODE = :country
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
                              ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                            @Param("carrier") String carrier, @Param("origin") String origin);
+                                                            @Param("carrier") String carrier, @Param("country") String country);
 
     //Top Domestic and International - Total Number of Weight for Continent
     @Query(value ="""
@@ -1647,17 +1652,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a , CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
-                               and a.ORG in(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE b.CONTINENT=:origin)
+                               and b.CONTINENT=:continent
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
                              ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                              @Param("carrier") String carrier, @Param("origin") String origin);
+                                                              @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Domestic and International - Total Number of Weight for Region
     @Query(value ="""
@@ -1690,18 +1695,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    ) THEN 'true'
                                    ELSE 'false'
                                  END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                               FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE a.ORG = b.CODE and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
                                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                                and a.CARRIER = :carrier
-                               and a.ORG IN(SELECT b.CODE FROM CITYCOUNTRYMASTER b WHERE
-                               b.CONTINENT IN(SELECT e.CONTINENT FROM REGIONMASTER e WHERE e.REGIONNAME= :origin))
+                               and e.REGIONNAME= :region
                                ) AS CategoryCTE
                              ON ac.category = CategoryCTE.category
                              GROUP BY ac.category
                              ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                           @Param("carrier") String carrier, @Param("origin") String origin);
+                                                           @Param("carrier") String carrier, @Param("region") String region);
 
 
     @Query("""
