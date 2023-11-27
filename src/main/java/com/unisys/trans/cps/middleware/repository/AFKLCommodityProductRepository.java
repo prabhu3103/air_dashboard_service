@@ -11,13 +11,13 @@ import java.util.List;
 @Repository
 public interface AFKLCommodityProductRepository extends JpaRepository<AFKLCommodityProduct, String> {
 
-    @Query("""
-           select c.commodityCode, c.commodity from AFKLCommodityProduct c
-           where c.commodityCode IN :codes
-           and c.carrier = :carrier
-           order by c.commodity
-           LIMIT 1
-           """)
+    @Query("""         
+            SELECT DISTINCT c.commodityCode, c.commodity
+            FROM AFKLCommodityProduct c
+            WHERE c.commodityCode IN :codes
+            AND c.carrier = :carrier
+            ORDER BY c.commodityCode
+            """)
     List<Object[]> getTopAFKLCommodityDescription(@Param("codes") List<String> codes, @Param("carrier") String carrier);
 
 
