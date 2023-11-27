@@ -779,7 +779,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                     ) s left join
                         (select a.productCode, COUNT(*) AS TOPPRODUCTS
                                     from   AdvanceFunctionAudit a
-                                    where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate) 
+                                    where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
                                     and a.org=:originAirport
                                     and a.carrier=:carrier
                                     group by a.productCode
@@ -787,7 +787,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                         			on s.productCode = m.productCode left join
             			(select a.productCode, COUNT(*) AS TOPPRODUCTS
                                     from   AdvanceFunctionAudit a
-                                    where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1) 
+                                    where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
                                     and a.org=:originAirport
                                     and a.carrier=:carrier
                                     group by a.productCode
@@ -810,7 +810,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      				and a.carrier=:carrier
                                      				and a.org = b.code
                                      				and b.countryCode = :country
-                                     				group by a.productCode,p.description				
+                                     				group by a.productCode,p.description
                                                              ) s left join
                                                  (select a.productCode, COUNT(*) AS TOPPRODUCTS
                                                              from   AdvanceFunctionAudit a, CityCountryMaster b
@@ -847,7 +847,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      				and a.org = b.code
                                      				and b.continent = :continent
                                      				and a.carrier=:carrier
-                                     				group by a.productCode,p.description								
+                                     				group by a.productCode,p.description
                                                              ) s left join
                                                  (select a.productCode, COUNT(*) AS TOPPRODUCTS
                                                              from   AdvanceFunctionAudit a,  CityCountryMaster b
@@ -885,7 +885,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             				and b.continent = c.continent
             				and c.regionName = :region
             				and a.carrier=:carrier
-            				group by a.productCode,p.description								
+            				group by a.productCode,p.description
                                     ) s left join
                         (select a.productCode, COUNT(*) AS TOPPRODUCTS
                                     from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c
@@ -923,8 +923,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      				and a.productCode=p.productType
                                      				and a.carrier=:carrier
                                      				and a.org=:originAirport
-                                     				group by a.productCode,p.description								
-                                                             ) s left join
+                                     				group by a.productCode,p.description                                                             ) s left join
                                                  (select a.productCode, SUM(a.stdWeight) AS totalWeight
                                                              from   AdvanceFunctionAudit a
                                                              where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
@@ -959,7 +958,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      				and a.carrier = :carrier
                                      				and a.org = b.code
                                      				and b.countryCode = :country
-                                     				group by a.productCode,p.description											
+                                     				group by a.productCode,p.description
                                                              ) s left join
                                                  (select a.productCode, SUM(a.stdWeight) AS totalWeight
                                                              from   AdvanceFunctionAudit a,CityCountryMaster b
@@ -997,7 +996,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      				and a.carrier = :carrier
                                      				and a.org = b.code
                                                     and b.continent = :continent
-                                     				group by a.productCode,p.description											
+                                     				group by a.productCode,p.description
                                                              ) s left join
                                                  (select a.productCode, SUM(a.stdWeight) AS totalWeight
                                                              from   AdvanceFunctionAudit a,CityCountryMaster b
@@ -1038,7 +1037,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      				and a.org = b.code
                                                     and b.continent = c.continent
                                                     and c.regionName = :region
-                                     				group by a.productCode,p.description											
+                                     				group by a.productCode,p.description
                                                              ) s left join
                                                  (select a.productCode, SUM(a.stdWeight) AS totalWeight
                                                              from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c
@@ -1077,7 +1076,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      				and a.productCode=p.productType
                                      				and a.carrier=:carrier
                                      				and a.org=:originAirport
-                                     				group by a.productCode,p.description								
+                                     				group by a.productCode,p.description
                                                              ) s left join
                                                  (select a.productCode, SUM(a.stdVolume) AS totalVolume
                                                              from   AdvanceFunctionAudit a
@@ -1113,8 +1112,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                      				and a.carrier = :carrier
                                      				and a.org = b.code
                                      				and b.countryCode = :country
-                                     				group by a.productCode,p.description											
-                                                             ) s left join
+                                     				group by a.productCode,p.description                                                             ) s left join
                                                  (select a.productCode, SUM(a.stdVolume) AS totalVolume
                                                              from   AdvanceFunctionAudit a, CityCountryMaster b
                                                              where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
@@ -1152,8 +1150,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             				and a.carrier = :carrier
             				and a.org = b.code
                             and b.continent = :continent
-            				group by a.productCode,p.description											
-                                    ) s left join
+            				group by a.productCode,p.description) s left join
                         (select a.productCode, SUM(a.stdVolume) AS totalVolume
                                     from   AdvanceFunctionAudit a, CityCountryMaster b
                                     where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
