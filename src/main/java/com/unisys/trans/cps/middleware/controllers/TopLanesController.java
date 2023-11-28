@@ -30,8 +30,6 @@ public class TopLanesController {
             @AuthenticationPrincipal Jwt principal,
             @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
-        log.info("getTopLanes Request Payload: {} ", airlineDashboardRequest);
-
         ResponseEntity<List<TopLanesResponseDTO>> response = new ResponseEntity<>();
 
         try {

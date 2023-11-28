@@ -36,8 +36,6 @@ public class DomesticInternationalController {
             @AuthenticationPrincipal Jwt principal,
             @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
-        log.info("Airline Strategic Dashboard Request Payload: {} ", airlineDashboardRequest);
-
         ResponseEntity<List<DomesticInternationalResponseDTO>> response = new ResponseEntity<>();
         List<DomesticInternationalResponseDTO> domesticInternationalResponseDTOS = new ArrayList<>();
 
