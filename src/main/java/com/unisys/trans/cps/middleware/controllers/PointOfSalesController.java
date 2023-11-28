@@ -32,8 +32,6 @@ public class PointOfSalesController {
             @AuthenticationPrincipal Jwt principal,
             @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
-        log.info("getPointOfSales Request Payload: {} ", airlineDashboardRequest);
-
         ResponseEntity <List<PointOfSalesResponseDTO>> response = new ResponseEntity<>();
 
         try {

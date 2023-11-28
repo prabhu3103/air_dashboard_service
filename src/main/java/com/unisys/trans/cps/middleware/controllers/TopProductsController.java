@@ -35,8 +35,6 @@ public class TopProductsController {
             @AuthenticationPrincipal Jwt principal,
             @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
-        log.info("getTopProducts Request Payload: {} ", airlineDashboardRequest);
-
         ResponseEntity<List<TopProductResponseDTO>> response = new ResponseEntity<>();
 
         try {

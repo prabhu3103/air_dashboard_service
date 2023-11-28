@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -35,7 +34,6 @@ public class TopAccountsController {
             @AuthenticationPrincipal Jwt principal,
             @Valid AirlineDashboardRequest airlineDashboardRequest) {
 
-        log.info("Airline Strategic Dashboard Request Payload: {} ", airlineDashboardRequest);
         ResponseEntity<AgentResponseDTO> response = new ResponseEntity<>();
 
         try {
