@@ -30,4 +30,7 @@ public class BranchAccount implements Serializable {
     @Column(name = "ACTIONDATE")
     private LocalDateTime actionDate;
 
+    @Column(name = "STATUS")
+    private String status;
+
 }
