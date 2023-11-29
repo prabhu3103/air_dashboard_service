@@ -32,7 +32,7 @@ spring:
       maxLifetime: 180000
       maximum-pool-size: 10
       minimum-idle: 2
-    password: cps
+    password: VishJyoti@1823
     url: jdbc:sqlserver://localhost:1433;databaseName=CPS;encrypt=true;trustServerCertificate=true;
     username: cps
   jpa:
@@ -50,7 +50,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/CPS_realm
+          issuer-uri: http://localhost:8080/realms/cpsrealm
+
 
 # swagger-ui custom path
 springdoc:
