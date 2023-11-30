@@ -1602,42 +1602,43 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Volume for Region
     @Query(value ="""
             WITH AllCategories AS (
-                               SELECT 'false' AS category
-                               UNION ALL
-                               SELECT 'true'
-                             )
-                             
-                             SELECT
-                               ac.category,
-                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDVOLUME) AS totalValue
-                             FROM AllCategories ac
-                             LEFT JOIN (
-                               SELECT
-                                 a.*,
-                                 (CASE
-                                   WHEN a.ORG NOT IN (
-                                     SELECT b.CODE
-                                     FROM CITYCOUNTRYMASTER b
-                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
-                                     WHERE c.CARRIERCODE = :carrier
-                                   ) OR a.DEST NOT IN (
-                                     SELECT b.CODE
-                                     FROM CITYCOUNTRYMASTER b
-                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
-                                     WHERE c.CARRIERCODE = :carrier
-                                   ) THEN 'true'
-                                   ELSE 'false'
-                                 END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE a.ORG = b.CODE and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                               and a.CARRIER = :carrier
-                               and e.REGIONNAME= :region
-                               ) AS CategoryCTE
-                             ON ac.category = CategoryCTE.category
-                             GROUP BY ac.category
-                             ORDER BY ac.category""",nativeQuery = true)
+                                           SELECT 'false' AS category
+                                           UNION ALL
+                                           SELECT 'true'
+                                         )
+                                        
+                                         SELECT
+                                           ac.category,
+                                           COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDVOLUME) AS totalValue
+                                         FROM AllCategories ac
+                                         LEFT JOIN (
+                                           SELECT
+                                             a.*,
+                                             (CASE
+                                               WHEN a.ORG NOT IN (
+                                                 SELECT b.CODE
+                                                 FROM CITYCOUNTRYMASTER b
+                                                 JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                                 JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
+                                                 WHERE c.CARRIERCODE = :carrier
+                                               ) OR a.DEST NOT IN (
+                                                 SELECT b.CODE
+                                                 FROM CITYCOUNTRYMASTER b
+                                                 JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                                 JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
+                                                 WHERE c.CARRIERCODE = :carrier
+                                               ) THEN 'true'
+                                               ELSE 'false'
+                                             END) AS category
+                                           FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                                           and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                                           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                                           and a.CARRIER = :carrier
+                                           and e.REGIONNAME= :region
+                                           ) AS CategoryCTE
+                                         ON ac.category = CategoryCTE.category
+                                         GROUP BY ac.category
+                                         ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                            @Param("carrier") String carrier, @Param("region") String region);
@@ -1774,42 +1775,43 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Weight for Region
     @Query(value ="""
             WITH AllCategories AS (
-                               SELECT 'false' AS category
-                               UNION ALL
-                               SELECT 'true'
-                             )
-                             
-                             SELECT
-                               ac.category,
-                               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDWEIGHT) AS totalValue
-                             FROM AllCategories ac
-                             LEFT JOIN (
-                               SELECT
-                                 a.*,
-                                 (CASE
-                                   WHEN a.ORG NOT IN (
-                                     SELECT b.CODE
-                                     FROM CITYCOUNTRYMASTER b
-                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
-                                     WHERE c.CARRIERCODE = :carrier
-                                   ) OR a.DEST NOT IN (
-                                     SELECT b.CODE
-                                     FROM CITYCOUNTRYMASTER b
-                                     JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-                                     JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
-                                     WHERE c.CARRIERCODE = :carrier
-                                   ) THEN 'true'
-                                   ELSE 'false'
-                                 END) AS category
-                               FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE a.ORG = b.CODE and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                               and a.CARRIER = :carrier
-                               and e.REGIONNAME= :region
-                               ) AS CategoryCTE
-                             ON ac.category = CategoryCTE.category
-                             GROUP BY ac.category
-                             ORDER BY ac.category""",nativeQuery = true)
+                                           SELECT 'false' AS category
+                                           UNION ALL
+                                           SELECT 'true'
+                                         )
+                                        
+                                         SELECT
+                                           ac.category,
+                                           COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDWEIGHT) AS totalValue
+                                         FROM AllCategories ac
+                                         LEFT JOIN (
+                                           SELECT
+                                             a.*,
+                                             (CASE
+                                               WHEN a.ORG NOT IN (
+                                                 SELECT b.CODE
+                                                 FROM CITYCOUNTRYMASTER b
+                                                 JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                                 JOIN ADVANCEFUNCTIONAUDIT a ON a.ORG = b.CODE
+                                                 WHERE c.CARRIERCODE = :carrier
+                                               ) OR a.DEST NOT IN (
+                                                 SELECT b.CODE
+                                                 FROM CITYCOUNTRYMASTER b
+                                                 JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                                 JOIN ADVANCEFUNCTIONAUDIT a ON a.DEST = b.CODE
+                                                 WHERE c.CARRIERCODE = :carrier
+                                               ) THEN 'true'
+                                               ELSE 'false'
+                                             END) AS category
+                                           FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                                           and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                                           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                                           and a.CARRIER = :carrier
+                                           and e.REGIONNAME= :region
+                                           ) AS CategoryCTE
+                                         ON ac.category = CategoryCTE.category
+                                         GROUP BY ac.category
+                                         ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                            @Param("carrier") String carrier, @Param("region") String region);
