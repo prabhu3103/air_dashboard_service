@@ -770,110 +770,128 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
 
     @Query(value = """
-            select s.productCode,s.description,s.TOPPRODUCTS, ROUND(((s.TOPPRODUCTS - m.TOPPRODUCTS)*100/ m.TOPPRODUCTS),2) as MOMPercent,
-            ROUND(((s.TOPPRODUCTS - y.TOPPRODUCTS)*100/ y.TOPPRODUCTS),2) as YOYPercent from
-                        (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
-                                    from   dbo.AdvanceFunctionAudit a , dbo.ProductType p
-                                    where
-            						a.eventDate >= :startDate and a.eventDate <= :endDate
-            						and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                    and a.carrier=p.airline
-                                    and a.productCode=p.productType
-                                    and a.org=:originAirport
-                                    and a.carrier=:carrier
-                                    group by a.productCode,p.description
-                                    ) s left join
-                        (select a.productCode, COUNT(*) AS TOPPRODUCTS
-                                    from   AdvanceFunctionAudit a
-                                    where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                                    and a.org=:originAirport
-                                    and a.carrier=:carrier
-                                    group by a.productCode
-                                    ) m
-                        			on s.productCode = m.productCode left join
-            			(select a.productCode, COUNT(*) AS TOPPRODUCTS
-                                    from   AdvanceFunctionAudit a
-                                    where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                    and a.org=:originAirport
-                                    and a.carrier=:carrier
-                                    group by a.productCode
-                                    ) y
-                        			on s.productCode = y.productCode
-                        			order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
-            """, nativeQuery = true)
+           select s.productCode,s.description,s.TOPPRODUCTS, ROUND(((s.TOPPRODUCTS - m.TOPPRODUCTS)*100/ m.TOPPRODUCTS),2) as MOMPercent,
+           ROUND(((s.TOPPRODUCTS - y.TOPPRODUCTS)*100/ y.TOPPRODUCTS),2) as YOYPercent from
+           (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
+           from   AdvanceFunctionAudit a , ProductType p
+           where
+           a.eventDate >= :startDate and a.eventDate <= :endDate
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+           and a.carrier=p.airline
+           and a.productCode=p.productType
+           and a.org=:originAirport
+           and a.carrier=:carrier
+           group by a.productCode,p.description
+           ) s left join
+           (select a.productCode, COUNT(*) AS TOPPRODUCTS
+           from   AdvanceFunctionAudit a, ProductType p
+           where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+           and a.carrier=p.airline
+           and a.productCode=p.productType
+           and a.org=:originAirport
+           and a.carrier=:carrier
+           group by a.productCode
+           ) m
+           on s.productCode = m.productCode left join
+           (select a.productCode, COUNT(*) AS TOPPRODUCTS
+           from   AdvanceFunctionAudit a, ProductType p
+           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+           and a.carrier=p.airline
+           and a.productCode=p.productType
+           and a.org=:originAirport
+           and a.carrier=:carrier
+           group by a.productCode
+           ) y
+           on s.productCode = y.productCode
+           order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
+           """, nativeQuery = true)
     List<Object[]> getTopProductsBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,@Param("carrier") String carrier,@Param("originAirport") String originAirport);
 
     @Query(value = """
             select s.productCode,s.description,s.TOPPRODUCTS, ROUND(((s.TOPPRODUCTS - m.TOPPRODUCTS)*100/ m.TOPPRODUCTS),2) as MOMPercent,
-                                     ROUND(((s.TOPPRODUCTS - y.TOPPRODUCTS)*100/ y.TOPPRODUCTS),2) as YOYPercent from
-                                                 (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
-                                     				from   AdvanceFunctionAudit a, ProductType p, CityCountryMaster b
-                                     				where
-                                     				a.eventDate >= :startDate and a.eventDate <= :endDate
-                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                     				and a.carrier=p.airline
-                                     				and a.productCode=p.productType
-                                     				and a.carrier=:carrier
-                                     				and a.org = b.code
-                                     				and b.countryCode = :country
-                                     				group by a.productCode,p.description
-                                                             ) s left join
-                                                 (select a.productCode, COUNT(*) AS TOPPRODUCTS
-                                                             from   AdvanceFunctionAudit a, CityCountryMaster b
-                                                             where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                                                             and a.carrier=:carrier
-                                     						 and a.org = b.code
-                                     				         and b.countryCode = :country
-                                                             group by a.productCode
-                                                             ) m
-                                                 			on s.productCode = m.productCode left join
-                                     			(select a.productCode, COUNT(*) AS TOPPRODUCTS
-                                                             from   AdvanceFunctionAudit a,  CityCountryMaster b
-                                                             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                                             and a.carrier=:carrier
-                                     						 and a.org = b.code
-                                     				         and b.countryCode = :country
-                                                             group by a.productCode
-                                                             ) y
-                                                 			on s.productCode = y.productCode
-                                                 			order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
+            ROUND(((s.TOPPRODUCTS - y.TOPPRODUCTS)*100/ y.TOPPRODUCTS),2) as YOYPercent from
+            (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, ProductType p, CityCountryMaster b
+            where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, CityCountryMaster b, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a,  CityCountryMaster b, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,@Param("carrier") String carrier,@Param("country") String country);
 
     @Query(value = """
             select s.productCode,s.description,s.TOPPRODUCTS, ROUND(((s.TOPPRODUCTS - m.TOPPRODUCTS)*100/ m.TOPPRODUCTS),0.00,2) as MOMPercent,
-                                     ROUND(((s.TOPPRODUCTS - y.TOPPRODUCTS)*100/ y.TOPPRODUCTS),2) as YOYPercent from
-                                                 (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
-                                     				from   AdvanceFunctionAudit a , ProductType p,  CityCountryMaster b
-                                     				where
-                                     			    a.eventDate >= :startDate and a.eventDate <= :endDate
-                                     			    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                     				and a.carrier=p.airline
-                                     				and a.productCode=p.productType
-                                     				and a.org = b.code
-                                     				and b.continent = :continent
-                                     				and a.carrier=:carrier
-                                     				group by a.productCode,p.description
-                                                             ) s left join
-                                                 (select a.productCode, COUNT(*) AS TOPPRODUCTS
-                                                             from   AdvanceFunctionAudit a,  CityCountryMaster b
-                                                             where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                                                             and a.carrier=:carrier
-                                     						 and a.org = b.code
-                                     				         and b.continent = :continent
-                                                             group by a.productCode
-                                                             ) m
-                                                 			on s.productCode = m.productCode left join
-                                     			(select a.productCode, COUNT(*) AS TOPPRODUCTS
-                                                             from   AdvanceFunctionAudit a, CityCountryMaster b
-                                                             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                                             and a.carrier=:carrier
-                                     						 and a.org = b.code
-                                     				         and b.continent = :continent
-                                                             group by a.productCode
-                                                             ) y
-                                                 			on s.productCode = y.productCode
-                                                 			order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
+            ROUND(((s.TOPPRODUCTS - y.TOPPRODUCTS)*100/ y.TOPPRODUCTS),2) as YOYPercent from
+            (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a , ProductType p,  CityCountryMaster b
+            where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.org = b.code
+            and b.continent = :continent
+            and a.carrier=:carrier
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a,  CityCountryMaster b,  ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, CityCountryMaster b,  ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,@Param("carrier") String carrier,@Param("continent") String continent);
 
@@ -881,72 +899,85 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.TOPPRODUCTS, ROUND(((s.TOPPRODUCTS - m.TOPPRODUCTS)*100/ m.TOPPRODUCTS),2) as MOMPercent,
             ROUND(((s.TOPPRODUCTS - y.TOPPRODUCTS)*100/ y.TOPPRODUCTS),2) as YOYPercent from
-                        (select a.productCode ,p.description, COUNT(*) AS TOPPRODUCTS
-            				from   AdvanceFunctionAudit a, ProductType p, CityCountryMaster b, RegionMaster c
-            				where a.eventDate >= :startDate and a.eventDate <= :endDate
-            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            				and a.carrier=p.airline
-            				and a.productCode=p.productType
-            				and a.org = b.code
-            				and b.continent = c.continent
-            				and c.regionName = :region
-            				and a.carrier=:carrier
-            				group by a.productCode,p.description
-                                    ) s left join
-                        (select a.productCode, COUNT(*) AS TOPPRODUCTS
-                                    from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c
-                                    where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                                    and a.carrier=:carrier
-                                    and a.org = b.code
-            				        and b.continent = c.continent
-            				        and c.regionName = :region
-                                    group by a.productCode
-                                    ) m
-                        			on s.productCode = m.productCode left join
-            			(select a.productCode, COUNT(*) AS TOPPRODUCTS
-                                    from   AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-                                    where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                    and a.carrier=:carrier
-                                    and a.org = b.code
-            				and b.continent = c.continent
-            				and c.regionName = :region
-                                    group by a.productCode
-                                    ) y
-                        			on s.productCode = y.productCode
-                        			order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
+            (select a.productCode ,p.description, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, ProductType p, CityCountryMaster b, RegionMaster c
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            and a.carrier=:carrier
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate ,@Param("carrier") String carrier, @Param("region") String region);
 
 
     @Query(value = """
             select s.productCode,s.description,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
-                                     ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
-                                                 (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
-                                     				from   AdvanceFunctionAudit a,ProductType p
-                                     				where a.eventDate >= :startDate and a.eventDate <= :endDate
-                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                     				and a.carrier=p.airline
-                                     				and a.productCode=p.productType
-                                     				and a.carrier=:carrier
-                                     				and a.org=:originAirport
-                                     				group by a.productCode,p.description                                                             ) s left join
-                                                 (select a.productCode, SUM(a.stdWeight) AS totalWeight
-                                                             from   AdvanceFunctionAudit a
-                                                             where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                                                             and a.carrier=:carrier
-                                     						and a.org=:originAirport
-                                     						group by a.productCode
-                                                             ) m
-                                                 			on s.productCode = m.productCode left join
-                                     			(select a.productCode, SUM(a.stdWeight) AS totalWeight
-                                                             from   AdvanceFunctionAudit a
-                                                             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                                             and a.carrier=:carrier
-                                     						and a.org=:originAirport
-                                     						group by a.productCode
-                                                             ) y
-                                                 			on s.productCode = y.productCode
-                                                 			order by s.totalWeight desc offset 0 rows fetch next 5 rows only
+            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,ProductType p
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalWeight desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier,@Param("originAirport") String originAirport);
@@ -954,37 +985,43 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query(value = """
             select s.productCode,s.description,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
-                                     ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
-                                                 (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
-                                     				from   AdvanceFunctionAudit a ,ProductType p, CityCountryMaster b where
-                                     				a.eventDate >= :startDate and a.eventDate <= :endDate
-                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                     				and a.carrier=p.airline
-                                     				and a.productCode=p.productType
-                                     				and a.carrier = :carrier
-                                     				and a.org = b.code
-                                     				and b.countryCode = :country
-                                     				group by a.productCode,p.description
-                                                             ) s left join
-                                                 (select a.productCode, SUM(a.stdWeight) AS totalWeight
-                                                             from   AdvanceFunctionAudit a,CityCountryMaster b
-                                                             where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                                                             and a.carrier = :carrier
-                                                             and a.org = b.code
-                                     				and b.countryCode = :country
-                                     						group by a.productCode
-                                                             ) m
-                                                 			on s.productCode = m.productCode left join
-                                     			(select a.productCode, SUM(a.stdWeight) AS totalWeight
-                                                             from   AdvanceFunctionAudit a, CityCountryMaster b
-                                                             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                                             and a.carrier = :carrier
-                                                             and a.org = b.code
-                                     				and b.countryCode = :country
-                                     						group by a.productCode
-                                                             ) y
-                                                 			on s.productCode = y.productCode
-                                                 			order by s.totalWeight desc offset 0 rows fetch next 5 rows only
+            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a ,ProductType p, CityCountryMaster b where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,CityCountryMaster b, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a, CityCountryMaster b, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalWeight desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("country") String country);
@@ -992,37 +1029,43 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query(value = """
             select s.productCode,s.description,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
-                                     ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
-                                                 (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
-                                     				from   AdvanceFunctionAudit a ,ProductType p,CityCountryMaster b where
-                                     				a.eventDate >= :startDate and a.eventDate <= :endDate
-                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                     				and a.carrier=p.airline
-                                     				and a.productCode=p.productType
-                                     				and a.carrier = :carrier
-                                     				and a.org = b.code
-                                                    and b.continent = :continent
-                                     				group by a.productCode,p.description
-                                                             ) s left join
-                                                 (select a.productCode, SUM(a.stdWeight) AS totalWeight
-                                                             from   AdvanceFunctionAudit a,CityCountryMaster b
-                                                             where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                                                             and a.carrier = :carrier
-                                                             and a.org = b.code
-                                                             and b.continent = :continent
-                                     						group by a.productCode
-                                                             ) m
-                                                 			on s.productCode = m.productCode left join
-                                     			(select a.productCode, SUM(a.stdWeight) AS totalWeight
-                                                             from   AdvanceFunctionAudit a,CityCountryMaster b
-                                                             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                                             and a.carrier = :carrier
-                                                             and a.org = b.code
-                                                            and b.continent = :continent
-                                     						group by a.productCode
-                                                             ) y
-                                                 			on s.productCode = y.productCode
-                                                 			order by s.totalWeight desc offset 0 rows fetch next 5 rows only
+            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a ,ProductType p,CityCountryMaster b where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,CityCountryMaster b, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,CityCountryMaster b, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalWeight desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                  @Param("carrier") String carrier, @Param("continent") String continent);
@@ -1032,40 +1075,46 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query(value = """
             select s.productCode,s.description,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
-                                     ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
-                                                 (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
-                                     				from   AdvanceFunctionAudit a ,ProductType p, CityCountryMaster b, RegionMaster c where
-                                     				a.eventDate >= :startDate and a.eventDate <= :endDate
-                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                     				and a.carrier=p.airline
-                                     				and a.productCode=p.productType
-                                     				and a.carrier = :carrier
-                                     				and a.org = b.code
-                                                    and b.continent = c.continent
-                                                    and c.regionName = :region
-                                     				group by a.productCode,p.description
-                                                             ) s left join
-                                                 (select a.productCode, SUM(a.stdWeight) AS totalWeight
-                                                             from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c
-                                                             where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                                                             and a.carrier = :carrier
-                                                             and a.org = b.code
-                                                             and b.continent = c.continent
-                                                             and c.regionName = :region
-                                     						group by a.productCode
-                                                             ) m
-                                                 			on s.productCode = m.productCode left join
-                                     			(select a.productCode, SUM(a.stdWeight) AS totalWeight
-                                                             from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c
-                                                             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                                             and a.carrier = :carrier
-                                                             and a.org = b.code
-                                                             and b.continent = c.continent
-                                                             and c.regionName = :region
-                                     						group by a.productCode
-                                                             ) y
-                                                 			on s.productCode = y.productCode
-                                                 			order by s.totalWeight desc offset 0 rows fetch next 5 rows only
+            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a ,ProductType p, CityCountryMaster b, RegionMaster c where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalWeight desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                               @Param("carrier") String carrier, @Param("region") String region);
@@ -1073,34 +1122,40 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query(value = """
             select s.productCode,s.description,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
-                                     ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent from
-                                                 (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
-                                     				from   AdvanceFunctionAudit a,ProductType p
-                                     				where a.eventDate >= :startDate and a.eventDate <= :endDate
-                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                     				and a.carrier=p.airline
-                                     				and a.productCode=p.productType
-                                     				and a.carrier=:carrier
-                                     				and a.org=:originAirport
-                                     				group by a.productCode,p.description
-                                                             ) s left join
-                                                 (select a.productCode, SUM(a.stdVolume) AS totalVolume
-                                                             from   AdvanceFunctionAudit a
-                                                             where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                                                             and a.carrier=:carrier
-                                     						and a.org=:originAirport
-                                     						group by a.productCode
-                                                             ) m
-                                                 			on s.productCode = m.productCode left join
-                                     			(select a.productCode, SUM(a.stdVolume) AS totalVolume
-                                                             from   AdvanceFunctionAudit a
-                                                             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                                             and a.carrier=:carrier
-                                     						and a.org=:originAirport
-                                     						group by a.productCode
-                                                             ) y
-                                                 			on s.productCode = y.productCode
-                                                 			order by s.totalVolume desc offset 0 rows fetch next 5 rows only
+            ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a,ProductType p
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalVolume desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier,@Param("originAirport") String originAirport);
@@ -1108,36 +1163,43 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query(value = """
             select s.productCode,s.description,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
-                                     ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent from
-                                                 (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
-                                     				from   AdvanceFunctionAudit a ,ProductType p, CityCountryMaster b where
-                                     				a.eventDate >= :startDate and a.eventDate <= :endDate
-                                     				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                     				and a.carrier=p.airline
-                                     				and a.productCode=p.productType
-                                     				and a.carrier = :carrier
-                                     				and a.org = b.code
-                                     				and b.countryCode = :country
-                                     				group by a.productCode,p.description                                                             ) s left join
-                                                 (select a.productCode, SUM(a.stdVolume) AS totalVolume
-                                                             from   AdvanceFunctionAudit a, CityCountryMaster b
-                                                             where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                                                             and a.carrier = :carrier
-                                                             and a.org = b.code
-                                     				and b.countryCode = :country
-                                     						group by a.productCode
-                                                             ) m
-                                                 			on s.productCode = m.productCode left join
-                                     			(select a.productCode, SUM(a.stdVolume) AS totalVolume
-                                                             from   AdvanceFunctionAudit a,CityCountryMaster b
-                                                             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                                             and a.carrier = :carrier
-                                                             and a.org = b.code
-                                     				and b.countryCode = :country
-                                     						group by a.productCode
-                                                             ) y
-                                                 			on s.productCode = y.productCode
-                                                 			order by s.totalVolume desc offset 0 rows fetch next 5 rows only
+            ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a ,ProductType p, CityCountryMaster b where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a, CityCountryMaster b, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a,CityCountryMaster b, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalVolume desc offset 0 rows fetch next 5 rows only
             """,nativeQuery = true)
     List<Object[]> getTopProductsVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("country") String country);
@@ -1147,35 +1209,41 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
             ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent from
-                        (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
-            				from   AdvanceFunctionAudit a ,ProductType p,CityCountryMaster b where
-            				a.eventDate >= :startDate and a.eventDate <= :endDate
-            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            				and a.carrier=p.airline
-            				and a.productCode=p.productType
-            				and a.carrier = :carrier
-            				and a.org = b.code
-                            and b.continent = :continent
-            				group by a.productCode,p.description) s left join
-                        (select a.productCode, SUM(a.stdVolume) AS totalVolume
-                                    from   AdvanceFunctionAudit a, CityCountryMaster b
-                                    where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                                    and a.carrier = :carrier
-                                    and a.org = b.code
-                            and b.continent = :continent
-            						group by a.productCode
-                                    ) m
-                        			on s.productCode = m.productCode left join
-            			(select a.productCode, SUM(a.stdVolume) AS totalVolume
-                                    from   AdvanceFunctionAudit a, CityCountryMaster b
-                                    where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                    and a.carrier = :carrier
-                                    and a.org = b.code
-                            and b.continent = :continent
-            						group by a.productCode
-                                    ) y
-                        			on s.productCode = y.productCode
-                        			order by s.totalVolume desc offset 0 rows fetch next 5 rows only
+            (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a ,ProductType p,CityCountryMaster b where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode,p.description) s left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a, CityCountryMaster b, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a, CityCountryMaster b, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalVolume desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                  @Param("carrier") String carrier, @Param("continent") String continent);
@@ -1196,8 +1264,11 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by a.productCode,p.description
             ) s left join
             (select a.productCode, SUM(a.stdVolume) AS totalVolume
-            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c
+            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c, ProductType p
             where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.carrier = :carrier
             and a.org = b.code
             and b.continent = c.continent
@@ -1206,8 +1277,11 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             ) m
             on s.productCode = m.productCode left join
             (select a.productCode, SUM(a.stdVolume) AS totalVolume
-            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c
+            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c, ProductType p
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.productType
             and a.carrier = :carrier
             and a.org = b.code
             and b.continent = c.continent
@@ -1746,5 +1820,531 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and YEAR(a.actionDate)=YEAR(:currentDate)""")
 
     Object[] getNewAgentsInCurrentMonth(@Param("currentDate") LocalDateTime currentDate);
+
+
+    @Query(value = """
+           select s.productCode,s.description,s.TOPPRODUCTS, ROUND(((s.TOPPRODUCTS - m.TOPPRODUCTS)*100/ m.TOPPRODUCTS),2) as MOMPercent,
+           ROUND(((s.TOPPRODUCTS - y.TOPPRODUCTS)*100/ y.TOPPRODUCTS),2) as YOYPercent from
+           (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
+           from   AdvanceFunctionAudit a , ProductType p
+           where
+           a.eventDate >= :startDate and a.eventDate <= :endDate
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+           and a.carrier=p.airline
+           and a.productCode=p.description
+           and a.org=:originAirport
+           and a.carrier=:carrier
+           group by a.productCode,p.description
+           ) s left join
+           (select a.productCode, COUNT(*) AS TOPPRODUCTS
+           from   AdvanceFunctionAudit a, ProductType p
+           where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+           and a.carrier=p.airline
+           and a.productCode=p.description
+           and a.org=:originAirport
+           and a.carrier=:carrier
+           group by a.productCode
+           ) m
+           on s.productCode = m.productCode left join
+           (select a.productCode, COUNT(*) AS TOPPRODUCTS
+           from   AdvanceFunctionAudit a, ProductType p
+           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+           and a.carrier=p.airline
+           and a.productCode=p.description
+           and a.org=:originAirport
+           and a.carrier=:carrier
+           group by a.productCode
+           ) y
+           on s.productCode = y.productCode
+           order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
+           """, nativeQuery = true)
+    List<Object[]> getTopProductsBookingAirportForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,@Param("carrier") String carrier,@Param("originAirport") String originAirport);
+
+    @Query(value = """
+            select s.productCode,s.description,s.TOPPRODUCTS, ROUND(((s.TOPPRODUCTS - m.TOPPRODUCTS)*100/ m.TOPPRODUCTS),2) as MOMPercent,
+            ROUND(((s.TOPPRODUCTS - y.TOPPRODUCTS)*100/ y.TOPPRODUCTS),2) as YOYPercent from
+            (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, ProductType p, CityCountryMaster b
+            where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, CityCountryMaster b, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a,  CityCountryMaster b, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
+            """, nativeQuery = true)
+    List<Object[]> getTopProductsBookingCountryForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,@Param("carrier") String carrier,@Param("country") String country);
+
+    @Query(value = """
+            select s.productCode,s.description,s.TOPPRODUCTS, ROUND(((s.TOPPRODUCTS - m.TOPPRODUCTS)*100/ m.TOPPRODUCTS),0.00,2) as MOMPercent,
+            ROUND(((s.TOPPRODUCTS - y.TOPPRODUCTS)*100/ y.TOPPRODUCTS),2) as YOYPercent from
+            (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a , ProductType p,  CityCountryMaster b
+            where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.org = b.code
+            and b.continent = :continent
+            and a.carrier=:carrier
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a,  CityCountryMaster b,  ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, CityCountryMaster b,  ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
+            """, nativeQuery = true)
+    List<Object[]> getTopProductsBookingContinentForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,@Param("carrier") String carrier,@Param("continent") String continent);
+
+
+    @Query(value = """
+            select s.productCode,s.description,s.TOPPRODUCTS, ROUND(((s.TOPPRODUCTS - m.TOPPRODUCTS)*100/ m.TOPPRODUCTS),2) as MOMPercent,
+            ROUND(((s.TOPPRODUCTS - y.TOPPRODUCTS)*100/ y.TOPPRODUCTS),2) as YOYPercent from
+            (select a.productCode ,p.description, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, ProductType p, CityCountryMaster b, RegionMaster c
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            and a.carrier=:carrier
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, COUNT(*) AS TOPPRODUCTS
+            from   AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
+            """, nativeQuery = true)
+    List<Object[]> getTopProductsBookingRegionForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate ,@Param("carrier") String carrier, @Param("region") String region);
+
+
+    @Query(value = """
+            select s.productCode,s.description,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
+            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,ProductType p
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalWeight desc offset 0 rows fetch next 5 rows only
+            """, nativeQuery = true)
+    List<Object[]> getTopProductsWeightAirportForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                               @Param("carrier") String carrier,@Param("originAirport") String originAirport);
+
+
+    @Query(value = """
+            select s.productCode,s.description,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
+            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a ,ProductType p, CityCountryMaster b where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,CityCountryMaster b, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a, CityCountryMaster b, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalWeight desc offset 0 rows fetch next 5 rows only
+            """, nativeQuery = true)
+    List<Object[]> getTopProductsWeightCountryForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                               @Param("carrier") String carrier, @Param("country") String country);
+
+
+    @Query(value = """
+            select s.productCode,s.description,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
+            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a ,ProductType p,CityCountryMaster b where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,CityCountryMaster b, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,CityCountryMaster b, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalWeight desc offset 0 rows fetch next 5 rows only
+            """, nativeQuery = true)
+    List<Object[]> getTopProductsWeightContinentForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                 @Param("carrier") String carrier, @Param("continent") String continent);
+
+
+
+
+    @Query(value = """
+            select s.productCode,s.description,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
+            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a ,ProductType p, CityCountryMaster b, RegionMaster c where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdWeight) AS totalWeight
+            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalWeight desc offset 0 rows fetch next 5 rows only
+            """, nativeQuery = true)
+    List<Object[]> getTopProductsWeightRegionForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                              @Param("carrier") String carrier, @Param("region") String region);
+
+
+    @Query(value = """
+            select s.productCode,s.description,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
+            ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a,ProductType p
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier=:carrier
+            and a.org=:originAirport
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalVolume desc offset 0 rows fetch next 5 rows only
+            """, nativeQuery = true)
+    List<Object[]> getTopProductsVolumeAirportForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                               @Param("carrier") String carrier,@Param("originAirport") String originAirport);
+
+
+    @Query(value = """
+            select s.productCode,s.description,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
+            ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a ,ProductType p, CityCountryMaster b where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a, CityCountryMaster b, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a,CityCountryMaster b, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.countryCode = :country
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalVolume desc offset 0 rows fetch next 5 rows only
+            """,nativeQuery = true)
+    List<Object[]> getTopProductsVolumeCountryForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                               @Param("carrier") String carrier, @Param("country") String country);
+
+
+
+    @Query(value = """
+            select s.productCode,s.description,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
+            ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a ,ProductType p,CityCountryMaster b where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode,p.description) s left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a, CityCountryMaster b, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a, CityCountryMaster b, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = :continent
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalVolume desc offset 0 rows fetch next 5 rows only
+            """, nativeQuery = true)
+    List<Object[]> getTopProductsVolumeContinentForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                 @Param("carrier") String carrier, @Param("continent") String continent);
+
+    @Query(value = """
+            select s.productCode,s.description,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
+            ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent from
+            (select a.productCode ,p.description, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a ,ProductType p,CityCountryMaster b, RegionMaster c where
+            a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode,p.description
+            ) s left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c, ProductType p
+            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode
+            ) m
+            on s.productCode = m.productCode left join
+            (select a.productCode, SUM(a.stdVolume) AS totalVolume
+            from   AdvanceFunctionAudit a,CityCountryMaster b, RegionMaster c, ProductType p
+            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier=p.airline
+            and a.productCode=p.description
+            and a.carrier = :carrier
+            and a.org = b.code
+            and b.continent = c.continent
+            and c.regionName = :region
+            group by a.productCode
+            ) y
+            on s.productCode = y.productCode
+            order by s.totalVolume desc offset 0 rows fetch next 5 rows only
+            """,nativeQuery = true)
+    List<Object[]> getTopProductsVolumeRegionForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                              @Param("carrier") String carrier, @Param("region") String region);
 
 }

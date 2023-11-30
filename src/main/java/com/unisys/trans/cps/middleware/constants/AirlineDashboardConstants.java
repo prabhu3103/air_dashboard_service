@@ -25,4 +25,6 @@ public class AirlineDashboardConstants {
     public  static final Float  DEFAULT_NEGATIVE_VALUE = -1.1f;
 
     public static final String INVALID_FILTER_VALUE = "Invalid Filter Value";
+
+    public static final String AA_CARRIER = "AA";
 }
