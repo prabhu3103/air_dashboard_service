@@ -1,6 +1,7 @@
 package com.unisys.trans.cps.middleware.services;
 
 
+import com.unisys.trans.cps.middleware.models.entity.ContactQuery;
 import com.unisys.trans.cps.middleware.models.request.InquiryRequest;
 import com.unisys.trans.cps.middleware.repository.CustomerInquiryRepository;
 import com.unisys.trans.cps.middleware.services.customerinquiriesservice.CustomerInquiriesService;
@@ -14,6 +15,8 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,10 +37,42 @@ public class CustomerInquiriesServiceImplTest {
     private CustomerInquiriesService service;
 
     @Test
-    void getCustomerInquiriesTest(){
+    void getCustomerInquiriesCountTest(){
+        InquiryRequest res =  new InquiryRequest();
+
+        res.setDate("2023-11-10 11:11:11");
+        res.setCarrier("AC");
+
         when(repository.getCount(anyString(), any(LocalDateTime.class))).thenReturn(0);
-        int response = serviceImpl.getInquiryCount(InquiryRequest.builder().date("2023-11-10 11:11:11").carrier("AC").build());
+        int response = serviceImpl.getInquiryCount(res);
         assertNotNull(response);
     }
+
+
+    @Test
+    void getCustomerInquiriesTest(){
+        InquiryRequest res =  new InquiryRequest();
+
+        res.setDate("2023-11-10 11:11:11");
+        res.setCarrier("AC");
+
+        LocalDateTime dateTime = LocalDateTime.now();
+
+        ContactQuery qry = new ContactQuery();
+        qry.setEmail("test@gmail.com");
+        qry.setName("testName");
+        qry.setPhone("98876610");
+        qry.setCarrier("AC");
+        qry.setDate(dateTime);
+        qry.setFunctionDesc("FunctionDesc");
+        qry.setProblemDesc("ProblemDesc");
+
+        List<ContactQuery> queries = new ArrayList<>();
+        queries.add(qry);
+        when(repository.getContactQuery(anyString(), any(LocalDateTime.class))).thenReturn(queries);
+        List<ContactQuery> response = serviceImpl.getAllContactQueries(res);
+        assertNotNull(response);
+    }
+
 
 }

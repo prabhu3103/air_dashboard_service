@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 
 @Data
-@Builder
 public class InquiryRequest implements Serializable {
 
 

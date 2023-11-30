@@ -37,7 +37,7 @@ class BranchRequestControllerTest {
     @MockBean
     private BranchRequestsService service;
 
-    private static InquiryRequest res;
+    private static InquiryRequest res = new InquiryRequest();
 
     @Autowired
     ObjectMapper objectMapper;
@@ -50,9 +50,15 @@ class BranchRequestControllerTest {
         value.add("2");
         value.add("0");
 
-        res = InquiryRequest.builder().carrier("AC").build();
+        res.setCarrier("AC");
 
-        when(service.getBranchRequests(anyString())).thenReturn(BranchRequestDTO.builder().approved(1).pending(2).rejected(3).build());
+
+        BranchRequestDTO dto = new BranchRequestDTO();
+        dto.setRejected(1);
+        dto.setApproved(1);
+        dto.setPending(1);
+
+        when(service.getBranchRequests(anyString())).thenReturn(dto);
 
         when(repository.getStatus("'AC'")).thenReturn(value);
 
@@ -66,29 +72,28 @@ class BranchRequestControllerTest {
     }
 
 
-
     @Test
-    void getBranchRequestCountCPSExceptionTest() throws CpsException{
+    void getBranchRequestCountCPSExceptionTest() throws CpsException {
 
-        res = InquiryRequest.builder().carrier("AC").build();
+        res.setCarrier("AC");
 
         when(service.getBranchRequests(anyString())).thenThrow(CpsException.class);
         when(repository.getStatus("'AC'")).thenThrow(CpsException.class);
 
         try {
-			mockMvc.perform(MockMvcRequestBuilders.post("/v1/airline-dashboard/branchrequest-count")
-			                .contentType(MediaType.APPLICATION_JSON)
-			                .content(objectMapper.writeValueAsString(res))
-			                .accept(MediaType.APPLICATION_JSON))
-			        .andExpect(MockMvcResultMatchers.status().isOk());
-			       // .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
-		} catch (JsonProcessingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+            mockMvc.perform(MockMvcRequestBuilders.post("/v1/airline-dashboard/branchrequest-count")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(res))
+                            .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(MockMvcResultMatchers.status().isOk());
+            // .andExpect(MockMvcResultMatchers.jsonPath("$.successFlag").value(true));
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
     }
 }
