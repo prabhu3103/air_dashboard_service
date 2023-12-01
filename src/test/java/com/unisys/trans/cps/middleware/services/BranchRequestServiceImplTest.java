@@ -2,8 +2,8 @@ package com.unisys.trans.cps.middleware.services;
 
 import com.unisys.trans.cps.middleware.models.response.BranchRequestDTO;
 import com.unisys.trans.cps.middleware.repository.BranchRequestsRepository;
-import com.unisys.trans.cps.middleware.services.branchrequestsservice.BranchRequestsService;
 import com.unisys.trans.cps.middleware.services.branchrequestsservice.BranchRequestsServiceImpl;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,7 +15,6 @@ import org.mockito.quality.Strictness;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
@@ -29,8 +28,6 @@ public class BranchRequestServiceImplTest {
     @Mock
     private BranchRequestsRepository repository;
 
-    @Mock
-    private BranchRequestsService service;
 
     @Test
     void getBranchrequestTest(){
@@ -42,6 +39,11 @@ public class BranchRequestServiceImplTest {
 
         when(repository.getStatus(anyString())).thenReturn(value);
         BranchRequestDTO response = serviceImpl.getBranchRequests(anyString());
-        assertNotNull(response);
+
+         Assertions.assertNotNull(response);
+         Assertions.assertEquals(response.getPending(), 1);
+         Assertions.assertEquals(response.getApproved(), 1);
+         Assertions.assertEquals(response.getRejected(), 1);
+
     }
 }

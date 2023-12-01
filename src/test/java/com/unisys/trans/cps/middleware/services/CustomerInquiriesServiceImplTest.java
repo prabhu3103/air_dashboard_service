@@ -6,6 +6,8 @@ import com.unisys.trans.cps.middleware.models.request.InquiryRequest;
 import com.unisys.trans.cps.middleware.repository.CustomerInquiryRepository;
 import com.unisys.trans.cps.middleware.services.customerinquiriesservice.CustomerInquiriesService;
 import com.unisys.trans.cps.middleware.services.customerinquiriesservice.CustomerInquiriesServiceImpl;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,9 +35,6 @@ public class CustomerInquiriesServiceImplTest {
     @Mock
     private CustomerInquiryRepository repository;
 
-    @Mock
-    private CustomerInquiriesService service;
-
     @Test
     void getCustomerInquiriesCountTest(){
         InquiryRequest res =  new InquiryRequest();
@@ -43,14 +42,15 @@ public class CustomerInquiriesServiceImplTest {
         res.setDate("2023-11-10 11:11:11");
         res.setCarrier("AC");
 
-        when(repository.getCount(anyString(), any(LocalDateTime.class))).thenReturn(0);
+        when(repository.getCount(anyString(), any(LocalDateTime.class))).thenReturn(1);
         int response = serviceImpl.getInquiryCount(res);
-        assertNotNull(response);
+
+        Assertions.assertEquals(response, 1);
+
     }
 
-
     @Test
-    void getCustomerInquiriesTest(){
+    void getCustomerInquiriesListTest(){
         InquiryRequest res =  new InquiryRequest();
 
         res.setDate("2023-11-10 11:11:11");
@@ -71,7 +71,10 @@ public class CustomerInquiriesServiceImplTest {
         queries.add(qry);
         when(repository.getContactQuery(anyString(), any(LocalDateTime.class))).thenReturn(queries);
         List<ContactQuery> response = serviceImpl.getAllContactQueries(res);
-        assertNotNull(response);
+
+         assertNotNull(response);
+        Assertions.assertEquals(response.get(0).getCarrier(), "AC");
+        Assertions.assertEquals(response.get(0).getName(), "testName");
     }
 
 
