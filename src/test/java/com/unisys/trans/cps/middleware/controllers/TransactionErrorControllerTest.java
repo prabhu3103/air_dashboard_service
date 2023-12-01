@@ -1,5 +1,6 @@
 package com.unisys.trans.cps.middleware.controllers;
 
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -29,7 +30,6 @@ import com.unisys.trans.cps.middleware.models.request.TransactionRequest;
 import com.unisys.trans.cps.middleware.models.response.MessageEntry;
 import com.unisys.trans.cps.middleware.models.response.TransactionData;
 import com.unisys.trans.cps.middleware.models.response.TransactionErrorData;
-
 import com.unisys.trans.cps.middleware.repository.TransactionErrorRepository;
 import com.unisys.trans.cps.middleware.services.transactionerrorservice.TransactionErrorService;
 
@@ -128,19 +128,14 @@ class TransactionErrorControllerTest {
        transactionData.setNormalCountPercent(45.5f);
        transactionData.setNormalCount(23);
        transactionData.setTotalTransaction(45);
-       transactionData.setErrorCountPercent(0.0f);
-       transactionData.setNormalCountPercent(0.0f);
        
        transactionData.setErrorTransactions(errorDataList);
+       doThrow(new CpsException("Test CpsException")).when(transactionErrorDescService).getTransactionErrors(request);
 
-       Object[] mockObject = {"true", 1, "BookingCount", null, 1.1, 1.1};
-       List<Object[]> mockObjects = new ArrayList<>();
-       mockObjects.add(mockObject);
-       
         when(transactionErrorDescRepository.getAllTransactionErrorsData(Mockito.anyString(), Mockito.eq(currentDate), Mockito.eq(past30Date), Mockito.anyString()))
                 .thenReturn(list);
       
-        when(transactionErrorDescService.getTransactionErrors(request)).thenReturn(transactionData).thenThrow(new CpsException());
+      //  when(transactionErrorDescService.getTransactionErrors(request)).thenThrow(new CpsException("Test CpsException"));
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/airline-dashboard/transaction-error-count")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))

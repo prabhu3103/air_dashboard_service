@@ -16,6 +16,8 @@ import lombok.Data;
 @Component
 public class TransactionData {
 	
+	private String portalFunction; 
+	
 	private long totalTransaction;
 
 	private long normalCount;

@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 public class TransactionErrorController {
 
 	@Autowired
-	private TransactionErrorService transactionErrorDescService;
+	private TransactionErrorService transactionErrorService;
 
 	/**
 	 * This controller class method is used to fetch Transaction errors from database for last 30 days
@@ -48,7 +48,7 @@ public class TransactionErrorController {
 		 TransactionData transactionData=new TransactionData();
 
 	        try {
-	        	TransactionData transactionErrorData = transactionErrorDescService.getTransactionErrors(request);
+	        	TransactionData transactionErrorData = transactionErrorService.getTransactionErrors(request);
 
 	            transactionData.setErrorCount(transactionErrorData.getErrorCount());
 	            transactionData.setErrorCountPercent(transactionErrorData.getErrorCountPercent());
@@ -56,7 +56,9 @@ public class TransactionErrorController {
 	            transactionData.setNormalCountPercent(transactionErrorData.getNormalCountPercent());
 	            transactionData.setTotalTransaction(transactionErrorData.getTotalTransaction());
 	            transactionData.setErrorTransactions(transactionErrorData.getErrorTransactions());
+	            transactionData.setPortalFunction(request.getPortalFunction());
 	            response.setResponse(transactionData);
+	            
 	            response.setSuccessFlag(true);
 	        } catch (CpsException e) {
 	            response.setSuccessFlag(false);

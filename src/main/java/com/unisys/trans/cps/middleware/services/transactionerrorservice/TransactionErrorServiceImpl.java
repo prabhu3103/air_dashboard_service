@@ -28,11 +28,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class TransactionErrorServiceImpl implements TransactionErrorService {
 
-	private TransactionErrorRepository transactionErrorDescRepository;
+	private TransactionErrorRepository transactionErrorRepository;
 
-	public TransactionErrorServiceImpl(TransactionErrorRepository transactionErrorDescRepository) {
+	public TransactionErrorServiceImpl(TransactionErrorRepository transactionErrorRepository) {
 		super();
-		this.transactionErrorDescRepository = transactionErrorDescRepository;
+		this.transactionErrorRepository = transactionErrorRepository;
 	}
 	
 	/**
@@ -51,29 +51,27 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 		LocalDateTime currentDate = LocalDateTime.parse(getDate, formatter);
 		LocalDateTime past30Date = currentDate.minus(30, ChronoUnit.DAYS);
 		// Getting all transaction data from database
-		List<TransactionFunctionAudit> transactionFunctionAuditList = transactionErrorDescRepository
+		List<TransactionFunctionAudit> transactionFunctionAuditList = transactionErrorRepository
 				.getAllTransactionErrorsData(request.getCarrier(), currentDate, past30Date,
 						request.getPortalFunction());
 		
-		List<TransactionErrorData> transactionDescErrorData=getTransactionErrorData(transactionFunctionAuditList);
+		List<TransactionErrorData> transactionErrorData=getTransactionErrorData(transactionFunctionAuditList);
 		// Getting errorCount and successCount to calculate totalTransactions and respective percentage
 		TransactionData transactionDataCount = new TransactionData();
-		long errorCount = transactionFunctionAuditList.stream()
-				.filter(item -> ("E".equals(item.getTxnStatus()) && "S".equals(item.getStatus()))
-						|| (" ".equals(item.getTxnStatus()) && "F".equals(item.getStatus())))
-				.count();
+		long totalErrorCount = getErrorCount(transactionFunctionAuditList);
+		
 		long successCount = transactionFunctionAuditList.stream()
 				.filter(item -> " ".equals(item.getTxnStatus()) && "S".equals(item.getStatus())).count();
 		// Calculating total transactions by adding successCount and errorCount
-		long totalTransactions = successCount + errorCount;
-		long normalCount = totalTransactions - errorCount;
+		long totalTransactions = successCount + totalErrorCount;
+		long normalCount = totalTransactions - totalErrorCount;
 
 		List<TransactionData> bookingDataList = new ArrayList<>();
 		try {
 			// Calculating normalCountPercent and errorCountPercent from the totalTransactions we get
 			if (!transactionFunctionAuditList.isEmpty()) {
 				float normalCountPercent = totalTransactions > 0 ? (float) (normalCount * 100) / totalTransactions: 0.0f;
-				float errorCountPercent = totalTransactions > 0 ? (float) (errorCount * 100) / totalTransactions : 0.0f;
+				float errorCountPercent = totalTransactions > 0 ? (float) (totalErrorCount * 100) / totalTransactions : 0.0f;
 				transactionDataCount.setNormalCountPercent(normalCountPercent);
 				transactionDataCount.setErrorCountPercent(errorCountPercent);
 			} else {
@@ -81,14 +79,14 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 				transactionDataCount.setErrorCountPercent(0.0f);
 			}
 		} catch (CpsException cpsException) {
-			log.info("Cps Exception in TransactionErrorDescServiceImpl :", cpsException.getMessage());
+			log.info("Cps Exception in TransactionErrorServiceImpl :", cpsException.getMessage());
 			throw cpsException;
 		}
 
 		transactionDataCount.setTotalTransaction(totalTransactions);
 		transactionDataCount.setNormalCount(normalCount);
-		transactionDataCount.setErrorCount(errorCount);
-		transactionDataCount.setErrorTransactions(transactionDescErrorData);
+		transactionDataCount.setErrorCount(totalErrorCount);
+		transactionDataCount.setErrorTransactions(transactionErrorData);
 		bookingDataList.add(transactionDataCount);
 		return transactionDataCount;
 	}
@@ -101,9 +99,7 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 	 */
 	private List<TransactionErrorData> getTransactionErrorData(final List<TransactionFunctionAudit> transactionFunctionAuditList) {
 		// Getting status="F"& " " And "E"&"S" as error from FUNCTIONAUDIT table to get errorCount and description for respective status
-		long totalErrorCount = transactionFunctionAuditList.stream()
-				.filter(item -> ("E".equals(item.getTxnStatus()) && "S".equals(item.getStatus()))
-						|| (" ".equals(item.getTxnStatus()) && "F".equals(item.getStatus()))).count();
+		long totalErrorCount = getErrorCount(transactionFunctionAuditList);
 		
 		return transactionFunctionAuditList.stream()
 	            .filter(audit -> ("E".equals(audit.getTxnStatus()) && "S".equals(audit.getStatus()))
@@ -118,5 +114,17 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 	                transactionErrorData.setErrorPercent(errorPercent);
 	                return transactionErrorData;
 	            }).toList();
+	}
+	/**
+	 * This Method is used to fetch total error count for particular carrier and 
+	 * portalFunction based on their status
+	 * @param transactionFunctionAuditList
+	 * @return
+	 */
+	private long getErrorCount(final List<TransactionFunctionAudit> transactionFunctionAuditList) {
+		
+		return transactionFunctionAuditList.stream()
+				.filter(item -> ("E".equals(item.getTxnStatus()) && "S".equals(item.getStatus()))
+						|| (" ".equals(item.getTxnStatus()) && "F".equals(item.getStatus()))).count();
 	}
 }
