@@ -1,6 +1,5 @@
 package com.unisys.trans.cps.middleware.controllers;
 
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -130,12 +129,12 @@ class TransactionErrorControllerTest {
        transactionData.setTotalTransaction(45);
        
        transactionData.setErrorTransactions(errorDataList);
-       doThrow(new CpsException("Test CpsException")).when(transactionErrorDescService).getTransactionErrors(request);
+      
 
         when(transactionErrorDescRepository.getAllTransactionErrorsData(Mockito.anyString(), Mockito.eq(currentDate), Mockito.eq(past30Date), Mockito.anyString()))
                 .thenReturn(list);
       
-      //  when(transactionErrorDescService.getTransactionErrors(request)).thenThrow(new CpsException("Test CpsException"));
+       when(transactionErrorDescService.getTransactionErrors(request)).thenThrow(new CpsException("Test CpsException"));
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/airline-dashboard/transaction-error-count")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(request))
