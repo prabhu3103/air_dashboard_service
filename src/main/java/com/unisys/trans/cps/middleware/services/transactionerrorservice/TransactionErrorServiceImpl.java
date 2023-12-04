@@ -142,7 +142,7 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 	 * @return
 	 */
 	private List<TransactionErrorCount>  getTransctionErrorCount(String carrier, LocalDateTime todayDate,LocalDateTime past30Date,String portalFunction) {
-		//Getting 
+		//Getting error count for portal function depending on txnStatus and Status
 		List<TransactionFunctionAudit> transactionFunctionAuditList = transactionErrorRepository.getAllTransactionErrorsCount(carrier, todayDate, past30Date, portalFunction);
 		 	
 		return transactionFunctionAuditList.stream()
