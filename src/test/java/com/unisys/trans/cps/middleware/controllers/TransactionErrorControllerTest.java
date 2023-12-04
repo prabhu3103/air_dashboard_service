@@ -28,6 +28,7 @@ import com.unisys.trans.cps.middleware.models.entity.TransactionFunctionAudit;
 import com.unisys.trans.cps.middleware.models.request.TransactionRequest;
 import com.unisys.trans.cps.middleware.models.response.MessageEntry;
 import com.unisys.trans.cps.middleware.models.response.TransactionData;
+import com.unisys.trans.cps.middleware.models.response.TransactionErrorCount;
 import com.unisys.trans.cps.middleware.models.response.TransactionErrorData;
 import com.unisys.trans.cps.middleware.repository.TransactionErrorRepository;
 import com.unisys.trans.cps.middleware.services.transactionerrorservice.TransactionErrorService;
@@ -66,6 +67,9 @@ class TransactionErrorControllerTest {
     MessageEntry messageEntry;
     @Mock
     ResponseEntity<TransactionData> response;
+    
+    @Mock
+    TransactionErrorCount transactionErrorCount;
     @Test
     void getMyCarriersRequestedTest() throws Exception {
         TransactionRequest request = new TransactionRequest();
@@ -130,10 +134,16 @@ class TransactionErrorControllerTest {
        
        transactionData.setErrorTransactions(errorDataList);
       
-
+       TransactionErrorCount transactionErrorCount=new TransactionErrorCount();
+       transactionErrorCount.setErrorCount(3);
+       transactionErrorCount.setPortalFunction(portalFunction);
+       
+       List<TransactionErrorCount> transactionErrorCountList=new ArrayList<>();
+       transactionErrorCountList.add(transactionErrorCount);
         when(transactionErrorDescRepository.getAllTransactionErrorsData(Mockito.anyString(), Mockito.eq(currentDate), Mockito.eq(past30Date), Mockito.anyString()))
                 .thenReturn(list);
-      
+        when(transactionErrorDescRepository.getAllTransactionErrorsCount(Mockito.anyString(), Mockito.eq(currentDate), Mockito.eq(past30Date), Mockito.anyString()))
+        .thenReturn(list);
        when(transactionErrorDescService.getTransactionErrors(request)).thenThrow(new CpsException("Test CpsException"));
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/airline-dashboard/transaction-error-count")
                 .contentType(MediaType.APPLICATION_JSON)

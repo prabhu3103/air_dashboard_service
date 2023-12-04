@@ -13,6 +13,7 @@ import com.unisys.trans.cps.middleware.exception.CpsException;
 import com.unisys.trans.cps.middleware.models.entity.TransactionFunctionAudit;
 import com.unisys.trans.cps.middleware.models.request.TransactionRequest;
 import com.unisys.trans.cps.middleware.models.response.TransactionData;
+import com.unisys.trans.cps.middleware.models.response.TransactionErrorCount;
 import com.unisys.trans.cps.middleware.models.response.TransactionErrorData;
 import com.unisys.trans.cps.middleware.repository.TransactionErrorRepository;
 
@@ -55,7 +56,9 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 				.getAllTransactionErrorsData(request.getCarrier(), currentDate, past30Date,
 						request.getPortalFunction());
 		
-		List<TransactionErrorData> transactionErrorData=getTransactionErrorData(transactionFunctionAuditList);
+		 List<TransactionErrorCount> transactionErrorCount=getTransctionErrorCount(request.getCarrier(), currentDate, past30Date, request.getPortalFunction());
+		
+		 List<TransactionErrorData> transactionErrorData=getTransactionErrorData(transactionFunctionAuditList);
 		// Getting errorCount and successCount to calculate totalTransactions and respective percentage
 		TransactionData transactionDataCount = new TransactionData();
 		long totalErrorCount = getErrorCount(transactionFunctionAuditList);
@@ -64,13 +67,13 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 				.filter(item -> " ".equals(item.getTxnStatus()) && "S".equals(item.getStatus())).count();
 		// Calculating total transactions by adding successCount and errorCount
 		long totalTransactions = successCount + totalErrorCount;
-		long normalCount = totalTransactions - totalErrorCount;
+		
 
 		List<TransactionData> bookingDataList = new ArrayList<>();
 		try {
 			// Calculating normalCountPercent and errorCountPercent from the totalTransactions we get
 			if (!transactionFunctionAuditList.isEmpty()) {
-				float normalCountPercent = totalTransactions > 0 ? (float) (normalCount * 100) / totalTransactions: 0.0f;
+				float normalCountPercent = totalTransactions > 0 ? (float) (successCount * 100) / totalTransactions: 0.0f;
 				float errorCountPercent = totalTransactions > 0 ? (float) (totalErrorCount * 100) / totalTransactions : 0.0f;
 				transactionDataCount.setNormalCountPercent(normalCountPercent);
 				transactionDataCount.setErrorCountPercent(errorCountPercent);
@@ -84,9 +87,10 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 		}
 
 		transactionDataCount.setTotalTransaction(totalTransactions);
-		transactionDataCount.setNormalCount(normalCount);
+		transactionDataCount.setNormalCount(successCount);
 		transactionDataCount.setErrorCount(totalErrorCount);
 		transactionDataCount.setErrorTransactions(transactionErrorData);
+		transactionDataCount.setTransactionErrorCount(transactionErrorCount);
 		bookingDataList.add(transactionDataCount);
 		return transactionDataCount;
 	}
@@ -127,4 +131,29 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 				.filter(item -> ("E".equals(item.getTxnStatus()) && "S".equals(item.getStatus()))
 						|| (" ".equals(item.getTxnStatus()) && "F".equals(item.getStatus()))).count();
 	}
+	
+	/**
+	 * This method is used to get error count for particular portalFunction 
+	 * to populate on UI on the refresh of page
+	 * @param carrier
+	 * @param todayDate
+	 * @param past30Date
+	 * @param portalFunction
+	 * @return
+	 */
+	private List<TransactionErrorCount>  getTransctionErrorCount(String carrier, LocalDateTime todayDate,LocalDateTime past30Date,String portalFunction) {
+		//Getting 
+		List<TransactionFunctionAudit> transactionFunctionAuditList = transactionErrorRepository.getAllTransactionErrorsCount(carrier, todayDate, past30Date, portalFunction);
+		 	
+		return transactionFunctionAuditList.stream()
+		        .filter(audit -> ("E".equals(audit.getTxnStatus()) && "S".equals(audit.getStatus()))
+		                || (" ".equals(audit.getTxnStatus()) && "F".equals(audit.getStatus())))
+		        .collect(Collectors.groupingBy(TransactionFunctionAudit::getPortalFunction, Collectors.counting()))
+		        .entrySet().stream().map(entry -> {
+		            TransactionErrorCount transactionErrorCount = new TransactionErrorCount();
+		            transactionErrorCount.setErrorCount(entry.getValue().intValue()); 
+		            transactionErrorCount.setPortalFunction(entry.getKey());
+		            return transactionErrorCount;
+		        }).toList();
 }
+	}

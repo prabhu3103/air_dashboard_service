@@ -45,20 +45,12 @@ public class TransactionErrorController {
 			@Valid @RequestBody TransactionRequest request) {
 		 log.info("Inside Controller class getTransactionErrors method");
 		 ResponseEntity<TransactionData> response=new ResponseEntity<>();
-		 TransactionData transactionData=new TransactionData();
-
+		  
 	        try {
 	        	TransactionData transactionErrorData = transactionErrorService.getTransactionErrors(request);
 
-	            transactionData.setErrorCount(transactionErrorData.getErrorCount());
-	            transactionData.setErrorCountPercent(transactionErrorData.getErrorCountPercent());
-	            transactionData.setNormalCount(transactionErrorData.getNormalCount());
-	            transactionData.setNormalCountPercent(transactionErrorData.getNormalCountPercent());
-	            transactionData.setTotalTransaction(transactionErrorData.getTotalTransaction());
-	            transactionData.setErrorTransactions(transactionErrorData.getErrorTransactions());
-	            transactionData.setPortalFunction(request.getPortalFunction());
-	            response.setResponse(transactionData);
-	            
+	        	transactionErrorData.setPortalFunction(request.getPortalFunction());
+	            response.setResponse(transactionErrorData);
 	            response.setSuccessFlag(true);
 	        } catch (CpsException e) {
 	            response.setSuccessFlag(false);

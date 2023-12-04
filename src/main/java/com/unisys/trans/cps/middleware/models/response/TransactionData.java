@@ -30,5 +30,6 @@ public class TransactionData {
 
 	@Autowired
 	private List<TransactionErrorData> errorTransactions;
-
+	@Autowired
+	private List<TransactionErrorCount> transactionErrorCount;
 }

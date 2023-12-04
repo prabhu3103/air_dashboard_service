@@ -24,5 +24,12 @@ public interface TransactionErrorRepository extends JpaRepository<TransactionFun
             + "AND PORTALFUNCTION IN(?4)";
     @Query(value = SQL_NATIVE_QUERY, nativeQuery = true)
     public List<TransactionFunctionAudit> getAllTransactionErrorsData(String carrier, LocalDateTime todayDate,LocalDateTime past30Date,String portalFunction);
-        
+      
+    String SQL_NAMED_QUERY_COUNT = "select tfa from TransactionFunctionAudit tfa " +
+            "where tfa.eventDate  <= (?2) "
+            + "and tfa.eventDate >= (?3) " 
+            + "and tfa.carrier IN (?1)"
+            + "and tfa.portalFunction NOT IN(?4)";
+    @Query(value = SQL_NAMED_QUERY_COUNT )
+    public List<TransactionFunctionAudit> getAllTransactionErrorsCount(String carrier, LocalDateTime todayDate,LocalDateTime past30Date,String portalFunction);
 }
