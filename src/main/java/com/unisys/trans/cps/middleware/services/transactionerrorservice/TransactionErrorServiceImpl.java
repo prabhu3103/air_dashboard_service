@@ -56,7 +56,7 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 				.getAllTransactionErrorsData(request.getCarrier(), currentDate, past30Date,
 						request.getPortalFunction());
 		
-		 List<TransactionErrorCount> transactionErrorCount=getTransctionErrorCount(request.getCarrier(), currentDate, past30Date, request.getPortalFunction());
+		 List<TransactionErrorCount> transactionErrorCount=getTransctionErrorCount(request.getCarrier(), currentDate, past30Date);
 		
 		 List<TransactionErrorData> transactionErrorData=getTransactionErrorData(transactionFunctionAuditList);
 		// Getting errorCount and successCount to calculate totalTransactions and respective percentage
@@ -142,19 +142,23 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 	 * @param portalFunction
 	 * @return
 	 */
-	private List<TransactionErrorCount>  getTransctionErrorCount(String carrier, LocalDateTime todayDate,LocalDateTime past30Date,String portalFunction) {
-		//Getting error count for portal function depending on txnStatus and Status
-		List<TransactionFunctionAudit> transactionFunctionAuditList = transactionErrorRepository.getAllTransactionErrorsCount(carrier, todayDate, past30Date, portalFunction);
-		 	
+	private List<TransactionErrorCount> getTransctionErrorCount(String carrier, LocalDateTime todayDate,
+			LocalDateTime past30Date) {
+		// Getting error count for portal function depending on txnStatus and Status
+		List<TransactionFunctionAudit> transactionFunctionAuditList = transactionErrorRepository
+				.getAllTransactionErrorsCount(carrier, todayDate, past30Date);
+
 		return transactionFunctionAuditList.stream()
-		        .filter(audit -> ("E".equals(audit.getTxnStatus()) && "S".equals(audit.getStatus()))
-		                || (" ".equals(audit.getTxnStatus()) && "F".equals(audit.getStatus())))
-		        .collect(Collectors.groupingBy(TransactionFunctionAudit::getPortalFunction, Collectors.counting()))
-		        .entrySet().stream().map(entry -> {
-		            TransactionErrorCount transactionErrorCount = new TransactionErrorCount();
-		            transactionErrorCount.setErrorCount(entry.getValue().intValue()); 
-		            transactionErrorCount.setPortalFunction(entry.getKey());
-		            return transactionErrorCount;
-		        }).toList();
-}
+				.filter(audit -> ("E".equals(audit.getTxnStatus()) && "S".equals(audit.getStatus()))
+						|| (" ".equals(audit.getTxnStatus()) && "F".equals(audit.getStatus())))
+				.collect(Collectors.groupingBy(TransactionFunctionAudit::getPortalFunction, Collectors.counting()))
+				.entrySet().stream().map(entry -> {
+					TransactionErrorCount transactionErrorCount = new TransactionErrorCount();
+
+					transactionErrorCount.setPortalFunction(entry.getKey());
+					transactionErrorCount.setErrorCount(entry.getValue().intValue());
+
+					return transactionErrorCount;
+				}).toList();
+	}
 	}
