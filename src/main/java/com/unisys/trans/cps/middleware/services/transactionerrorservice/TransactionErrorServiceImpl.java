@@ -68,9 +68,8 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 		// Calculating total transactions by adding successCount and errorCount
 		long totalTransactions = successCount + totalErrorCount;
 		
-
 		List<TransactionData> bookingDataList = new ArrayList<>();
-		try {
+		
 			// Calculating normalCountPercent and errorCountPercent from the totalTransactions we get
 			if (!transactionFunctionAuditList.isEmpty()) {
 				float normalCountPercent = totalTransactions > 0 ? (float) (successCount * 100) / totalTransactions: 0.0f;
@@ -81,10 +80,6 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 				transactionDataCount.setNormalCountPercent(0.0f);
 				transactionDataCount.setErrorCountPercent(0.0f);
 			}
-		} catch (CpsException cpsException) {
-			log.info("Cps Exception in TransactionErrorServiceImpl :", cpsException.getMessage());
-			throw cpsException;
-		}
 
 		transactionDataCount.setTotalTransaction(totalTransactions);
 		transactionDataCount.setNormalCount(successCount);
@@ -139,7 +134,6 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 	 * @param carrier
 	 * @param todayDate
 	 * @param past30Date
-	 * @param portalFunction
 	 * @return
 	 */
 	private List<TransactionErrorCount> getTransctionErrorCount(String carrier, LocalDateTime todayDate,
@@ -154,7 +148,6 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 				.collect(Collectors.groupingBy(TransactionFunctionAudit::getPortalFunction, Collectors.counting()))
 				.entrySet().stream().map(entry -> {
 					TransactionErrorCount transactionErrorCount = new TransactionErrorCount();
-
 					transactionErrorCount.setPortalFunction(entry.getKey());
 					transactionErrorCount.setErrorCount(entry.getValue().intValue());
 
