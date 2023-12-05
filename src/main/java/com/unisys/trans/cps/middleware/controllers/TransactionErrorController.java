@@ -48,8 +48,6 @@ public class TransactionErrorController {
 		  
 	        try {
 	        	TransactionData transactionErrorData = transactionErrorService.getTransactionErrors(request);
-
-	        	transactionErrorData.setPortalFunction(request.getPortalFunction());
 	            response.setResponse(transactionErrorData);
 	            response.setSuccessFlag(true);
 	        } catch (CpsException e) {

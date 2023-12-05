@@ -91,6 +91,7 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 		transactionDataCount.setErrorCount(totalErrorCount);
 		transactionDataCount.setErrorTransactions(transactionErrorData);
 		transactionDataCount.setTransactionErrorCount(transactionErrorCount);
+		transactionDataCount.setPortalFunction(request.getPortalFunction());
 		bookingDataList.add(transactionDataCount);
 		return transactionDataCount;
 	}
