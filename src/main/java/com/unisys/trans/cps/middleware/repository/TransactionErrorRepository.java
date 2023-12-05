@@ -16,20 +16,22 @@ import com.unisys.trans.cps.middleware.models.entity.TransactionFunctionAudit;
 @Repository
 public interface TransactionErrorRepository extends JpaRepository<TransactionFunctionAudit, Long> {
 
-    
-    String SQL_NATIVE_QUERY = "SELECT * FROM [dbo].[FUNCTIONAUDIT] " +
-            "WHERE EVENTDATE  <= (?2) "
-            + "AND EVENTDATE >= (?3) " 
-            + "AND CARRIER IN (?1)"
-            + "AND PORTALFUNCTION IN(?4)";
-    @Query(value = SQL_NATIVE_QUERY, nativeQuery = true)
-    public List<TransactionFunctionAudit> getAllTransactionErrorsData(String carrier, LocalDateTime todayDate,LocalDateTime past30Date,String portalFunction);
-      
-    String SQL_NAMED_QUERY_COUNT = "select tfa from TransactionFunctionAudit tfa " +
-            "where tfa.eventDate  <= (?2) "
-            + "and tfa.eventDate >= (?3) " 
-            + "and tfa.carrier IN (?1)"
-            + "and tfa.portalFunction NOT IN(?4)";
+	String SQL_NAMED_QUERY = "SELECT tfa FROM TransactionFunctionAudit tfa " +
+			  "WHERE tfa.eventDate  <= (?2) "
+	            + "AND tfa.eventDate >= (?3) " 
+	            + "AND tfa.carrier IN (?1)"
+	            + "AND tfa.portalFunction IN(?4)";
+	@Query(value = SQL_NAMED_QUERY)
+	public List<TransactionFunctionAudit> getAllTransactionErrorsData(String carrier, LocalDateTime todayDate,
+				LocalDateTime past30Date, String portalFunction);
+	      
+	    
+    String SQL_NAMED_QUERY_COUNT = "SELECT tfa FROM TransactionFunctionAudit tfa " +
+            "WHERE tfa.eventDate  <= (?2) "
+            + "AND tfa.eventDate >= (?3) " 
+            + "AND tfa.carrier IN (?1)"
+            + "AND tfa.portalFunction NOT IN(?4)";
     @Query(value = SQL_NAMED_QUERY_COUNT )
-    public List<TransactionFunctionAudit> getAllTransactionErrorsCount(String carrier, LocalDateTime todayDate,LocalDateTime past30Date,String portalFunction);
+	public List<TransactionFunctionAudit> getAllTransactionErrorsCount(String carrier, LocalDateTime todayDate,
+			LocalDateTime past30Date, String portalFunction);
 }
