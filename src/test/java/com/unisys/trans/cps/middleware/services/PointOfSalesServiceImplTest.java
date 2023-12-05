@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -176,16 +177,16 @@ class PointOfSalesServiceImplTest {
     List<Object[]> getPointOfSalesMock(){
         List<Object[]> mockedPosList = new ArrayList<>();
 
-        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 9, 15, 10, 30), 100.0f});
-        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 10, 28, 14, 45), 200.0f});
-        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 11, 10, 9, 0), 150.0f});
+        mockedPosList.add(new Object[]{Timestamp.valueOf(LocalDateTime.of(2023, 9, 15, 10, 30)), 100.0f, 10f, 2.5f});
+        mockedPosList.add(new Object[]{Timestamp.valueOf(LocalDateTime.of(2023, 10, 28, 14, 45)), 200.0f, 10f, 2.5f});
+        mockedPosList.add(new Object[]{Timestamp.valueOf(LocalDateTime.of(2023, 11, 10, 9, 0)), 150.0f, 10f, 2.5f});
 
         return mockedPosList;
     }
 
     List<Object[]> getPointOfSalesMockForEmptyValue(){
         List<Object[]> mockedPosList = new ArrayList<>();
-        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 9, 15, 10, 30), 0});
+        mockedPosList.add(new Object[]{Timestamp.valueOf(LocalDateTime.of(2023, 9, 15, 10, 30)), 0, 10f, 2.5f});
         return mockedPosList;
     }
 }
