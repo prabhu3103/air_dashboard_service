@@ -35,9 +35,9 @@ class TopLanesControllerTest {
     private AirlineHostCountryMasterRepository airlineHostCountryMasterRepository;
 
     @Test
-    void getTopAccountsBookingAirportTest() throws Exception {
+    void getToplanesBookingAirportTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopLanesBookingAirport(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -55,9 +55,9 @@ class TopLanesControllerTest {
     }
 
     @Test
-    void getTopAccountsBookingCountryTest() throws Exception {
+    void getToplanesBookingCountryTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopLanesBookingCountry(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -75,9 +75,9 @@ class TopLanesControllerTest {
     }
 
     @Test
-    void getTopAccountsBookingContinentTest() throws Exception {
+    void getToplanesBookingContinentTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopLanesBookingContinent(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -95,9 +95,9 @@ class TopLanesControllerTest {
     }
 
     @Test
-    void getTopAccountsBookingRegionTest() throws Exception {
+    void getToplanesBookingRegionTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopLanesBookingRegion(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -115,9 +115,9 @@ class TopLanesControllerTest {
     }
 
     @Test
-    void getTopAccountsWeightAirportTest() throws Exception {
+    void getToplanesWeightAirportTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         AirlineHostCountryMaster masterRecord = new AirlineHostCountryMaster();
@@ -140,9 +140,9 @@ class TopLanesControllerTest {
     }
 
     @Test
-    void getTopAccountsWeightCountryTest() throws Exception {
+    void getToplanesWeightCountryTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         AirlineHostCountryMaster masterRecord = new AirlineHostCountryMaster();
@@ -165,9 +165,9 @@ class TopLanesControllerTest {
     }
 
     @Test
-    void getTopAccountsWeightContinentTest() throws Exception {
+    void getToplanesWeightContinentTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         AirlineHostCountryMaster masterRecord = new AirlineHostCountryMaster();
@@ -190,9 +190,9 @@ class TopLanesControllerTest {
     }
 
     @Test
-    void getTopAccountsWeightRegionTest() throws Exception {
+    void getToplanesWeightRegionTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         AirlineHostCountryMaster masterRecord = new AirlineHostCountryMaster();
@@ -215,9 +215,9 @@ class TopLanesControllerTest {
     }
 
     @Test
-    void getTopAccountsVolumeAirportTest() throws Exception {
+    void getToplanesVolumeAirportTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         AirlineHostCountryMaster masterRecord = new AirlineHostCountryMaster();
@@ -240,9 +240,9 @@ class TopLanesControllerTest {
     }
 
     @Test
-    void getTopAccountsVolumeCountryTest() throws Exception {
+    void getToplanesVolumeCountryTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         AirlineHostCountryMaster masterRecord = new AirlineHostCountryMaster();
@@ -265,9 +265,9 @@ class TopLanesControllerTest {
     }
 
     @Test
-    void getTopAccountsVolumeContinentTest() throws Exception {
+    void getToplanesVolumeContinentTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         AirlineHostCountryMaster masterRecord = new AirlineHostCountryMaster();
@@ -290,9 +290,9 @@ class TopLanesControllerTest {
     }
 
     @Test
-    void getTopAccountsVolumeRegionTest() throws Exception {
+    void getToplanesVolumeRegionTest() throws Exception {
 
-        Object[] mockObject = {"YYZ", "YUL", 2};
+        Object[] mockObject = {"YYZ", "YUL", 2,0.0f,0.0f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         AirlineHostCountryMaster masterRecord = new AirlineHostCountryMaster();
