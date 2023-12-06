@@ -134,8 +134,18 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 topAgentsResponseDTO.setValue(value.floatValue());
                 topAgentsResponseDTO.setValueType(valueType);
                 topAgentsResponseDTO.setUnit(stdUnit);
-                topAgentsResponseDTO.setMomData(1.1f);
-                topAgentsResponseDTO.setYoyData(-1.1f);
+                if(array[3] != null){
+                    Number mom = (Number) array[3];
+                    topAgentsResponseDTO.setMomData(mom.floatValue());
+                }else{
+                    topAgentsResponseDTO.setMomData(0.0f);
+                }
+                if(array[4] != null){
+                    Number yoy = (Number) array[4];
+                    topAgentsResponseDTO.setMomData(yoy.floatValue());
+                }else{
+                    topAgentsResponseDTO.setYoyData(0.0f);
+                }
                 topAgentsResponseDTOS.add(topAgentsResponseDTO);
             }
             response.setTopAgentsResponseDTOList(topAgentsResponseDTOS);
@@ -154,8 +164,18 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 Number value = (Number) array[2];
                 topAgentsResponseDTO.setValue(value.floatValue());
                 topAgentsResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
-                topAgentsResponseDTO.setMomData(1.1f);
-                topAgentsResponseDTO.setYoyData(-1.1f);
+                if(array[3] != null){
+                    Number mom = (Number) array[3];
+                    topAgentsResponseDTO.setMomData(mom.floatValue());
+                }else{
+                    topAgentsResponseDTO.setMomData(0.0f);
+                }
+                if(array[4] != null){
+                    Number yoy = (Number) array[4];
+                    topAgentsResponseDTO.setMomData(yoy.floatValue());
+                }else{
+                    topAgentsResponseDTO.setYoyData(0.0f);
+                }
                 topAgentsResponseDTOS.add(topAgentsResponseDTO);
             }
             response.setTopAgentsResponseDTOList(topAgentsResponseDTOS);
