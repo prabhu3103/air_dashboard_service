@@ -408,7 +408,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
@@ -465,7 +465,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
@@ -524,7 +524,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
@@ -587,7 +587,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
@@ -646,7 +646,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
@@ -704,7 +704,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
@@ -763,7 +763,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
@@ -825,7 +825,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
@@ -884,7 +884,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
@@ -941,7 +941,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
@@ -1000,7 +1000,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
@@ -1062,7 +1062,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 (
                  month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
                  or 
-                 month(getdate()) = 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=(year(getdate())-1) 
+                 month(getdate()) = 1 and month(a.eventDate)= 12 and  year(a.eventDate)=(year(getdate())-1) 
                 ) 			
             	and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
             	and a.carrier = :carrier 
