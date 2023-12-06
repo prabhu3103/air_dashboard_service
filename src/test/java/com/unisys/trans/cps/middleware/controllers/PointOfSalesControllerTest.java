@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,9 +66,9 @@ class PointOfSalesControllerTest {
     List<Object[]> getPointOfSalesMock(){
         List<Object[]> mockedPosList = new ArrayList<>();
 
-        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 9, 15, 10, 30), 100L});
-        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 10, 28, 14, 45), 200L});
-        mockedPosList.add(new Object[]{LocalDateTime.of(2023, 11, 10, 9, 0), 150L});
+        mockedPosList.add(new Object[]{Timestamp.valueOf(LocalDateTime.of(2023, 9, 15, 10, 30)), 100f, 10f, 2.5f});
+        mockedPosList.add(new Object[]{Timestamp.valueOf(LocalDateTime.of(2023, 10, 28, 14, 45)), 200f, 10f, 2.5f});
+        mockedPosList.add(new Object[]{Timestamp.valueOf(LocalDateTime.of(2023, 11, 10, 9, 0)), 150f, 10f, 2.5f});
 
         return mockedPosList;
     }

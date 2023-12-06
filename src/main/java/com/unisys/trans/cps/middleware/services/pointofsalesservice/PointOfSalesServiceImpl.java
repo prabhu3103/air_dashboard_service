@@ -11,12 +11,14 @@ import com.unisys.trans.cps.middleware.services.AirlineHostCountryMasterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class PointOfSalesServiceImpl implements PointOfSalesService {
@@ -120,37 +122,65 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
     private void buildPOSResponseDTO(List<PointOfSalesResponseDTO> response, List<Object[]> posObjects, String startDate, String endDate, String valueType, String standardUnit) {
 
         if (posObjects != null && !posObjects.isEmpty()) {
-            Map<String, Number> dataMap = posObjects.stream()
-                    .collect(Collectors.toMap(
-                             array -> ((LocalDateTime) array[0]).format(FORMATTER),
-                             array -> (Optional.ofNullable((Number) array[1]).orElse(AirlineDashboardConstants.FLOAT_ZERO))));
             float[] maxPosValue = {Float.MIN_VALUE};
             float[] totalValue = {AirlineDashboardConstants.FLOAT_ZERO};
-            List<POSResponseDTO> posResponseDTOList = LocalDate.parse(startDate, FORMATTER)
+            float[] momValue = {AirlineDashboardConstants.FLOAT_ZERO};
+            float[] yoyValue = {AirlineDashboardConstants.FLOAT_ZERO};
+            final String[] momYoyFlag = {"TRUE"};
+            Map<String, List<POSResponseDTO>> groupedByDate = posObjects.stream()
+                    .collect(Collectors.groupingBy(
+                            array -> ((Timestamp) array[0]).toLocalDateTime().format(FORMATTER),
+                            Collectors.mapping(array -> {
+                                POSResponseDTO posResponseDTO = new POSResponseDTO();
+                                posResponseDTO.setEventDate(((Timestamp) array[0]).toLocalDateTime().format(FORMATTER));
+                                posResponseDTO.setValue(array.length > 1 && array[1] != null ? ((Number) array[1]).floatValue() : AirlineDashboardConstants.LONG_ZERO.floatValue());
+                                totalValue[0] += posResponseDTO.getValue();
+                                if (posResponseDTO.getValue() > maxPosValue[0]) {
+                                    maxPosValue[0] = posResponseDTO.getValue();
+                                }
+                                if (momYoyFlag[0].equals("TRUE")) {
+                                    if (array.length > 2 && array[2] != null) {
+                                        momValue[0] = ((Number) array[2]).floatValue();
+                                    }
+                                    if (array.length > 3 && array[3] != null) {
+                                        yoyValue[0] = ((Number) array[3]).floatValue();
+                                    }
+                                    momYoyFlag[0] = "FALSE";
+                                }
+                                posResponseDTO.setValueType(valueType);
+                                posResponseDTO.setUnit(standardUnit != null ? standardUnit : AirlineDashboardConstants.EMPTY_STRING);
+                                return posResponseDTO;
+                            }, Collectors.toList())
+                    ));
+
+            // Stream to create empty POSResponseDTO for missing dates
+            List<POSResponseDTO> missingDatePosDTOs = LocalDate.parse(startDate, FORMATTER)
                     .datesUntil(LocalDate.parse(endDate, FORMATTER).plusDays(1))
+                    .filter(date -> !groupedByDate.containsKey(date.format(FORMATTER)))
                     .map(date -> {
-                        String formattedDate = date.format(FORMATTER);
-                        Number value = dataMap.getOrDefault(formattedDate, AirlineDashboardConstants.FLOAT_ZERO);
-                        float posValue = value.floatValue();
-                        totalValue[0] += posValue;
-                        POSResponseDTO posResponseDTO = new POSResponseDTO();
-                        posResponseDTO.setEventDate(formattedDate);
-                        posResponseDTO.setValue(posValue);
-                        posResponseDTO.setValueType(valueType);
-                        posResponseDTO.setUnit(standardUnit != null ? standardUnit : AirlineDashboardConstants.EMPTY_STRING);
-                        if (posValue > maxPosValue[0]) {
-                            maxPosValue[0] = posValue;
-                        }
-                        return posResponseDTO;
+                        POSResponseDTO emptyPosResponseDTO = new POSResponseDTO();
+                        emptyPosResponseDTO.setEventDate(date.format(FORMATTER));
+                        emptyPosResponseDTO.setValue(AirlineDashboardConstants.LONG_ZERO.floatValue());
+                        emptyPosResponseDTO.setValueType(valueType);
+                        emptyPosResponseDTO.setUnit(standardUnit != null ? standardUnit : AirlineDashboardConstants.EMPTY_STRING);
+                        return emptyPosResponseDTO;
                     })
-                    .sorted(Comparator.comparing(POSResponseDTO::getEventDate))
-                    .toList();
+                    .collect(Collectors.toList());
+
+            // Combine the existing POSResponseDTOs with the ones for missing dates
+            List<POSResponseDTO> posResponseDTOList = groupedByDate.values().stream()
+                    .flatMap(List::stream)
+                    .collect(Collectors.toList());
+            posResponseDTOList.addAll(missingDatePosDTOs);
+
+            // Sort the combined list by event date
+            posResponseDTOList.sort(Comparator.comparing(POSResponseDTO::getEventDate));
 
             PointOfSalesResponseDTO pointOfSalesResponseDTO = new PointOfSalesResponseDTO();
             pointOfSalesResponseDTO.setTotalValue(totalValue[0]);
             pointOfSalesResponseDTO.setMaxValue(maxPosValue[0]);
-            pointOfSalesResponseDTO.setYoyData(AirlineDashboardConstants.DEFAULT_NEGATIVE_VALUE);
-            pointOfSalesResponseDTO.setMomData(AirlineDashboardConstants.DEFAULT_VALUE);
+            pointOfSalesResponseDTO.setYoyData(momValue[0]);
+            pointOfSalesResponseDTO.setMomData(yoyValue[0]);
             pointOfSalesResponseDTO.setPosList(posResponseDTOList);
 
             response.add(pointOfSalesResponseDTO);
