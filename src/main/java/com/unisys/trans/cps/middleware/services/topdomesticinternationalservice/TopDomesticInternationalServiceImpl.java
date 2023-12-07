@@ -172,15 +172,15 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                 topDomesticInternationalResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 topDomesticInternationalResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
                 totalValue+=value.longValue();
-                if(array[3] != null){
-                    Number mom = (Number) array[3];
+                if(array[2] != null){
+                    Number mom = (Number) array[2];
                     topDomesticInternationalResponseDTO.setMomData(mom.floatValue());
                 }else{
                     topDomesticInternationalResponseDTO.setMomData(0.0f);
                 }
-                if(array[4] != null){
-                    Number yoy = (Number) array[4];
-                    topDomesticInternationalResponseDTO.setMomData(yoy.floatValue());
+                if(array[3] != null){
+                    Number yoy = (Number) array[3];
+                    topDomesticInternationalResponseDTO.setYoyData(yoy.floatValue());
                 }else{
                     topDomesticInternationalResponseDTO.setYoyData(0.0f);
                 }
