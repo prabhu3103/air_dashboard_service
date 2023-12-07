@@ -142,7 +142,7 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 }
                 if(array[4] != null){
                     Number yoy = (Number) array[4];
-                    topAgentsResponseDTO.setMomData(yoy.floatValue());
+                    topAgentsResponseDTO.setYoyData(yoy.floatValue());
                 }else{
                     topAgentsResponseDTO.setYoyData(0.0f);
                 }
@@ -172,7 +172,7 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 }
                 if(array[4] != null){
                     Number yoy = (Number) array[4];
-                    topAgentsResponseDTO.setMomData(yoy.floatValue());
+                    topAgentsResponseDTO.setYoyData(yoy.floatValue());
                 }else{
                     topAgentsResponseDTO.setYoyData(0.0f);
                 }

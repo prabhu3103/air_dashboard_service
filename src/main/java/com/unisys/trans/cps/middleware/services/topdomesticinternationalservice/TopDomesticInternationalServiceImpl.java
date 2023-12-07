@@ -147,7 +147,7 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
             }
             if(array[4] != null){
                 Number yoy = (Number) array[4];
-                topDomesticInternationalResponseDTO.setMomData(yoy.floatValue());
+                topDomesticInternationalResponseDTO.setYoyData(yoy.floatValue());
             }else{
                 topDomesticInternationalResponseDTO.setYoyData(0.0f);
             }

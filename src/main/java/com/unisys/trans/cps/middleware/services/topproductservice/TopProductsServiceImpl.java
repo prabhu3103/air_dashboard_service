@@ -210,7 +210,7 @@ public class TopProductsServiceImpl implements TopProductsService {
             }
             if(array[4] != null){
                 Number yoy = (Number) array[4];
-                topProductResponseDTO.setMomData(yoy.floatValue());
+                topProductResponseDTO.setYoyData(yoy.floatValue());
             }else{
                 topProductResponseDTO.setYoyData(0.0f);
             }
@@ -235,7 +235,7 @@ public class TopProductsServiceImpl implements TopProductsService {
             }
             if(array[4] != null){
                 Number yoy = (Number) array[4];
-                topProductResponseDTO.setMomData(yoy.floatValue());
+                topProductResponseDTO.setYoyData(yoy.floatValue());
             }else{
                 topProductResponseDTO.setYoyData(0.0f);
             }
