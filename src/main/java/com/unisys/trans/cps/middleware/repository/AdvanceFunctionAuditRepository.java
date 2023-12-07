@@ -3342,8 +3342,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                    FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
                    and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                   AND a.CARRIER = :carrier
-                   AND a.ORG = :origin
+                   AND a.CARRIER = :carrier                   
                    and b.COUNTRYCODE = :country
                    )  m
                    ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
@@ -3367,8 +3366,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                    FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
                    month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                   AND a.CARRIER = :carrier
-                   AND a.ORG = :origin
+                   AND a.CARRIER = :carrier                   
                    and b.COUNTRYCODE = :country
                    )  y
                    ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
@@ -3745,8 +3743,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                    FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
                    and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                   AND a.CARRIER = :carrier
-                   AND a.ORG = :origin
+                   AND a.CARRIER = :carrier                   
                    and b.COUNTRYCODE = :country
                    )  m
                    ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
@@ -3770,8 +3767,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                    FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
                    month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                   AND a.CARRIER = :carrier
-                   AND a.ORG = :origin
+                   AND a.CARRIER = :carrier                   
                    and b.COUNTRYCODE = :country
                    )  y
                    ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
