@@ -6,10 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Service;
-
-import com.unisys.trans.cps.middleware.exception.CpsException;
 import com.unisys.trans.cps.middleware.models.entity.TransactionFunctionAudit;
 import com.unisys.trans.cps.middleware.models.request.TransactionRequest;
 import com.unisys.trans.cps.middleware.models.response.TransactionData;
@@ -17,15 +14,13 @@ import com.unisys.trans.cps.middleware.models.response.TransactionErrorCount;
 import com.unisys.trans.cps.middleware.models.response.TransactionErrorData;
 import com.unisys.trans.cps.middleware.repository.TransactionErrorRepository;
 
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * This serviceImpl class is used to calculate total transaction and inquiries
  * and depending on errors to calculate count and percentage
  * 
  * @author Vishal.Bhat2@unisysm.com
  */
-@Slf4j
+
 @Service
 public class TransactionErrorServiceImpl implements TransactionErrorService {
 
@@ -80,13 +75,12 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 				transactionDataCount.setNormalCountPercent(0.0f);
 				transactionDataCount.setErrorCountPercent(0.0f);
 			}
-
+		transactionDataCount.setPortalFunction(request.getPortalFunction());
 		transactionDataCount.setTotalTransaction(totalTransactions);
 		transactionDataCount.setNormalCount(successCount);
 		transactionDataCount.setErrorCount(totalErrorCount);
 		transactionDataCount.setErrorTransactions(transactionErrorData);
 		transactionDataCount.setTransactionErrorCount(transactionErrorCount);
-		transactionDataCount.setPortalFunction(request.getPortalFunction());
 		bookingDataList.add(transactionDataCount);
 		return transactionDataCount;
 	}
