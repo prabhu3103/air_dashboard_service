@@ -231,6 +231,8 @@ public class TopCommodityServiceImpl implements TopCommodityService{
     private void buildResponseDTO(List<TopCommoditiesResponseDTO> response, List<Object[]> topObjects, List<Object[]> topObjects1){
         Map<String, Number> result1 = new LinkedHashMap<>();
         Map<String, String> result2 = new LinkedHashMap<>();
+        Map<String, Number> result3 = new LinkedHashMap<>();
+        Map<String, Number> result4 = new LinkedHashMap<>();
 
         //Merging Empty String commodity count with commodity=0000 and removing commodity=000
         if(topObjects != null && !topObjects.isEmpty()) {
@@ -248,6 +250,18 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                 }else{
                     Number value = (Number) array[1];
                     addCount += value.intValue();
+                }
+                if(array[2] != null) {
+                    Number mom = (Number) array[2];
+                    result3.put((String) array[0], mom);
+                } else{
+                    result3.put((String) array[0], 0.0f);
+                }
+                if(array[3] != null) {
+                    Number yoy = (Number) array[3];
+                    result4.put((String) array[0], yoy);
+                }else{
+                    result4.put((String) array[0], 0.0f);
                 }
             }
             if(addCount > 0)
@@ -267,8 +281,9 @@ public class TopCommodityServiceImpl implements TopCommodityService{
         }
 
         if(topObjects1 != null && !topObjects1.isEmpty()) {
-            for (Object[] array : topObjects1)
+            for (Object[] array : topObjects1) {
                 result2.put((String) array[0], (String) array[1]);
+            }
         }
 
         for (String commodity : result1.keySet()) {
@@ -301,8 +316,10 @@ public class TopCommodityServiceImpl implements TopCommodityService{
             }
             topCommoditiesResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
             topCommoditiesResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
-            topCommoditiesResponseDTO.setMomData(1.1f);
-            topCommoditiesResponseDTO.setYoyData(-1.1f);
+            Number MoM = (Number) result3.get(commodity);
+            Number YoY = (Number) result4.get(commodity);
+            topCommoditiesResponseDTO.setMomData(MoM.floatValue());
+            topCommoditiesResponseDTO.setYoyData(YoY.floatValue());
             response.add(topCommoditiesResponseDTO);
         }
     }
@@ -312,6 +329,8 @@ public class TopCommodityServiceImpl implements TopCommodityService{
 
         Map<String, Number> result1 = new LinkedHashMap<>();
         Map<String, String> result2 = new LinkedHashMap<>();
+        Map<String, Number> result3 = new LinkedHashMap<>();
+        Map<String, Number> result4 = new LinkedHashMap<>();
 
         //Merging Empty String commodity count with commodity=0000 and removing commodity=000
         if(topObjects != null && !topObjects.isEmpty()) {
@@ -329,6 +348,18 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                 }else{
                     Number value = (Number) array[1];
                     addCount += value.floatValue();
+                }
+                if(array[2] != null) {
+                    Number mom = (Number) array[2];
+                    result3.put((String) array[0], mom);
+                } else{
+                    result3.put((String) array[0], 0.0f);
+                }
+                if(array[3] != null) {
+                    Number yoy = (Number) array[3];
+                    result4.put((String) array[0], yoy);
+                }else{
+                    result4.put((String) array[0], 0.0f);
                 }
             }
             if(addCount > 0)
@@ -381,8 +412,10 @@ public class TopCommodityServiceImpl implements TopCommodityService{
             }
             topCommoditiesResponseDTO.setValueType(valueType);
             topCommoditiesResponseDTO.setUnit(stdUnit);
-            topCommoditiesResponseDTO.setMomData(1.1f);
-            topCommoditiesResponseDTO.setYoyData(-1.1f);
+            Number MoM = (Number) result3.get(commodity);
+            Number YoY = (Number) result4.get(commodity);
+            topCommoditiesResponseDTO.setMomData(MoM.floatValue());
+            topCommoditiesResponseDTO.setYoyData(YoY.floatValue());
             response.add(topCommoditiesResponseDTO);
         }
     }
