@@ -46,7 +46,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityBookingAirportTest() throws Exception{
-        Object[] mockObject = {"0000", 29, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 29, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityBookingAirport(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -105,7 +105,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityBookingCountryTest() throws Exception{
-        Object[] mockObject = {"0000", 29, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 29, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityBookingCountry(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -124,7 +124,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityBookingContinentTest() throws Exception{
-        Object[] mockObject = {"0000", 29, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 29, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityBookingContinent(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -143,7 +143,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityBookingRegionTest() throws Exception{
-        Object[] mockObject = {"0000", 29, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 29, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopCommodityBookingRegion(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -162,7 +162,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityWeightAirportTest() throws Exception{
-        Object[] mockObject = {"0000", 9508.00, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 9508.00, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
@@ -182,7 +182,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityWeightCountryTest() throws Exception{
-        Object[] mockObject = {"0000", 9508.00, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 9508.00, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
@@ -202,7 +202,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityWeightContinentTest() throws Exception{
-        Object[] mockObject = {"0000", 9508.00, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 9508.00, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
@@ -222,7 +222,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityWeightRegionTest() throws Exception{
-        Object[] mockObject = {"0000", 9508.00, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 9508.00, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
@@ -242,7 +242,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityVolumeAirportTest() throws Exception{
-        Object[] mockObject = {"0000", 566.92, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 566.92, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
@@ -262,7 +262,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityVolumeCountryTest() throws Exception{
-        Object[] mockObject = {"0000", 566.92, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 566.92, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
@@ -282,7 +282,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityVolumeContinentTest() throws Exception{
-        Object[] mockObject = {"0000", 566.92, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 566.92, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
@@ -302,7 +302,7 @@ class TopCommoditiesControllerTest {
 
     @Test
     void getTopCommodityVolumeRegionTest() throws Exception{
-        Object[] mockObject = {"0000", 566.92, 1.1f, 1.1f};
+        Object[] mockObject = {" ", 566.92, 1.1f, 1.1f};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());

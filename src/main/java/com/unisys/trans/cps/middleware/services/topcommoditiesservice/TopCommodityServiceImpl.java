@@ -306,7 +306,6 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                 topCommoditiesResponseDTO.setCommodityDesc("GENERAL CARGO");
                 Number value = (Number) result1.get(commodity);
                 topCommoditiesResponseDTO.setValue(value.floatValue());
-                commodity="0000";
 
             }  //If given commodity is not present in Commodity table based on Carrier.
             else if(commodity != null && commDiscription == null){
@@ -403,7 +402,6 @@ public class TopCommodityServiceImpl implements TopCommodityService{
                 topCommoditiesResponseDTO.setCommodityDesc("GENERAL CARGO");
                 Number value = (Number) result1.get(commodity);
                 topCommoditiesResponseDTO.setValue(value.floatValue());
-                commodity="0000";
 
             }  //If given commodity is not present in Commodity table based on Carrier.
             else if(commodity != null && commDiscription == null){
