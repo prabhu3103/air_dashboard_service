@@ -544,165 +544,482 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
 
     //Top Agents - Total Number of Booking Count for AirPort
-    @Query("""
-            select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
-                                                      where a.eventDate >= :startDate and a.eventDate <= :endDate
-                                                      and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                                      and a.carrier = :carrier
-                                                      and a.origin = :origin
-                                                      group by a.carrier, a.accNo order by totalNoOfBookingCount desc LIMIT 5
-            """)
+    @Query(value="""
+            select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent,
+          ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
+          from
+                      (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.carrier = :carrier
+                        and a.ORG = :origin
+                        group by a.carrier, a.accNo
+                        ) s left join
+                      (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
+                        where (
+                          month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                          or
+                          month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                         )				
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.carrier = :carrier
+                        and a.ORG = :origin
+                        group by a.carrier, a.accNo
+                       ) m on s.accNo = m.accNo left join
+                    (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
+                        where  month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.carrier = :carrier
+                        and a.ORG = :origin
+                        group by a.carrier, a.accNo
+                      ) y
+                    on s.accNo = y.accNo
+                    order by s.totalNoOfBookingCount desc
+                    offset 0 rows
+                    fetch next 5 rows only
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                               @Param("carrier") String carrier, @Param("origin") String origin);
 
 
     //Top Agents - Total Number of Booking Count for Country
-    @Query("""
-            select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b
-                                                  where a.origin = b.code
-                                                  and a.eventDate >= :startDate and a.eventDate <= :endDate
-                                                  and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                                  and a.carrier = :carrier
-                                                  and b.countryCode = :country
-                                                  group by a.carrier, a.accNo order by totalNoOfBookingCount desc LIMIT 5
-            """)
+    @Query(value="""
+            select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent, 
+            ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
+            from
+                        (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+            				where a.ORG = b.code
+                			and	a.eventDate >= :startDate and a.eventDate <= :endDate
+            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            				and a.carrier = :carrier
+            				and b.countryCode = :country
+            				group by  a.carrier, a.accNo
+            				) s left join
+                        (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+            				where (
+            				  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            				  or
+            				  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            				 )	
+            				and a.ORG = b.code
+            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            				and a.carrier = :carrier
+            				and b.countryCode = :country
+            				group by  a.carrier, a.accNo
+                             ) m on s.accNo = m.accNo left join
+            			(select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+            				where a.ORG = b.code and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            				and a.carrier = :carrier
+            				and b.countryCode = :country
+            				group by a.carrier, a.accNo
+                                    ) y
+            				on  s.accNo = y.accNo
+            				order by s.totalNoOfBookingCount desc
+            				offset 0 rows
+            				fetch next 5 rows only
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                               @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Agents - Total Number of Booking Count for Continent
-    @Query("""
-            select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b
-                                                          where a.origin = b.code
-                                                          and a.eventDate >= :startDate and a.eventDate <= :endDate
-                                                          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                                                          and a.carrier = :carrier
-                                                          and b.continent = :continent
-                                                          group by a.carrier, a.accNo order by totalNoOfBookingCount desc LIMIT 5
-            """)
+    @Query(value="""
+            select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent, 
+            ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
+           from
+                       ( select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b
+                        where a.ORG = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.carrier = :carrier
+                        and b.continent = :continent
+                        group by a.carrier, a.accNo
+                        ) s left join
+                       (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b
+                        where (
+                          month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                          or
+                          month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                         )	
+                        and a.ORG = b.code
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.carrier = :carrier
+                        and b.continent = :continent
+                        group by a.carrier, a.accNo
+                            ) m on s.accNo = m.accNo left join
+                    (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b
+                        where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.carrier = :carrier
+                        and b.continent = :continent
+                        group by a.carrier, a.accNo
+                                   ) y
+                        on s.accNo = y.accNo
+                        order by s.totalNoOfBookingCount desc
+                        offset 0 rows
+                        fetch next 5 rows only
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Agents - Total Number of Booking Count for Region
-    @Query("""
-            select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-            where a.origin = b.code and b.continent = c.continent
-            and a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and c.regionName = :region
-            group by a.carrier, a.accNo order by totalNoOfBookingCount desc LIMIT 5
-            """)
+    @Query(value="""
+            select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent, 
+            ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
+             from
+                (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c where a.ORG = b.code and b.continent = c.continent
+                    and a.eventDate >= :startDate and a.eventDate <= :endDate
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'				
+                    and a.carrier = :carrier
+                    and c.regionName = :region				
+                    group by a.carrier, a.accNo
+                    ) s left join
+                   (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
+                    where  month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+                    and a.ORG = b.code and b.continent = c.continent
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                    and a.carrier = :carrier
+                    and c.regionName = :region
+                    group by a.carrier, a.accNo
+                        ) m on s.accNo = m.accNo left join
+                (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
+                    where a.ORG = b.code and b.continent = c.continent and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)\s
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                    and a.carrier = :carrier
+                    and c.regionName = :region
+                    group by a.carrier, a.accNo
+                        ) y
+                    on s.accNo = y.accNo
+                    order by s.totalNoOfBookingCount desc
+                    offset 0 rows
+                    fetch next 5 rows only
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("region") String region);
 
     //Top Agents - Total Number of Volume for AirPort
-    @Query("""
-            select a.carrier, a.accNo, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and a.origin = :origin
-            group by  a.carrier, a.accNo order by totalNoOfVolumeCount desc LIMIT 5""")
+    @Query(value = """
+            select s.carrier,s.accNo,s.totalNoOfVolumeCount, ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent, 
+            ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
+                from        
+              (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a
+                    where a.eventDate >= :startDate and a.eventDate <= :endDate
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                    and a.carrier = :carrier
+                    and a.ORG = :origin
+                    group by a.carrier, a.accNo
+                    ) s left join
+                (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a
+                    where (
+                      month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                      or
+                      month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                     )				
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                    and a.carrier = :carrier
+                    and a.ORG = :origin
+                    group by a.carrier, a.accNo
+                     ) m on s.accNo = m.accNo left join
+                (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a
+                    where  month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                    and a.carrier = :carrier
+                    and a.ORG = :origin
+                    group by a.carrier, a.accNo
+                            ) y
+                on s.accNo = y.accNo
+                order by s.totalNoOfVolumeCount desc
+                offset 0 rows
+                fetch next 5 rows only
+                """,nativeQuery = true)
 
     List<Object[]> getTopAgentsVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("origin") String origin);
 
 
     //Top Agents - Total Number of Volume for Country
-    @Query("""
-            select a.carrier, a.accNo, SUM(a.stdVol)  as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b
-            where a.origin = b.code
-            and a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and b.countryCode = :country
-            group by a.carrier, a.accNo order by totalNoOfVolumeCount desc LIMIT 5""")
+    @Query(value="""
+            select s.carrier,s.accNo,s.totalNoOfVolumeCount, ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent, ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
+            from        
+            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
+                where a.eventDate >= :startDate and a.eventDate <= :endDate
+                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                and a.carrier = :carrier
+                and a.ORG = b.code
+                and b.countryCode = :country
+                group by a.carrier, a.accNo
+                ) s left join
+            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
+                where (
+                  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                  or
+                  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                 )				
+                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                and a.carrier = :carrier
+                and a.ORG = b.code
+                and b.countryCode = :country
+                group by a.carrier, a.accNo
+                 ) m on s.accNo = m.accNo left join
+            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
+                where  month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                and a.carrier = :carrier
+                and a.ORG = b.code
+                and b.countryCode = :country
+                group by a.carrier, a.accNo
+                 ) y
+            on s.accNo = y.accNo
+            order by s.totalNoOfVolumeCount desc
+            offset 0 rows
+            fetch next 5 rows only
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Agents - Total Number of Volume for Continent
-    @Query("""
-            select a.carrier, a.accNo, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b
-            where a.origin = b.code
-            and a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and b.continent = :continent
-            group by a.carrier, a.accNo order by totalNoOfVolumeCount desc LIMIT 5""")
+    @Query(value="""
+            select s.carrier,s.accNo,s.totalNoOfVolumeCount, ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent, ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
+            from        
+            		  (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b
+            				where a.ORG = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
+            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            				and a.carrier = :carrier
+            				and b.continent = :continent
+            				group by a.carrier, a.accNo
+            				) s left join
+                        (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b
+            				where (
+            				  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            				  or
+            				  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            				 )	
+            				and a.ORG = b.code
+            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            				and a.carrier = :carrier
+            				and b.continent = :continent
+            				group by a.carrier, a.accNo
+                             ) m on s.accNo = m.accNo left join
+            			(select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b
+            				where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            				and a.carrier = :carrier
+            				and b.continent = :continent
+            				group by a.carrier, a.accNo
+                                    ) y
+            				on s.accNo = y.accNo
+            				order by s.totalNoOfVolumeCount desc
+            				offset 0 rows
+            				fetch next 5 rows only
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Agents - Total Number of Volume for Region
-    @Query("""
-            select  a.carrier, a.accNo, SUM(a.stdVol) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-            where a.origin = b.code and b.continent = c.continent
+    @Query(value="""
+            select s.carrier,s.accNo,s.totalNoOfVolumeCount,ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent,
+            ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
+            from        
+            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c where a.ORG = b.code and b.continent = c.continent
             and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'				
+            and a.carrier = :carrier
+            and c.regionName = :region				
+            group by a.carrier, a.accNo
+            ) s left join
+            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
+            where (
+                  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                  or
+                  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                 )
+            and a.ORG = b.code and b.continent = c.continent
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region
-            group by a.carrier, a.accNo order by totalNoOfVolumeCount desc LIMIT 5""")
+            group by a.carrier, a.accNo
+               ) m on s.accNo = m.accNo left join
+            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
+            where a.ORG = b.code and b.continent = c.continent and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)\s
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region
+            group by a.carrier, a.accNo
+               ) y
+            on s.accNo = y.accNo
+            order by s.totalNoOfVolumeCount desc
+            offset 0 rows
+            fetch next 5 rows only	
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("region") String region);
 
 
     //Top Agents - Total Number of Weight for AirPort
-    @Query("""
-            select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and a.origin = :origin
-            group by a.carrier, a.accNo order by totalNoOfWeightCount desc LIMIT 5""")
+    @Query(value="""
+            select s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent,
+            ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
+            from       
+            (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a
+                  where a.eventDate >= :startDate and a.eventDate <= :endDate
+                  and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                  and a.carrier = :carrier
+                  and a.ORG = :origin
+                  group by a.carrier, a.accNo
+                  ) s left join
+              (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a
+                  where (
+                    month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                    or
+                    month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                   )				
+                  and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                  and a.carrier = :carrier
+                  and a.ORG = :origin
+                  group by a.carrier, a.accNo
+                   ) m on s.accNo = m.accNo left join
+              (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a
+                  where  month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                  and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                  and a.carrier = :carrier
+                  and a.ORG = :origin
+                  group by a.carrier, a.accNo
+                          ) y
+              on s.accNo = y.accNo
+              order by s.totalNoOfWeightCount desc
+              offset 0 rows
+              fetch next 5 rows only
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("origin") String origin);
 
 
     //Top Agents - Total Number of Weight for Country
-    @Query("""
-            select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b
-            where a.origin = b.code
-            and a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and b.countryCode = :country
-            group by a.carrier, a.accNo order by totalNoOfWeightCount desc LIMIT 5""")
+    @Query(value="""
+            select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent, ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
+            from        
+              (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
+                    where a.eventDate >= :startDate and a.eventDate <= :endDate
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                    and a.carrier = :carrier
+                    and a.ORG = b.code
+                    and b.countryCode = :country
+                    group by a.carrier, a.accNo
+                    ) s left join
+                  (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
+                    where (
+                      month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                      or
+                      month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                     )				
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                    and a.carrier = :carrier
+                    and a.ORG = b.code
+                    and b.countryCode = :country
+                    group by a.carrier, a.accNo
+                       ) m on s.accNo = m.accNo left join
+                (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
+                    where  month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                    and a.carrier = :carrier
+                    and a.ORG = b.code
+                    and b.countryCode = :country
+                    group by a.carrier, a.accNo
+                       ) y
+                on s.accNo = y.accNo
+                order by s.totalNoOfWeightCount desc
+                offset 0 rows
+                fetch next 5 rows only
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Agents - Total Number of Weight for Continent
-    @Query("""
-            select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b
-            where a.origin = b.code
-            and a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and b.continent = :continent
-            group by a.carrier, a.accNo order by totalNoOfWeightCount desc LIMIT 5""")
+    @Query(value="""
+          select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent, ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
+          from        
+          (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b
+                where a.ORG = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
+                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                and a.carrier = :carrier
+                and b.continent = :continent
+                group by a.carrier, a.accNo
+                ) s left join
+              (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b
+                where (
+                  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                  or
+                  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                 )	
+                and a.ORG = b.code
+                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                and a.carrier = :carrier
+                and b.continent = :continent
+                group by a.carrier, a.accNo
+                   ) m on s.accNo = m.accNo left join
+            (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b
+                where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)\s
+                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                and a.carrier = :carrier
+                and b.continent = :continent
+                group by a.carrier, a.accNo
+                          ) y
+                on s.accNo = y.accNo
+                order by s.totalNoOfWeightCount desc
+                offset 0 rows
+                fetch next 5 rows only
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Agents - Total Number of Weight for Region
-    @Query("""
-            select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-            where a.origin = b.code and b.continent = c.continent
-            and a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and c.regionName = :region
-            group by a.carrier, a.accNo order by totalNoOfWeightCount desc LIMIT 5""")
+    @Query(value="""
+            select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent, 
+            ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
+            from        
+            (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c where a.ORG = b.code and b.continent = c.continent
+                and a.eventDate >= :startDate and a.eventDate <= :endDate
+                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'				
+                and a.carrier = :carrier
+                and c.regionName = :region				
+                group by a.carrier, a.accNo
+                ) s left join
+              (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
+                where (
+                  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                  or
+                  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                 )
+                and a.ORG = b.code and b.continent = c.continent
+                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                and a.carrier = :carrier
+                and c.regionName = :region
+                group by a.carrier, a.accNo
+                   ) m on s.accNo = m.accNo left join
+            (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
+                where a.ORG = b.code and b.continent = c.continent and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)\s
+                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                and a.carrier = :carrier
+                and c.regionName = :region
+                group by a.carrier, a.accNo
+                   ) y
+                on s.accNo = y.accNo
+                order by s.totalNoOfWeightCount desc
+                offset 0 rows
+                fetch next 5 rows only	
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("region") String region);
@@ -1421,210 +1738,517 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
 
     //Top Commodity - Total Number of Booking Count for Airport
-    @Query("""
-           select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-           from AdvanceFunctionAudit a
-           where a.eventDate >= :startDate and a.eventDate <= :endDate
-           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           and a.carrier = :carrier
-           and a.origin = :originAirport
-           group by a.commodity
-           order by COMMODITY_COUNT desc
-           LIMIT 6
-           """)
+    @Query(value="""
+             select s.commodity,s.COMMODITY_COUNT, ROUND(((s.COMMODITY_COUNT - m.COMMODITY_COUNT)*100/ m.COMMODITY_COUNT),2) as MOMPercent,
+           ROUND(((s.COMMODITY_COUNT - y.COMMODITY_COUNT)*100/ y.COMMODITY_COUNT),2) as YOYPercent
+           from
+                       (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+                       from AdvanceFunctionAudit a
+                       where a.eventDate >= :startDate and a.eventDate <= :endDate
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       and a.carrier = :carrier
+                       and a.org = :originAirport
+                       group by a.commodity
+                        ) s left join
+                       (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+                                   from   AdvanceFunctionAudit a
+                                   where (
+                                  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                                  or
+                                  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                                )
+                                and a.carrier = :carrier
+                                and a.org = :originAirport			       
+                                group by a.commodity
+                                   ) m
+                                on s.commodity = m.commodity left join
+                    (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+                                   from   AdvanceFunctionAudit a
+                                   where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                   and a.carrier = :carrier
+                                and a.org = :originAirport				       
+                                group by a.commodity
+                                   ) y
+                                on s.commodity = y.commodity
+                                order by s.COMMODITY_COUNT desc
+                                offset 0 rows
+                                   fetch next 6 rows only
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                  @Param("carrier") String carrier, @Param("originAirport") String originAirport);
 
 
     //Top Commodity - Total Number of Booking Count for Country
-    @Query("""
-            select
-            a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-            from AdvanceFunctionAudit a
-            join CityCountryMaster b ON a.origin = b.code
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            AND b.countryCode = :country
-            group by a.commodity
-            order by COMMODITY_COUNT desc
-            LIMIT 6
-            """)
+    @Query(value="""
+            select s.commodity,s.COMMODITY_COUNT, ROUND(((s.COMMODITY_COUNT - m.COMMODITY_COUNT)*100/ m.COMMODITY_COUNT),2) as MOMPercent,
+            ROUND(((s.COMMODITY_COUNT - y.COMMODITY_COUNT)*100/ y.COMMODITY_COUNT),2) as YOYPercent
+            from
+                        (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+            				from AdvanceFunctionAudit a
+            				join CityCountryMaster b ON a.ORG = b.code
+            				where a.eventDate >= :startDate and a.eventDate <= :endDate
+            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            				and a.carrier = :carrier
+            				AND b.countryCode = :country
+            				group by a.commodity
+            				) s left join
+                        (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+                                    from   AdvanceFunctionAudit a
+                                    join CityCountryMaster b ON a.ORG = b.code
+                                    where (
+                                      month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                                      or
+                                      month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                                    )
+                                    AND a.carrier = :carrier		
+                                    AND b.countryCode = :country	       
+            						group by a.commodity
+                                    ) m
+                        			on s.commodity = m.commodity left join
+            			(SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+                                    from   AdvanceFunctionAudit a
+                                    join CityCountryMaster b ON a.ORG = b.code
+                                    where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                    and a.carrier = :carrier	
+                                    AND b.countryCode = :country			       
+            						group by a.commodity
+                                    ) y
+                        			on s.commodity = y.commodity
+                        			order by s.COMMODITY_COUNT desc
+            						offset 0 rows
+                                    fetch next 6 rows only
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                  @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Commodity - Total Number of Booking Count for Continent
-    @Query("""
-            select
-            a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-            from  AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.origin = b.code
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            AND b.continent = :continent
-            group by a.commodity
-            order by COMMODITY_COUNT desc
-            LIMIT 6
-            """)
+    @Query(value="""
+            select s.commodity,s.COMMODITY_COUNT, ROUND(((s.COMMODITY_COUNT - m.COMMODITY_COUNT)*100/ m.COMMODITY_COUNT),2) as MOMPercent,
+            ROUND(((s.COMMODITY_COUNT - y.COMMODITY_COUNT)*100/ y.COMMODITY_COUNT),2) as YOYPercent
+            from
+                        (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+            				from  AdvanceFunctionAudit a
+            				JOIN CityCountryMaster b ON a.ORG = b.code
+            				where a.eventDate >= :startDate and a.eventDate <= :endDate
+            				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            				and a.carrier = :carrier
+            				AND b.continent =  :continent
+            				group by a.commodity
+            				) s left join
+                        (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+                                    from   AdvanceFunctionAudit a
+            						JOIN CityCountryMaster b ON a.ORG = b.code
+                                    where (
+                                      month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                                      or
+                                      month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                                    )
+                                    AND a.carrier = :carrier	
+                                    AND b.continent = :continent						
+            						group by a.commodity
+                                    ) m
+                        			on s.commodity = m.commodity left join
+            			(SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+                                    from   AdvanceFunctionAudit a
+            						JOIN CityCountryMaster b ON a.ORG = b.code
+                                    where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                    and a.carrier = :carrier	
+                                    AND b.continent = :continent						
+            						group by a.commodity
+                                    ) y
+                        			on s.commodity = y.commodity
+                        			order by s.COMMODITY_COUNT desc
+            						offset 0 rows
+                                    fetch next 6 rows only
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                    @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Commodity - Total Number of Booking Count for Region
-    @Query("""
-            select
-            a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-            from AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.origin = b.code
-            JOIN RegionMaster r ON b.continent = r.continent
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            AND r.regionName = :region
-            group by a.commodity
-            order by COMMODITY_COUNT desc
-            LIMIT 6
-            """)
+    @Query(value="""
+            select s.commodity,s.COMMODITY_COUNT, ROUND(((s.COMMODITY_COUNT - m.COMMODITY_COUNT)*100/ m.COMMODITY_COUNT),2) as MOMPercent,
+                    ROUND(((s.COMMODITY_COUNT - y.COMMODITY_COUNT)*100/ y.COMMODITY_COUNT),2) as YOYPercent
+                    from
+                                (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+                    				from AdvanceFunctionAudit a
+                    				JOIN CityCountryMaster b ON a.ORG = b.code
+                    				JOIN RegionMaster r ON b.continent = r.continent
+                    				where a.eventDate >= :startDate and a.eventDate <= :endDate
+                    				and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                    				and a.carrier = :carrier
+                    				AND r.regionName = :region
+                    				group by a.commodity
+                    				) s left join
+                                (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+                                            from   AdvanceFunctionAudit a
+                                            JOIN CityCountryMaster b ON a.ORG = b.code
+                    				        JOIN RegionMaster r ON b.continent = r.continent
+                    						where (
+                    						  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                    						  or
+                    						  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                    						)
+                                            and a.carrier = :carrier
+                    				        AND r.regionName = :region			       
+                    						group by a.commodity
+                                            ) m
+                                			on s.commodity = m.commodity left join
+                    			(SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+                                            from   AdvanceFunctionAudit a
+                                            JOIN CityCountryMaster b ON a.ORG = b.code
+                    				        JOIN RegionMaster r ON b.continent = r.continent
+                                            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                            and a.carrier = :carrier
+                    				        AND r.regionName = :region				       
+                    						group by a.commodity
+                                            ) y
+                                			on s.commodity = y.commodity
+                                			order by s.COMMODITY_COUNT desc
+                    						offset 0 rows
+                                            fetch next 6 rows only	
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("region") String region);
 
     //Top Commodity - Total Number of Weight Count for Airport
-    @Query("""
-            select
-            a.commodity, SUM(a.stdWeight) AS totalWeight
-            from AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and a.origin = :originAirport
-            group by a.commodity
-            order by totalWeight desc
-            LIMIT 6
-            """)
+    @Query(value="""
+            select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
+            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
+            from        
+            		  (select a.commodity, SUM(a.stdWeight) AS totalWeight
+                        from AdvanceFunctionAudit a
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.carrier = :carrier
+                        and a.ORG = :originAirport
+                        group by a.commodity        
+            			) s left join
+                        (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+                                    from   AdvanceFunctionAudit a
+                                   where (
+            						  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            						  or
+            						  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            						)
+                                    AND a.carrier = :carrier	
+                                    and a.ORG = :originAirport						
+            						group by a.commodity
+                                    ) m
+                        			on s.commodity = m.commodity left join
+            			(SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+                                    from   AdvanceFunctionAudit a
+                                    where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                    and a.carrier = :carrier				       
+            						group by a.commodity
+                                    ) y
+            						on s.commodity = y.commodity            						
+                        			order by s.totalWeight desc
+            						offset 0 rows
+                                    fetch next 6 rows only 	
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("originAirport") String originAirport);
 
 
     //Top Commodity - Total Number of Weight Count for Country
-    @Query("""
-            select
-            a.commodity, SUM(a.stdWeight) AS totalWeight
-            from AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.origin = b.code
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            AND b.countryCode = :country
-            group by a.commodity
-            order by totalWeight desc
-            LIMIT 6
-            """)
+    @Query(value="""
+            select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
+               ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
+               from        
+                      (select a.commodity, SUM(a.stdWeight) AS totalWeight
+                           from AdvanceFunctionAudit a
+                           JOIN CityCountryMaster b ON a.ORG = b.code
+                           where a.eventDate >= :startDate and a.eventDate <= :endDate
+                           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                           and a.carrier = :carrier
+                           AND b.countryCode = :country     
+                        group by a.commodity
+                        ) s left join
+                           (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+                                       from   AdvanceFunctionAudit a
+                                       JOIN CityCountryMaster b ON a.ORG = b.code
+                                       where (
+                                      month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                                      or
+                                      month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                                    )
+                                     AND a.carrier = :carrier	
+                                     AND b.countryCode = :country			       
+                                    group by a.commodity
+                                       ) m
+                                    on s.commodity = m.commodity left join
+                        (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+                                       from   AdvanceFunctionAudit a
+                                       JOIN CityCountryMaster b ON a.ORG = b.code
+                                       where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                       and a.carrier = :carrier	
+                                       AND b.countryCode = :country			       
+                                    group by a.commodity
+                                       ) y
+                                    on s.commodity = y.commodity
+                                    order by s.totalWeight desc
+                                    offset 0 rows
+                                    fetch next 6 rows only
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Commodity - Total Number of Weight Count for Continent
-    @Query("""
-            select
-            a.commodity, SUM(a.stdWeight) AS totalWeight
-            from AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.origin = b.code
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            AND b.continent = :continent
-            group by a.commodity
-            order by totalWeight desc
-            LIMIT 6
-            """)
+    @Query(value="""
+            select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
+                   ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
+                   from        
+                   		  (select a.commodity, SUM(a.stdWeight) AS totalWeight
+                               from AdvanceFunctionAudit a
+                               JOIN CityCountryMaster b ON a.ORG = b.code
+                               where a.eventDate >= :startDate and a.eventDate <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                               and a.carrier = :carrier
+                               AND b.continent = :continent
+                               group by a.commodity
+                   			) s left join
+                               (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+                                           from   AdvanceFunctionAudit a
+                   						JOIN CityCountryMaster b ON a.ORG = b.code
+                                           where (
+                   						  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                   						  or
+                   						  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                   						)
+                                           AND a.carrier = :carrier
+                                           AND b.continent = :continent				       
+                   						group by a.commodity
+                                           ) m
+                               			on s.commodity = m.commodity left join
+                   			(SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+                                           from   AdvanceFunctionAudit a
+                   						JOIN CityCountryMaster b ON a.ORG = b.code
+                                           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                           and a.carrier = :carrier	
+                                           AND b.continent = :continent						
+                   						group by a.commodity
+                                           ) y
+                   						on s.commodity = y.commodity
+                               			order by s.totalWeight desc
+                   						offset 0 rows
+                                        fetch next 6 rows only
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                   @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Commodity - Total Number of Weight Count for Region
-    @Query("""
-            select
-            a.commodity, SUM(a.stdWeight) AS totalWeight
-            from AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.origin = b.code
-            JOIN RegionMaster r ON b.continent = r.continent
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            AND r.regionName = :region
-            group by a.commodity
-            order by totalWeight desc
-            LIMIT 6
-            """)
+    @Query(value="""
+            select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
+            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
+            from        
+            		  (select a.commodity, SUM(a.stdWeight) AS totalWeight
+                        from AdvanceFunctionAudit a
+                        JOIN CityCountryMaster b ON a.ORG = b.code
+                        JOIN RegionMaster r ON b.continent = r.continent
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.carrier = :carrier
+                        AND r.regionName = :region
+                        group by a.commodity
+            			) s left join
+                        (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+                                    from   AdvanceFunctionAudit a
+            						JOIN CityCountryMaster b ON a.ORG = b.code
+                                    JOIN RegionMaster r ON b.continent = r.continent
+                                    where (
+                   						  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                   						  or
+                   						  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                   					)
+                                    AND a.carrier = :carrier	
+                                    AND r.regionName = :region						
+            						group by a.commodity
+                                    ) m
+                        			on s.commodity = m.commodity left join
+            			(SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+                                    from   AdvanceFunctionAudit a
+            						JOIN CityCountryMaster b ON a.ORG = b.code
+                                    JOIN RegionMaster r ON b.continent = r.continent
+                                    where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                    and a.carrier = :carrier	
+                                    AND r.regionName = :region						
+            						group by a.commodity
+                                    ) y
+            						on s.commodity = y.commodity
+                        			order by s.totalWeight desc
+            						offset 0 rows
+                                    fetch next 6 rows only
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("region") String region);
 
 
     //Top Commodity - Total Number of Volume Count for Airport
-    @Query("""
-            select
-            a.commodity, SUM(a.stdVol) AS totalVolume
-            from AdvanceFunctionAudit a
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and a.origin = :originAirport
-            group by a.commodity
-            order by totalVolume desc
-            LIMIT 6
-            """)
+    @Query(value="""
+            select s.commodity,s.totalvolume, ROUND(((s.totalvolume - m.totalvolume)*100/ m.totalvolume),2) as MOMPercent,
+                   ROUND(((s.totalvolume - y.totalvolume)*100/ y.totalvolume),2) as YOYPercent
+                   from        
+                   		  (select a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                               from AdvanceFunctionAudit a
+                               where a.eventDate >= :startDate and a.eventDate <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                               and a.carrier = :carrier
+                               and a.ORG = :originAirport
+                               group by a.commodity        
+                   			) s left join
+                               (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                                           from   AdvanceFunctionAudit a
+                                           where (
+                   						  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                   						  or
+                   						  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                   					       )
+                                           AND a.carrier = :carrier	
+                                           and a.ORG = :originAirport						
+                   						group by a.commodity
+                                           ) m
+                               			on s.commodity = m.commodity left join
+                   			(SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                                           from   AdvanceFunctionAudit a
+                                           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                           and a.carrier = :carrier				       
+                   						group by a.commodity
+                                           ) y
+                   						on s.commodity = y.commodity                   						
+                               			order by s.totalvolume desc
+                   						offset 0 rows
+                                        fetch next 6 rows only
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("originAirport") String originAirport);
 
     //Top Commodity - Total Number of volume Count for Country
-    @Query("""
-            select
-            a.commodity, SUM(a.stdVol) AS totalVolume
-            from AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.origin = b.code
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            AND b.countryCode = :country
-            group by a.commodity
-            order by totalVolume desc
-            LIMIT 6
-            """)
+    @Query(value="""
+            select s.commodity,s.totalvolume, ROUND(((s.totalvolume - m.totalvolume)*100/ m.totalvolume),2) as MOMPercent,
+                   ROUND(((s.totalvolume - y.totalvolume)*100/ y.totalvolume),2) as YOYPercent
+                   from        
+                   		  (select a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                               from AdvanceFunctionAudit a 
+                               JOIN CityCountryMaster b ON a.ORG = b.code                              
+                               where a.eventDate >= :startDate and a.eventDate <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                               and a.carrier = :carrier
+                               AND b.countryCode = :country     
+                   			group by a.commodity
+                   			) s left join
+                               (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                                           from   AdvanceFunctionAudit a  
+                                           JOIN CityCountryMaster b ON a.ORG = b.code                 						
+                                           where (
+                   						  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+                   						  or
+                   						  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+                   						)
+                                           AND a.carrier = :carrier	
+                                           AND b.countryCode = :country   						
+                   						group by a.commodity
+                                           ) m
+                               			on s.commodity = m.commodity left join
+                   			(SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                                           from   AdvanceFunctionAudit a    
+                                           JOIN CityCountryMaster b ON a.ORG = b.code               						
+                                           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                           and a.carrier = :carrier				       
+                   						group by a.commodity
+                                           ) y
+                   						on s.commodity = y.commodity
+                               			order by s.totalvolume desc
+                   						offset 0 rows
+                                           fetch next 6 rows only
+                   						
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("country") String country);
 
     //Top Commodity - Total Number of volume Count for Continent
-    @Query("""
-            select
-            a.commodity, SUM(a.stdVol) AS totalVolume
-            from AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.origin = b.code
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            AND b.continent = :continent
-            group by a.commodity
-            order by totalVolume desc
-            LIMIT 6
-            """)
+    @Query(value="""
+            select s.commodity,s.totalvolume, ROUND(((s.totalvolume - m.totalvolume)*100/ m.totalvolume),2) as MOMPercent,
+                   ROUND(((s.totalvolume - y.totalvolume)*100/ y.totalvolume),2) as YOYPercent
+                   from        
+                   		  (select a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                               from AdvanceFunctionAudit a
+                               JOIN CityCountryMaster b ON a.ORG = b.code
+                               where a.eventDate >= :startDate and a.eventDate <= :endDate
+                               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                               and a.carrier = :carrier
+                               AND b.continent = :continent
+                               group by a.commodity
+                   			) s left join
+                               (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                                           from   AdvanceFunctionAudit a
+                   						JOIN CityCountryMaster b ON a.ORG = b.code
+                                           where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+                                           AND a.carrier = :carrier	
+                                           AND b.continent = :continent						
+                   						group by a.commodity
+                                           ) m
+                               			on s.commodity = m.commodity left join
+                   			(SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                                           from   AdvanceFunctionAudit a
+                   						JOIN CityCountryMaster b ON a.ORG = b.code
+                                           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                           and a.carrier = :carrier
+                                           AND b.continent = :continent				       
+                   						group by a.commodity
+                                           ) y
+                   						on s.commodity = y.commodity
+                               			order by s.totalvolume desc
+                   						offset 0 rows
+                                           fetch next 6 rows only
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                   @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Commodity - Total Number of volume Count for Region
-    @Query("""
-            select
-            a.commodity, SUM(a.stdVol) AS totalVolume
-            from AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.origin = b.code
-            JOIN RegionMaster r ON b.continent = r.continent
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            AND r.regionName = :region
-            group by a.commodity
-            order by totalVolume desc
-            LIMIT 6
-            """)
+    @Query(value="""
+            select s.commodity,s.totalvolume, ROUND(((s.totalvolume - m.totalvolume)*100/ m.totalvolume),2) as MOMPercent,
+            ROUND(((s.totalvolume - y.totalvolume)*100/ y.totalvolume),2) as YOYPercent
+            from        
+            		  (select a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                        from AdvanceFunctionAudit a
+                        JOIN CityCountryMaster b ON a.ORG = b.code
+                        JOIN RegionMaster r ON b.continent = r.continent
+                        where a.eventDate >= :startDate and a.eventDate <= :endDate
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.carrier = :carrier
+                        AND r.regionName = :region
+                        group by a.commodity
+            			) s left join
+                        (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                                    from   AdvanceFunctionAudit a
+            						JOIN CityCountryMaster b ON a.ORG = b.code
+                                    JOIN RegionMaster r ON b.continent = r.continent
+                                    where (
+            						  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            						  or
+            						  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            						)
+                                    AND a.carrier = :carrier
+                                    AND r.regionName = :region				       
+            						group by a.commodity
+                                    ) m
+                        			on s.commodity = m.commodity left join
+            			(SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
+                                    from   AdvanceFunctionAudit a
+            						JOIN CityCountryMaster b ON a.ORG = b.code
+                                    JOIN RegionMaster r ON b.continent = r.continent
+                                    where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+                                    and a.carrier = :carrier	
+                                    AND r.regionName = :region						
+            						group by a.commodity
+                                    ) y
+            						on s.commodity = y.commodity
+                        			order by s.totalvolume desc
+            						offset 0 rows
+                                    fetch next 6 rows only	
+            """,nativeQuery = true)
     List<Object[]> getTopCommodityVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("region") String region);
 
@@ -2156,15 +2780,122 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Domestic and International - Total Number of Booking Count for AirPort
     @Query(value ="""
+            		 WITH AllCategories AS (
+                        SELECT 'false' AS category
+                        UNION ALL
+                        SELECT 'true'
+                        )
+                       SELECT
+                       ac.category,
+                       COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,
+            		   case
+                            when COUNT(m.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(m.category)) * 100 / COUNT(m.category)), 1)
+                            when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+                            when COUNT(m.category) = 0  then 100
+                        end as momPercent,
+                        case
+                            when COUNT(y.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(y.category)) * 100 / COUNT(y.category)), 1)
+                            when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+                            when COUNT(y.category) = 0  then 100
+                        end as yoyPercent		 
+                       FROM AllCategories ac
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       AND a.CARRIER = :carrier
+                       AND a.ORG = :origin
+                       ) AS CategoryCTE
+                       ON ac.category = CategoryCTE.category
+            		   LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a WHERE month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       AND a.CARRIER = :carrier
+                       AND a.ORG = :origin
+                       )  m
+                       ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+            		   LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a WHERE  month(a.eventDate)= month(:startDate) and year(a.eventDate)= year(:startDate)-1
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       AND a.CARRIER = :carrier
+                       AND a.ORG = :origin
+                       )  y
+                       ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+                       GROUP BY ac.category
+                       ORDER BY ac.category
+            """,nativeQuery = true)
+
+    List<Object[]> getTopDomesticInternationalBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                             @Param("carrier") String carrier, @Param("origin") String origin);
+
+
+    //Top Domestic and International - Total Number of Booking Count for Country
+    @Query(value ="""
             WITH AllCategories AS (
             SELECT 'false' AS category
             UNION ALL
             SELECT 'true'
             )
-
            SELECT
            ac.category,
-           COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
+           COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,
+           case
+                when COUNT(m.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(m.category)) * 100 / COUNT(m.category)), 1)
+                when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+                when COUNT(m.category) = 0  then 100
+            end as momPercent,
+            case
+                when COUNT(y.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(y.category)) * 100 / COUNT(y.category)), 1)
+                when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+                when COUNT(y.category) = 0  then 100
+            end as yoyPercent		
            FROM AllCategories ac
            LEFT JOIN (
            SELECT
@@ -2183,57 +2914,64 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            ) THEN 'true'
            ELSE 'false'
            END AS category
-           FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.CARRIER = :carrier
-           AND a.ORG = :origin
-           ) AS CategoryCTE
-           ON ac.category = CategoryCTE.category
-           GROUP BY ac.category
-           ORDER BY ac.category""",nativeQuery = true)
-
-    List<Object[]> getTopDomesticInternationalBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                             @Param("carrier") String carrier, @Param("origin") String origin);
-
-
-    //Top Domestic and International - Total Number of Booking Count for Country
-    @Query(value ="""
-            WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-            
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+           FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
             and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.CARRIER = :carrier
             and b.COUNTRYCODE = :country
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
+           ) AS CategoryCTE
+           ON ac.category = CategoryCTE.category
+           LEFT JOIN (
+           SELECT
+           a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+           CASE
+           WHEN a.ORG NOT IN (
+           SELECT b.CODE
+           FROM CITYCOUNTRYMASTER b
+           JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+           WHERE c.CARRIERCODE = :carrier
+           ) OR a.DEST NOT IN (
+           SELECT b.CODE
+           FROM CITYCOUNTRYMASTER b
+           JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+           WHERE c.CARRIERCODE = :carrier
+           ) THEN 'true'
+           ELSE 'false'
+           END AS category
+           FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+           and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+           AND a.CARRIER = :carrier           
+           and b.COUNTRYCODE = :country
+           )  m
+           ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+           LEFT JOIN (
+           SELECT
+           a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+           CASE
+           WHEN a.ORG NOT IN (
+           SELECT b.CODE
+           FROM CITYCOUNTRYMASTER b
+           JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+           WHERE c.CARRIERCODE = :carrier
+           ) OR a.DEST NOT IN (
+           SELECT b.CODE
+           FROM CITYCOUNTRYMASTER b
+           JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+           WHERE c.CARRIERCODE = :carrier
+           ) THEN 'true'
+           ELSE 'false'
+           END AS category
+           FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+           and month(a.eventDate)= month(:startDate) and year(a.eventDate)= (year(:startDate)-1)
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+           AND a.CARRIER = :carrier           
+           and b.COUNTRYCODE = :country
+           )  y
+           ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+           GROUP BY ac.category
+           ORDER BY ac.category
+            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                              @Param("carrier") String carrier, @Param("country") String country);
@@ -2242,41 +2980,99 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Booking Count for Continent
     @Query(value ="""
             WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-                                       
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and b.CONTINENT=:continent
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
+                        SELECT 'false' AS category
+                        UNION ALL
+                        SELECT 'true'
+                        )
+                       SELECT
+                       ac.category,
+                       COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,
+                       case
+                            when COUNT(m.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(m.category)) * 100 / COUNT(m.category)), 1)
+                            when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+                            when COUNT(m.category) = 0  then 100
+                        end as momPercent,
+                        case
+                            when COUNT(y.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(y.category)) * 100 / COUNT(y.category)), 1)
+                            when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+                            when COUNT(y.category) = 0  then 100
+                        end as yoyPercent		
+                       FROM AllCategories ac
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+                        and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.CARRIER = :carrier
+                        AND b.CONTINENT=:continent
+                       ) AS CategoryCTE
+                       ON ac.category = CategoryCTE.category
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+                       and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       AND a.CARRIER = :carrier          
+                       AND b.CONTINENT=:continent
+                       )  m
+                       ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+                       and month(a.eventDate)= month(:startDate) and year(a.eventDate)= (year(:startDate)-1)
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       AND a.CARRIER = :carrier          
+                       AND b.CONTINENT=:continent
+                       )  y
+                       ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+                       GROUP BY ac.category
+                       ORDER BY ac.category
+            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                                @Param("carrier") String carrier, @Param("continent") String continent);
@@ -2284,42 +3080,102 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Booking Count for Region
     @Query(value ="""
             WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-                                        
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE
-            a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and e.REGIONNAME= :region
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
+                        SELECT 'false' AS category
+                        UNION ALL
+                        SELECT 'true'
+                        )
+                       SELECT
+                       ac.category,
+                       COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,
+                       case
+                            when COUNT(m.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(m.category)) * 100 / COUNT(m.category)), 1)
+                            when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+                            when COUNT(m.category) = 0  then 100
+                        end as momPercent,
+                        case
+                            when COUNT(y.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(y.category)) * 100 / COUNT(y.category)), 1)
+                            when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+                            when COUNT(y.category) = 0  then 100
+                        end as yoyPercent		
+                       FROM AllCategories ac
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE
+                        a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                        and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.CARRIER = :carrier
+                        and e.REGIONNAME= :region
+                       ) AS CategoryCTE
+                       ON ac.category = CategoryCTE.category
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b , REGIONMASTER e WHERE
+                       a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                       and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       AND a.CARRIER = :carrier          
+                       AND e.REGIONNAME= :region
+                       )  m
+                       ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b, REGIONMASTER e WHERE
+                       a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                       and month(a.eventDate)= month(:startDate) and year(a.eventDate)= (year(:startDate)-1)
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       AND a.CARRIER = :carrier          
+                       AND e.REGIONNAME= :region
+                       )  y
+                       ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+                       GROUP BY ac.category
+                       ORDER BY ac.category	
+            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                             @Param("carrier") String carrier, @Param("region") String region);
@@ -2327,40 +3183,96 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Volume for AirPort
     @Query(value ="""
             WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-                                       
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDVOLUME) AS totalValue
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER, a.STDVOLUME,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and a.ORG = :origin
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
+                SELECT 'false' AS category
+                UNION ALL
+                SELECT 'true'
+                )
+               SELECT
+               ac.category,
+               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,SUM(CategoryCTE.STDVOLUME) AS totalValue,
+               case
+                    when COUNT(m.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(m.STDVOLUME)) * 100 / SUM(m.STDVOLUME), 1)
+                    when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+                    when COUNT(m.category) = 0  then 100
+                end as momPercent,
+                case
+                    when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(y.STDVOLUME)) * 100 / SUM(y.STDVOLUME), 1)
+                    when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+                    when COUNT(y.category) = 0  then 100
+                end as yoyPercent		
+               FROM AllCategories ac
+               LEFT JOIN (
+               SELECT
+               a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+               CASE
+               WHEN a.ORG NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) OR a.DEST NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) THEN 'true'
+               ELSE 'false'
+               END AS category
+               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+               AND a.CARRIER = :carrier
+               AND a.ORG = :origin
+               ) AS CategoryCTE
+               ON ac.category = CategoryCTE.category
+               LEFT JOIN (
+               SELECT
+               a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+               CASE
+               WHEN a.ORG NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) OR a.DEST NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) THEN 'true'
+               ELSE 'false'
+               END AS category
+               FROM ADVANCEFUNCTIONAUDIT a WHERE month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+               AND a.CARRIER = :carrier
+               AND a.ORG = :origin
+               )  m
+               ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+               LEFT JOIN (
+               SELECT
+               a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+               CASE
+               WHEN a.ORG NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) OR a.DEST NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) THEN 'true'
+               ELSE 'false'
+               END AS category
+               FROM ADVANCEFUNCTIONAUDIT a WHERE  month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+               AND a.CARRIER = :carrier
+               AND a.ORG = :origin
+               )  y
+               ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+               GROUP BY ac.category
+               ORDER BY ac.category			
+            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                             @Param("carrier") String carrier, @Param("origin") String origin);
@@ -2368,41 +3280,99 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Volume for Country
     @Query(value ="""
             WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-           
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDVOLUME) AS totalValue
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER, a.STDVOLUME,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b  WHERE a.ORG = b.CODE
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and b.COUNTRYCODE = :country
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
+                    SELECT 'false' AS category
+                    UNION ALL
+                    SELECT 'true'
+                    )
+                   SELECT
+                   ac.category,
+                   COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,SUM(CategoryCTE.STDVOLUME) AS totalValue,
+                   case
+                        when COUNT(m.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(m.STDVOLUME)) * 100 / SUM(m.STDVOLUME), 1)
+                        when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+                        when COUNT(m.category) = 0  then 100
+                    end as momPercent,
+                    case
+                        when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(y.STDVOLUME)) * 100 / SUM(y.STDVOLUME), 1)
+                        when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+                        when COUNT(y.category) = 0  then 100
+                    end as yoyPercent		
+                   FROM AllCategories ac
+                   LEFT JOIN (
+                   SELECT
+                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+                   CASE
+                   WHEN a.ORG NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) OR a.DEST NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) THEN 'true'
+                   ELSE 'false'
+                   END AS category
+                   FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+                    and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                    and a.CARRIER = :carrier
+                    and b.COUNTRYCODE = :country
+                   ) AS CategoryCTE
+                   ON ac.category = CategoryCTE.category
+                   LEFT JOIN (
+                   SELECT
+                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+                   CASE
+                   WHEN a.ORG NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) OR a.DEST NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) THEN 'true'
+                   ELSE 'false'
+                   END AS category
+                   FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+                   and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+                   and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                   AND a.CARRIER = :carrier                   
+                   and b.COUNTRYCODE = :country
+                   )  m
+                   ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+                   LEFT JOIN (
+                   SELECT
+                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+                   CASE
+                   WHEN a.ORG NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) OR a.DEST NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) THEN 'true'
+                   ELSE 'false'
+                   END AS category
+                   FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+                   AND month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+                   and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                   AND a.CARRIER = :carrier                   
+                   and b.COUNTRYCODE = :country
+                   )  y
+                   ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+                   GROUP BY ac.category
+                   ORDER BY ac.category	
+            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                             @Param("carrier") String carrier, @Param("country") String country);
@@ -2411,41 +3381,99 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Volume for Continent
     @Query(value ="""
             WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-            
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDVOLUME) AS totalValue
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER, a.STDVOLUME,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and b.CONTINENT=:continent
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
+                                    SELECT 'false' AS category
+                                    UNION ALL
+                                    SELECT 'true'
+                                    )
+                                   SELECT
+                                   ac.category,
+                                   COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,SUM(CategoryCTE.STDVOLUME) AS totalValue,
+                        		   case
+                                        when COUNT(m.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(m.STDVOLUME)) * 100 / SUM(m.STDVOLUME), 1)
+                                        when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+                                        when COUNT(m.category) = 0  then 100
+                                    end as momPercent,
+                                    case
+                                        when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(y.STDVOLUME)) * 100 / SUM(y.STDVOLUME), 1)
+                                        when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+                                        when COUNT(y.category) = 0  then 100
+                                    end as yoyPercent	
+                                   FROM AllCategories ac
+                                   LEFT JOIN (
+                                   SELECT
+                                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+                                   CASE
+                                   WHEN a.ORG NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                   END AS category
+                                   FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+            						and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+            						and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            						and a.CARRIER = :carrier
+            						and b.CONTINENT=:continent
+                                   ) AS CategoryCTE
+                                   ON ac.category = CategoryCTE.category
+                        		   LEFT JOIN (
+                                   SELECT
+                                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+                                   CASE
+                                   WHEN a.ORG NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                   END AS category
+                                   FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+            					   and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+                                   and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                                   AND a.CARRIER = :carrier                                   
+            					   and b.CONTINENT=:continent
+                                   )  m
+                                   ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+                        		   LEFT JOIN (
+                                   SELECT
+                                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+                                   CASE
+                                   WHEN a.ORG NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                   END AS category
+                                   FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+            					   month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+                                   and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                                   AND a.CARRIER = :carrier                                   
+            					   AND b.CONTINENT=:continent
+                                   )  y
+                                   ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+                                   GROUP BY ac.category
+                                   ORDER BY ac.category	
+            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                               @Param("carrier") String carrier, @Param("continent") String continent);
@@ -2453,41 +3481,102 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Volume for Region
     @Query(value ="""
             WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-            
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDVOLUME) AS totalValue
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER, a.STDVOLUME,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and e.REGIONNAME= :region
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
+                        SELECT 'false' AS category
+                        UNION ALL
+                        SELECT 'true'
+                        )
+                       SELECT
+                       ac.category,
+                       COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,SUM(CategoryCTE.STDVOLUME) AS totalValue,
+                       case
+            				when COUNT(m.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(m.STDVOLUME)) * 100 / SUM(m.STDVOLUME), 1)
+            				when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+            				when COUNT(m.category) = 0  then 100
+            			end as momPercent,
+            			case
+            				when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(y.STDVOLUME)) * 100 / SUM(y.STDVOLUME), 1)
+            				when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+            				when COUNT(y.category) = 0  then 100
+            			end as yoyPercent	
+                       FROM AllCategories ac
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE
+                        a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                        and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.CARRIER = :carrier
+                        and e.REGIONNAME= :region
+                       ) AS CategoryCTE
+                       ON ac.category = CategoryCTE.category
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b , REGIONMASTER e WHERE
+                       a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                       and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       AND a.CARRIER = :carrier          
+                       AND e.REGIONNAME= :region
+                       )  m
+                       ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b, REGIONMASTER e WHERE
+                       a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                       month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       AND a.CARRIER = :carrier          
+                       AND e.REGIONNAME= :region
+                       )  y
+                       ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+                       GROUP BY ac.category
+                       ORDER BY ac.category	
+            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                            @Param("carrier") String carrier, @Param("region") String region);
@@ -2495,40 +3584,96 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Weight for AirPort
     @Query(value ="""
             WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-            
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDWEIGHT) AS totalValue
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER, a.STDWEIGHT,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and a.ORG = :origin
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
+                SELECT 'false' AS category
+                UNION ALL
+                SELECT 'true'
+                )
+               SELECT
+               ac.category,
+               COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,SUM(CategoryCTE.STDWEIGHT) AS totalValue,
+               case
+                    when COUNT(m.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(m.STDWEIGHT)) * 100 / SUM(m.STDWEIGHT), 1)
+                    when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+                    when COUNT(m.category) = 0  then 100
+                end as momPercent,
+                case
+                    when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(y.STDWEIGHT)) * 100 / SUM(y.STDWEIGHT), 1)
+                    when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+                    when COUNT(y.category) = 0  then 100
+                end as yoyPercent		
+               FROM AllCategories ac
+               LEFT JOIN (
+               SELECT
+               a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+               CASE
+               WHEN a.ORG NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) OR a.DEST NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) THEN 'true'
+               ELSE 'false'
+               END AS category
+               FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+               AND a.CARRIER = :carrier
+               AND a.ORG = :origin
+               ) AS CategoryCTE
+               ON ac.category = CategoryCTE.category
+               LEFT JOIN (
+               SELECT
+               a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+               CASE
+               WHEN a.ORG NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) OR a.DEST NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) THEN 'true'
+               ELSE 'false'
+               END AS category
+               FROM ADVANCEFUNCTIONAUDIT a WHERE month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+               AND a.CARRIER = :carrier
+               AND a.ORG = :origin
+               )  m
+               ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+               LEFT JOIN (
+               SELECT
+               a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+               CASE
+               WHEN a.ORG NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) OR a.DEST NOT IN (
+               SELECT b.CODE
+               FROM CITYCOUNTRYMASTER b
+               JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+               WHERE c.CARRIERCODE = :carrier
+               ) THEN 'true'
+               ELSE 'false'
+               END AS category
+               FROM ADVANCEFUNCTIONAUDIT a WHERE  month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+               and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+               AND a.CARRIER = :carrier
+               AND a.ORG = :origin
+               )  y
+               ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+               GROUP BY ac.category
+               ORDER BY ac.category	
+            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                             @Param("carrier") String carrier, @Param("origin") String origin);
@@ -2536,41 +3681,99 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Weight for Country
     @Query(value ="""
             WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-            
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDWEIGHT) AS totalValue
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER, a.STDWEIGHT,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and b.COUNTRYCODE = :country
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
+                    SELECT 'false' AS category
+                    UNION ALL
+                    SELECT 'true'
+                    )
+                   SELECT
+                   ac.category,
+                   COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,SUM(CategoryCTE.STDWEIGHT) AS totalValue,
+                   case
+                        when COUNT(m.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(m.STDWEIGHT)) * 100 / SUM(m.STDWEIGHT), 1)
+                        when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+                        when COUNT(m.category) = 0  then 100
+                    end as momPercent,
+                    case
+                        when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(y.STDWEIGHT)) * 100 / SUM(y.STDWEIGHT), 1)
+                        when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+                        when COUNT(y.category) = 0  then 100
+                    end as yoyPercent		
+                   FROM AllCategories ac
+                   LEFT JOIN (
+                   SELECT
+                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+                   CASE
+                   WHEN a.ORG NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) OR a.DEST NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) THEN 'true'
+                   ELSE 'false'
+                   END AS category
+                   FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+                    and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                    and a.CARRIER = :carrier
+                    and b.COUNTRYCODE = :country
+                   ) AS CategoryCTE
+                   ON ac.category = CategoryCTE.category
+                   LEFT JOIN (
+                   SELECT
+                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+                   CASE
+                   WHEN a.ORG NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) OR a.DEST NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) THEN 'true'
+                   ELSE 'false'
+                   END AS category
+                   FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+                   and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+                   and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                   AND a.CARRIER = :carrier                   
+                   and b.COUNTRYCODE = :country
+                   )  m
+                   ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+                   LEFT JOIN (
+                   SELECT
+                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+                   CASE
+                   WHEN a.ORG NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) OR a.DEST NOT IN (
+                   SELECT b.CODE
+                   FROM CITYCOUNTRYMASTER b
+                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                   WHERE c.CARRIERCODE = :carrier
+                   ) THEN 'true'
+                   ELSE 'false'
+                   END AS category
+                   FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+                   month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+                   and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                   AND a.CARRIER = :carrier                   
+                   and b.COUNTRYCODE = :country
+                   )  y
+                   ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+                   GROUP BY ac.category
+                   ORDER BY ac.category	
+            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                             @Param("carrier") String carrier, @Param("country") String country);
@@ -2578,41 +3781,99 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Weight for Continent
     @Query(value ="""
             WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-            
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDWEIGHT) AS totalValue
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER, a.STDWEIGHT,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a , CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and b.CONTINENT=:continent
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
+                                    SELECT 'false' AS category
+                                    UNION ALL
+                                    SELECT 'true'
+                                    )
+                                   SELECT
+                                   ac.category,
+                                   COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,SUM(CategoryCTE.STDWEIGHT) AS totalValue,
+                        		   case
+                                        when COUNT(m.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(m.STDWEIGHT)) * 100 / SUM(m.STDWEIGHT), 1)
+                                        when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+                                        when COUNT(m.category) = 0  then 100
+                                    end as momPercent,
+                                    case
+                                        when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(y.STDWEIGHT)) * 100 / SUM(y.STDWEIGHT), 1)
+                                        when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+                                        when COUNT(y.category) = 0  then 100
+                                    end as yoyPercent	
+                                   FROM AllCategories ac
+                                   LEFT JOIN (
+                                   SELECT
+                                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+                                   CASE
+                                   WHEN a.ORG NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                   END AS category
+                                   FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+            						and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+            						and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            						and a.CARRIER = :carrier
+            						and b.CONTINENT=:continent
+                                   ) AS CategoryCTE
+                                   ON ac.category = CategoryCTE.category
+                        		   LEFT JOIN (
+                                   SELECT
+                                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+                                   CASE
+                                   WHEN a.ORG NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                   END AS category
+                                   FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+            					   and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+                                   and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                                   AND a.CARRIER = :carrier                                   
+            					   and b.CONTINENT=:continent
+                                   )  m
+                                   ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+                        		   LEFT JOIN (
+                                   SELECT
+                                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+                                   CASE
+                                   WHEN a.ORG NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) OR a.DEST NOT IN (
+                                   SELECT b.CODE
+                                   FROM CITYCOUNTRYMASTER b
+                                   JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                                   WHERE c.CARRIERCODE = :carrier
+                                   ) THEN 'true'
+                                   ELSE 'false'
+                                   END AS category
+                                   FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
+            					   month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+                                   and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                                   AND a.CARRIER = :carrier                                   
+            					   AND b.CONTINENT=:continent
+                                   )  y
+                                   ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+                                   GROUP BY ac.category
+                                   ORDER BY ac.category	
+                                   """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                               @Param("carrier") String carrier, @Param("continent") String continent);
@@ -2620,42 +3881,102 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Weight for Region
     @Query(value ="""
             WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-            
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count, SUM(CategoryCTE.STDWEIGHT) AS totalValue
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER, a.STDWEIGHT,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE a.ORG = b.CODE
-            and b.CONTINENT = e.CONTINENT
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and e.REGIONNAME= :region
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
+                        SELECT 'false' AS category
+                        UNION ALL
+                        SELECT 'true'
+                        )
+                       SELECT
+                       ac.category,
+                       COALESCE(COUNT(CategoryCTE.category), 0) AS category_count,SUM(CategoryCTE.STDWEIGHT) AS totalValue,
+                       case
+            				when COUNT(m.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(m.STDWEIGHT)) * 100 / SUM(m.STDWEIGHT), 1)
+            				when COUNT(CategoryCTE.category) = 0  and COUNT(m.category) = 0 then 0
+            				when COUNT(m.category) = 0  then 100
+            			end as momPercent,
+            			case
+            				when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(y.STDWEIGHT)) * 100 / SUM(y.STDWEIGHT), 1)
+            				when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
+            				when COUNT(y.category) = 0  then 100
+            			end as yoyPercent	
+                       FROM AllCategories ac
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE
+                        a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                        and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
+                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                        and a.CARRIER = :carrier
+                        and e.REGIONNAME= :region
+                       ) AS CategoryCTE
+                       ON ac.category = CategoryCTE.category
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b , REGIONMASTER e WHERE
+                       a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                       and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       AND a.CARRIER = :carrier          
+                       AND e.REGIONNAME= :region
+                       )  m
+                       ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
+                       LEFT JOIN (
+                       SELECT
+                       a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDWEIGHT,
+                       CASE
+                       WHEN a.ORG NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) OR a.DEST NOT IN (
+                       SELECT b.CODE
+                       FROM CITYCOUNTRYMASTER b
+                       JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+                       WHERE c.CARRIERCODE = :carrier
+                       ) THEN 'true'
+                       ELSE 'false'
+                       END AS category
+                       FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b, REGIONMASTER e WHERE
+                       a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
+                       month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+                       AND a.CARRIER = :carrier          
+                       AND e.REGIONNAME= :region
+                       )  y
+                       ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
+                       GROUP BY ac.category
+                       ORDER BY ac.category	
+            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                            @Param("carrier") String carrier, @Param("region") String region);

@@ -139,8 +139,18 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
             }
             topDomesticInternationalResponseDTO.setValueType(valueType);
             topDomesticInternationalResponseDTO.setUnit(stdUnit);
-            topDomesticInternationalResponseDTO.setMomData(1.1f);
-            topDomesticInternationalResponseDTO.setYoyData(-1.1f);
+            if(array[3] != null){
+                Number mom = (Number) array[3];
+                topDomesticInternationalResponseDTO.setMomData(mom.floatValue());
+            }else{
+                topDomesticInternationalResponseDTO.setMomData(0.0f);
+            }
+            if(array[4] != null){
+                Number yoy = (Number) array[4];
+                topDomesticInternationalResponseDTO.setYoyData(yoy.floatValue());
+            }else{
+                topDomesticInternationalResponseDTO.setYoyData(0.0f);
+            }
             topDomesticInternationalResponseDTOS.add(topDomesticInternationalResponseDTO);
         }
         response.setTopDomesticInternationalResponseDTOList(topDomesticInternationalResponseDTOS);
@@ -162,8 +172,18 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                 topDomesticInternationalResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 topDomesticInternationalResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
                 totalValue+=value.longValue();
-                topDomesticInternationalResponseDTO.setMomData(1.1f);
-                topDomesticInternationalResponseDTO.setYoyData(-1.1f);
+                if(array[2] != null){
+                    Number mom = (Number) array[2];
+                    topDomesticInternationalResponseDTO.setMomData(mom.floatValue());
+                }else{
+                    topDomesticInternationalResponseDTO.setMomData(0.0f);
+                }
+                if(array[3] != null){
+                    Number yoy = (Number) array[3];
+                    topDomesticInternationalResponseDTO.setYoyData(yoy.floatValue());
+                }else{
+                    topDomesticInternationalResponseDTO.setYoyData(0.0f);
+                }
                 topDomesticInternationalResponseDTOS.add(topDomesticInternationalResponseDTO);
 
             }

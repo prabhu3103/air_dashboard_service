@@ -145,7 +145,7 @@ public class TopLanesServiceImpl implements TopLanesService {
                 }
                 if(array[4] != null){
                     Number yoy = (Number) array[4];
-                    topLanesResponseDTO.setMomData(yoy.floatValue());
+                    topLanesResponseDTO.setYoyData(yoy.floatValue());
                 }else{
                     topLanesResponseDTO.setYoyData(0.0f);
                 }
@@ -174,7 +174,7 @@ public class TopLanesServiceImpl implements TopLanesService {
                 }
                 if(array[4] != null){
                     Number yoy = (Number) array[4];
-                    topLanesResponseDTO.setMomData(yoy.floatValue());
+                    topLanesResponseDTO.setYoyData(yoy.floatValue());
                 }else{
                     topLanesResponseDTO.setYoyData(0.0f);
                 }
