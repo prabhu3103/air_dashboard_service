@@ -3300,7 +3300,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                    FROM AllCategories ac
                    LEFT JOIN (
                    SELECT
-                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+                   a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,a.STDVOLUME,
                    CASE
                    WHEN a.ORG NOT IN (
                    SELECT b.CODE
@@ -3364,7 +3364,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                    ELSE 'false'
                    END AS category
                    FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-                   month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+                   AND month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                    AND a.CARRIER = :carrier                   
                    and b.COUNTRYCODE = :country
