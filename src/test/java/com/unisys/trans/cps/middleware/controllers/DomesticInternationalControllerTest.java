@@ -46,7 +46,7 @@ class DomesticInternationalControllerTest {
     @Test
     void getTopDomesticInternationalBookingAirportTest() throws Exception {
 
-        Object[] mockObject = {"true", 1, "BookingCount", null, 1.1, 1.1};
+        Object[] mockObject = {"true", 1, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalBookingAirport(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -64,7 +64,7 @@ class DomesticInternationalControllerTest {
     }
     @Test
     void getTopDomesticInternationalBookingCountryTest() throws Exception {
-        Object[] mockObject = {"true", 1, "BookingCount", null, 1.1, 1.1};
+        Object[] mockObject = {"true", 1, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalBookingCountry(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -82,7 +82,7 @@ class DomesticInternationalControllerTest {
     }
     @Test
     void getTopDomesticInternationalBookingContinentTest() throws Exception {
-        Object[] mockObject = {"true", 1, "BookingCount", null, 1.1, 1.1};
+        Object[] mockObject = {"true", 1, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalBookingContinent(any(), any(), any(), any())).thenReturn(mockObjects);
@@ -100,7 +100,7 @@ class DomesticInternationalControllerTest {
     }
     @Test
     void getTopDomesticInternationalBookingRegionTest() throws Exception {
-        Object[] mockObject = {"true", 1, "BookingCount", null, 1.1, 1.1};
+        Object[] mockObject = {"true", 1, 1.1, 1.1};
         List<Object[]> mockObjects = new ArrayList<>();
         mockObjects.add(mockObject);
         Mockito.when(advanceFunctionAuditRepository.getTopDomesticInternationalBookingRegion(any(), any(), any(), any())).thenReturn(mockObjects);
