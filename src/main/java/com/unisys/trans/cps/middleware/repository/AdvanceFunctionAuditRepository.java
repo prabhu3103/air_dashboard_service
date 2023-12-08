@@ -89,7 +89,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
-            AND b.countryCode = :country			       
+            AND b.countryCode = :country
             group by a.org, a.DEST
             ) y
             on s.org = y.org and s.DEST = y.DEST
@@ -104,7 +104,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
            select s.ORG,s.DEST,s.TOPLANE, ROUND(((s.TOPLANE - m.TOPLANE)*100/ m.TOPLANE),2) as MOMPercent,
            ROUND(((s.TOPLANE - y.TOPLANE)*100/ y.TOPLANE),2) as YOYPercent
-           from        
+           from
            (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
            FROM AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
@@ -123,8 +123,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
            )
            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.carrier = :carrier	
-           AND b.continent =:continent						
+           AND a.carrier = :carrier
+           AND b.continent =:continent
            group by a.ORG, a.DEST
            ) m
            on s.ORG = m.ORG and s.DEST = m.DEST  left join
@@ -133,14 +133,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            JOIN CityCountryMaster b ON a.ORG = b.code
            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.carrier = :carrier	
-           AND b.continent =:continent					       
+           AND a.carrier = :carrier
+           AND b.continent =:continent
            group by a.ORG, a.DEST
            ) y
            on s.org = y.org and s.DEST = y.DEST
            order by s.TOPLANE desc
            offset 0 rows
-           fetch next 5 rows only                   
+           fetch next 5 rows only
            """,nativeQuery = true)
     List<Object[]> getTopLanesBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("continent") String continent);
@@ -150,7 +150,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
            select s.ORG,s.DEST,s.TOPLANE, ROUND(((s.TOPLANE - m.TOPLANE)*100/ m.TOPLANE),2) as MOMPercent,
            ROUND(((s.TOPLANE - y.TOPLANE)*100/ y.TOPLANE),2) as YOYPercent
-           from        
+           from
            (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
            FROM AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
@@ -171,7 +171,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
            )
            AND a.carrier = :carrier
-           AND c.regionName = :region				       
+           AND c.regionName = :region
            group by a.ORG, a.DEST
            ) m
            on s.ORG = m.ORG and s.DEST = m.DEST left join
@@ -180,8 +180,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            JOIN CityCountryMaster b ON a.ORG = b.code
            JOIN RegionMaster c ON b.continent = c.continent
            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-           and a.carrier = :carrier	
-           AND c.regionName = :region						
+           and a.carrier = :carrier
+           AND c.regionName = :region
            group by a.ORG, a.DEST
            ) y
            on s.org = y.org and s.DEST = y.DEST
@@ -197,14 +197,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
           select s.ORG,s.DEST,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
           ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
-          from        
+          from
           (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
           from   AdvanceFunctionAudit a
           where a.eventDate >= :startDate and a.eventDate <= :endDate
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
           and a.carrier = :carrier
           and a.org=:originAirport
-          group by a.ORG, a.DEST           
+          group by a.ORG, a.DEST
           ) s left join
           (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
           from   AdvanceFunctionAudit a
@@ -213,8 +213,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           or
           month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
           )
-          AND a.carrier = :carrier	
-          AND a.org=:originAirport						
+          AND a.carrier = :carrier
+          AND a.org=:originAirport
           group by a.ORG, a.DEST
           ) m
           on s.ORG = m.ORG and s.DEST = m.DEST left join
@@ -222,7 +222,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           from   AdvanceFunctionAudit a
           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
           AND a.carrier = :carrier
-          AND a.org=:originAirport				
+          AND a.org=:originAirport
           group by a.ORG, a.DEST
           ) y
           on s.ORG = y.ORG and s.DEST = y.DEST
@@ -238,15 +238,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
             ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
-            from        
+            from
             (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             WHERE  a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'           
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
             AND b.countryCode = :country
-            GROUP BY a.ORG, a.DEST          
+            GROUP BY a.ORG, a.DEST
             ) s left join
             (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
             from   AdvanceFunctionAudit a
@@ -256,8 +256,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             or
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
-            AND a.carrier = :carrier	
-            AND b.countryCode = :country						
+            AND a.carrier = :carrier
+            AND b.countryCode = :country
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
@@ -266,7 +266,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             JOIN CityCountryMaster b ON a.ORG = b.code
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
             AND a.carrier = :carrier
-            AND b.countryCode = :country				       
+            AND b.countryCode = :country
             group by a.ORG, a.DEST
             ) y
             on s.ORG = y.ORG and s.DEST = y.DEST
@@ -281,15 +281,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
            select s.ORG,s.DEST,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
-           from        
+           from
            (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
            FROM AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            WHERE a.eventDate >= :startDate and a.eventDate <= :endDate
-           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'           
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
            AND a.carrier = :carrier
            AND b.continent = :continent
-           GROUP BY a.ORG, a.DEST      
+           GROUP BY a.ORG, a.DEST
            ) s left join
            (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
            from   AdvanceFunctionAudit a
@@ -299,8 +299,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            or
            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
            )
-           AND a.carrier = :carrier	
-           AND b.continent = :continent						
+           AND a.carrier = :carrier
+           AND b.continent = :continent
            group by a.ORG, a.DEST
            ) m
            on s.ORG = m.ORG and s.DEST = m.DEST left join
@@ -308,8 +308,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-           and a.carrier = :carrier	
-           AND b.continent = :continent						
+           and a.carrier = :carrier
+           AND b.continent = :continent
            group by a.ORG, a.DEST
            ) y
            on s.ORG = y.ORG and s.DEST = y.DEST
@@ -324,16 +324,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
             ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
-            from        
+            from
             (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent
             WHERE a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'          
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
-            AND c.regionName = :region  
-            group by a.ORG, a.DEST			
+            AND c.regionName = :region
+            group by a.ORG, a.DEST
             ) s left join
             (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
             from   AdvanceFunctionAudit a
@@ -341,7 +341,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             JOIN RegionMaster c ON b.continent = c.continent
             where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
             AND a.carrier = :carrier
-            AND c.regionName = :region  				       
+            AND c.regionName = :region
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
@@ -354,8 +354,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             or
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
-            and a.carrier = :carrier	
-            AND c.regionName = :region  						
+            and a.carrier = :carrier
+            AND c.regionName = :region
             group by a.ORG, a.DEST
             ) y
             on s.ORG = y.ORG and s.DEST = y.DEST
@@ -371,14 +371,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),1) as MOMPercent,
             ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent
-            from        
+            from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org=:originAirport
-            group by a.ORG, a.DEST           
+            group by a.ORG, a.DEST
             ) s left join
             (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
@@ -387,16 +387,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             or
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
-            AND a.carrier = :carrier	
-            AND a.org = :originAirport						
+            AND a.carrier = :carrier
+            AND a.org = :originAirport
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
             (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            AND a.carrier = :carrier	
-            AND a.org = :originAirport						
+            AND a.carrier = :carrier
+            AND a.org = :originAirport
             group by a.ORG, a.DEST
             ) y
             on s.ORG = y.ORG and s.DEST = y.DEST
@@ -411,15 +411,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),1) as MOMPercent,
             ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent
-            from        
+            from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             WHERE  a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'           
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
             AND b.countryCode = :country
-            GROUP BY a.ORG, a.DEST          
+            GROUP BY a.ORG, a.DEST
             ) s left join
             (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
@@ -429,9 +429,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             or
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'           
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
-            AND b.countryCode = :country				       
+            AND b.countryCode = :country
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
@@ -439,15 +439,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'           
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
-            AND b.countryCode = :country				       
+            AND b.countryCode = :country
             group by a.ORG, a.DEST
             ) y
             on s.ORG = y.ORG and s.DEST = y.DEST
             order by s.totalVolume desc
             offset 0 rows
-            fetch next 5 rows only            						
+            fetch next 5 rows only
             """,nativeQuery = true)
     List<Object[]> getTopLanesVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("country") String country);
@@ -456,15 +456,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
             ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent
-            from        
+            from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             WHERE a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'           
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
             AND b.continent =:continent
-            GROUP BY a.ORG, a.DEST      
+            GROUP BY a.ORG, a.DEST
             ) s left join
             (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
@@ -474,8 +474,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             or
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
-            AND a.carrier = :carrier	
-            AND b.continent = :continent						
+            AND a.carrier = :carrier
+            AND b.continent = :continent
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
@@ -483,8 +483,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            and a.carrier = :carrier	
-            AND b.continent = :continent						
+            and a.carrier = :carrier
+            AND b.continent = :continent
             group by a.ORG, a.DEST
             ) y
             on s.ORG = y.ORG and s.DEST = y.DEST
@@ -499,16 +499,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
             ROUND(((s.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent
-            from        
+            from
             ( select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent
             WHERE a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'          
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
-            AND c.regionName = :region  
-            group by a.ORG, a.DEST			
+            AND c.regionName = :region
+            group by a.ORG, a.DEST
             ) s left join
             (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
@@ -516,7 +516,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             JOIN RegionMaster c ON b.continent = c.continent
             where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
             AND a.carrier = :carrier
-            AND c.regionName = :region				       
+            AND c.regionName = :region
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
@@ -529,8 +529,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             or
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
-            and a.carrier = :carrier	
-            AND c.regionName = :region						
+            and a.carrier = :carrier
+            AND c.regionName = :region
             group by a.ORG, a.DEST
             ) y
             on s.ORG = y.ORG and s.DEST = y.DEST
@@ -559,7 +559,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
           or
           month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-          )				
+          )
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
           and a.carrier = :carrier
           and a.ORG = :origin
@@ -584,41 +584,41 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Booking Count for Country
     @Query(value="""
-        select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent, 
-        ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
-        from
-        (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
-        where a.ORG = b.code
-        and	a.eventDate >= :startDate and a.eventDate <= :endDate
-        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-        and a.carrier = :carrier
-        and b.countryCode = :country
-        group by  a.carrier, a.accNo
-        ) s left join
-        (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
-        where (
-        month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-        or
-        month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-        )	
-        and a.ORG = b.code
-        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-        and a.carrier = :carrier
-        and b.countryCode = :country
-        group by  a.carrier, a.accNo
-        ) m on s.accNo = m.accNo left join
-        (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
-        where a.ORG = b.code and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-        and a.carrier = :carrier
-        and b.countryCode = :country
-        group by a.carrier, a.accNo
-        ) y
-        on  s.accNo = y.accNo
-        order by s.totalNoOfBookingCount desc
-        offset 0 rows
-        fetch next 5 rows only
-        """,nativeQuery = true)
+          select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent,
+          ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
+          from
+          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+          where a.ORG = b.code
+          and a.eventDate >= :startDate and a.eventDate <= :endDate
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and b.countryCode = :country
+          group by  a.carrier, a.accNo
+          ) s left join
+          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+          where (
+          month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+          or
+          month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+          )
+          and a.ORG = b.code
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and b.countryCode = :country
+          group by  a.carrier, a.accNo
+          ) m on s.accNo = m.accNo left join
+          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+          where a.ORG = b.code and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and b.countryCode = :country
+          group by a.carrier, a.accNo
+          ) y
+          on  s.accNo = y.accNo
+          order by s.totalNoOfBookingCount desc
+          offset 0 rows
+          fetch next 5 rows only
+          """,nativeQuery = true)
 
     List<Object[]> getTopAgentsBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                               @Param("carrier") String carrier, @Param("country") String country);
@@ -626,7 +626,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Booking Count for Continent
     @Query(value="""
-           select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent, 
+           select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent,
            ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
            from
                        ( select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b
@@ -641,7 +641,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                           month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
                           or
                           month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                         )	
+                         )
                         and a.ORG = b.code
                         and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                         and a.carrier = :carrier
@@ -666,14 +666,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Booking Count for Region
     @Query(value="""
-            select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent, 
+            select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent,
             ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
              from
                 (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c where a.ORG = b.code and b.continent = c.continent
                     and a.eventDate >= :startDate and a.eventDate <= :endDate
-                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'				
+                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                     and a.carrier = :carrier
-                    and c.regionName = :region				
+                    and c.regionName = :region
                     group by a.carrier, a.accNo
                     ) s left join
                    (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
@@ -685,7 +685,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                     group by a.carrier, a.accNo
                         ) m on s.accNo = m.accNo left join
                 (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-                    where a.ORG = b.code and b.continent = c.continent and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)\s
+                    where a.ORG = b.code and b.continent = c.continent and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
                     and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                     and a.carrier = :carrier
                     and c.regionName = :region
@@ -702,9 +702,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Volume for AirPort
     @Query(value = """
-            select s.carrier,s.accNo,s.totalNoOfVolumeCount, ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent, 
+            select s.carrier,s.accNo,s.totalNoOfVolumeCount, ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent,
             ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
-                from        
+                from
               (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a
                     where a.eventDate >= :startDate and a.eventDate <= :endDate
                     and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -717,7 +717,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                       month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
                       or
                       month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                     )				
+                     )
                     and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                     and a.carrier = :carrier
                     and a.ORG = :origin
@@ -743,7 +743,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Agents - Total Number of Volume for Country
     @Query(value="""
             select s.carrier,s.accNo,s.totalNoOfVolumeCount, ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent, ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
-            from        
+            from
             (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
                 where a.eventDate >= :startDate and a.eventDate <= :endDate
                 and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -757,7 +757,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                   month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
                   or
                   month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                 )				
+                 )
                 and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                 and a.carrier = :carrier
                 and a.ORG = b.code
@@ -785,7 +785,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Agents - Total Number of Volume for Continent
     @Query(value="""
             select s.carrier,s.accNo,s.totalNoOfVolumeCount, ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent, ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
-            from        
+            from
             (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b
             where a.ORG = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -798,7 +798,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
             or
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-            )	
+            )
             and a.ORG = b.code
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
@@ -825,12 +825,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.carrier,s.accNo,s.totalNoOfVolumeCount,ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent,
             ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
-            from        
+            from
             (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c where a.ORG = b.code and b.continent = c.continent
             and a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'				
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and c.regionName = :region				
+            and c.regionName = :region
             group by a.carrier, a.accNo
             ) s left join
             (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
@@ -855,7 +855,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             on s.accNo = y.accNo
             order by s.totalNoOfVolumeCount desc
             offset 0 rows
-            fetch next 5 rows only	
+            fetch next 5 rows only
             """,nativeQuery = true)
 
     List<Object[]> getTopAgentsVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -866,7 +866,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent,
             ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
-            from       
+            from
             (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a
                   where a.eventDate >= :startDate and a.eventDate <= :endDate
                   and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -879,7 +879,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                     month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
                     or
                     month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                   )				
+                   )
                   and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                   and a.carrier = :carrier
                   and a.ORG = :origin
@@ -905,7 +905,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Agents - Total Number of Weight for Country
     @Query(value="""
             select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent, ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
-            from        
+            from
               (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
                     where a.eventDate >= :startDate and a.eventDate <= :endDate
                     and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -919,7 +919,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                       month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
                       or
                       month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                     )				
+                     )
                     and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                     and a.carrier = :carrier
                     and a.ORG = b.code
@@ -947,7 +947,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Agents - Total Number of Weight for Continent
     @Query(value="""
           select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent, ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
-          from        
+          from
           (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b
                 where a.ORG = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
                 and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -960,7 +960,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                   month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
                   or
                   month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                 )	
+                 )
                 and a.ORG = b.code
                 and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                 and a.carrier = :carrier
@@ -985,14 +985,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Weight for Region
     @Query(value="""
-            select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent, 
+            select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent,
             ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
-            from        
+            from
             (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c where a.ORG = b.code and b.continent = c.continent
                 and a.eventDate >= :startDate and a.eventDate <= :endDate
-                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'				
+                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                 and a.carrier = :carrier
-                and c.regionName = :region				
+                and c.regionName = :region
                 group by a.carrier, a.accNo
                 ) s left join
               (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
@@ -1017,7 +1017,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 on s.accNo = y.accNo
                 order by s.totalNoOfWeightCount desc
                 offset 0 rows
-                fetch next 5 rows only	
+                fetch next 5 rows only
             """,nativeQuery = true)
 
     List<Object[]> getTopAgentsWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -1025,172 +1025,172 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Booking Count for Airport
     @Query(value = """
-            select s.day, s.bookingCount, 
-            case 
-            when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1) 
-            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0 
-            when pm.pmbookingCount = 0  then 100 
+            select s.day, s.bookingCount,
+            case
+            when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1)
+            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0
+            when pm.pmbookingCount = 0  then 100
             end as momPercent,
-            case 
-            when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1) 
-            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0 
-            when py.pybookingCount = 0  then 100 
-            end as yoyPercent 
-            from 
-            (select a.eventDate as day, count(*) as bookingCount 		    
-            from AdvanceFunctionAudit a 
-            where a.eventDate >= :startDate and a.eventDate <= :endDate 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport 
-            group by a.eventDate) s, 
-            (select count(*) as monthbookingCount 			    
-            from AdvanceFunctionAudit a 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) m, 
-                 (select count(*) as pmbookingCount 			    
-            from AdvanceFunctionAudit a				
-            where 
+            case
+            when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1)
+            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0
+            when py.pybookingCount = 0  then 100
+            end as yoyPercent
+            from
+            (select a.eventDate as day, count(*) as bookingCount
+            from AdvanceFunctionAudit a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport
+            group by a.eventDate) s,
+            (select count(*) as monthbookingCount
+            from AdvanceFunctionAudit a
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) m,
+                 (select count(*) as pmbookingCount
+            from AdvanceFunctionAudit a
+            where
             (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) pm, 
-            (select count(*) as yearbookingCount 			    
-            from AdvanceFunctionAudit a 
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) y, 
-            (select count(*) as pybookingCount			    
-            from AdvanceFunctionAudit a 
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) py 
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) pm,
+            (select count(*) as yearbookingCount
+            from AdvanceFunctionAudit a
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) y,
+            (select count(*) as pybookingCount
+            from AdvanceFunctionAudit a
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) py
             """, nativeQuery = true)
     List<Object[]> getPointOfSalesBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                  @Param("carrier") String carrier, @Param("originAirport") String originAirport);
 
     //Point Of Sales - Total Number of Booking Count for Country
     @Query(value = """
-            select s.day, s.bookingCount, 
-            case 
-            when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1) 
-            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0 
-            when pm.pmbookingCount = 0  then 100 
+            select s.day, s.bookingCount,
+            case
+            when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1)
+            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0
+            when pm.pmbookingCount = 0  then 100
             end as momPercent,
-            case 
-            when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1) 
-            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0 
-            when py.pybookingCount = 0  then 100 
-            end as yoyPercent 
-            from 
-            (select a.eventDate as day, count(*) as bookingCount 
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where a.eventDate >= :startDate and a.eventDate <= :endDate 
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S' 
-            and a.carrier = :carrier
-            and b.countryCode = :country 
-            group by a.eventDate) s, 
-            (select count(*) as monthbookingCount 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) m, 
-            (select count(*) as pmbookingCount 			    
-            from AdvanceFunctionAudit a	
-            join CityCountryMaster b on a.org = b.code 				
-            where 
-            (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) pm, 
-            (select count(*) as yearbookingCount 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 	
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) y, 
-            (select count(*) as pybookingCount			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 	
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) py 
-            """, nativeQuery = true)
-    List<Object[]> getPointOfSalesBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                 @Param("carrier") String carrier, @Param("country") String country);
-
-    //Point Of Sales - Total Number of Booking Count for Continent
-    @Query(value = """
-            select s.day, s.bookingCount, 
-            case 
-            when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1) 
-            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0 
-            when pm.pmbookingCount = 0  then 100 
-            end as momPercent,
-            case 
-            when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1) 
-            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0 
-            when py.pybookingCount = 0  then 100 
-            end as yoyPercent 
-            from 
+            case
+            when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1)
+            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0
+            when py.pybookingCount = 0  then 100
+            end as yoyPercent
+            from
             (select a.eventDate as day, count(*) as bookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and b.continent = :continent 
-            group by a.eventDate) s, 
-            (select count(*) as monthbookingCount 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) m, 
-            (select count(*) as pmbookingCount 			    
-            from AdvanceFunctionAudit a	
-            join CityCountryMaster b on a.org = b.code 				
-            where 
+            and b.countryCode = :country
+            group by a.eventDate) s,
+            (select count(*) as monthbookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) m,
+            (select count(*) as pmbookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where
             (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) pm, 
-            (select count(*) as yearbookingCount 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) y, 
-            (select count(*) as pybookingCount			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) py 
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) pm,
+            (select count(*) as yearbookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) y,
+            (select count(*) as pybookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) py
+            """, nativeQuery = true)
+    List<Object[]> getPointOfSalesBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                 @Param("carrier") String carrier, @Param("country") String country);
+
+    //Point Of Sales - Total Number of Booking Count for Continent
+    @Query(value = """
+            select s.day, s.bookingCount,
+            case
+            when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1)
+            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0
+            when pm.pmbookingCount = 0  then 100
+            end as momPercent,
+            case
+            when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1)
+            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0
+            when py.pybookingCount = 0  then 100
+            end as yoyPercent
+            from
+            (select a.eventDate as day, count(*) as bookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent
+            group by a.eventDate) s,
+            (select count(*) as monthbookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) m,
+            (select count(*) as pmbookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where
+            (
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) pm,
+            (select count(*) as yearbookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) y,
+            (select count(*) as pybookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) py
             """, nativeQuery = true)
     List<Object[]> getPointOfSalesBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                    @Param("carrier") String carrier, @Param("continent") String continent);
@@ -1198,18 +1198,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Booking Count for Region
     @Query(value = """
-            select s.day, s.bookingCount, 
-            case 
-            when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1) 
-            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0 
-            when pm.pmbookingCount = 0  then 100 
+            select s.day, s.bookingCount,
+            case
+            when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1)
+            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0
+            when pm.pmbookingCount = 0  then 100
             end as momPercent,
-            case 
-            when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1) 
-            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0 
-            when py.pybookingCount = 0  then 100 
-            end as yoyPercent 
-            from 
+            case
+            when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1)
+            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0
+            when py.pybookingCount = 0  then 100
+            end as yoyPercent
+            from
             (select a.eventDate as day, count(*) as bookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
@@ -1217,45 +1217,45 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and c.regionName = :region 
-            group by a.eventDate) s, 
-            (select count(*) as monthbookingCount 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            join RegionMaster c on b.continent = c.continent 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) m, 
-            (select count(*) as pmbookingCount 			    
-            from AdvanceFunctionAudit a	
-            join CityCountryMaster b on a.org = b.code 
-            join RegionMaster c on b.continent = c.continent 			
-            where 
-            (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) pm, 
-            (select count(*) as yearbookingCount 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
+            and c.regionName = :region
+            group by a.eventDate) s,
+            (select count(*) as monthbookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) y, 
-            (select count(*) as pybookingCount			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            join RegionMaster c on b.continent = c.continent 
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) py 
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) m,
+            (select count(*) as pmbookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            join RegionMaster c on b.continent = c.continent
+            where
+            (
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) pm,
+            (select count(*) as yearbookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            join RegionMaster c on b.continent = c.continent
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) y,
+            (select count(*) as pybookingCount
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            join RegionMaster c on b.continent = c.continent
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) py
             """, nativeQuery = true)
     List<Object[]> getPointOfSalesBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("region") String region);
@@ -1263,54 +1263,54 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Weight Count for Airport
     @Query(value = """
-            select s.day, s.weight, 
-            case 
-            when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1) 
-            when pm.pmweight = 0  and m.monthweight = 0 then 0 
-            when pm.pmweight = 0  then 100 
+            select s.day, s.weight,
+            case
+            when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1)
+            when pm.pmweight = 0  and m.monthweight = 0 then 0
+            when pm.pmweight = 0  then 100
             end as momPercent,
-            case 
-            when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1) 
-            when py.pyweight = 0  and y.yearweight = 0 then 0 
-            when py.pyweight = 0  then 100 
-            end as yoyPercent 
-            from 
-            (select a.eventDate as day, sum(a.stdWeight) as weight 		    
-            from AdvanceFunctionAudit a 
-            where a.eventDate >= :startDate and a.eventDate <= :endDate 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport 
-            group by a.eventDate) s, 
-            (select sum(a.stdWeight) as monthweight 			    
-            from AdvanceFunctionAudit a 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) m, 
-            (select sum(a.stdWeight) as pmweight 			    
-            from AdvanceFunctionAudit a				
-            where 
+            case
+            when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1)
+            when py.pyweight = 0  and y.yearweight = 0 then 0
+            when py.pyweight = 0  then 100
+            end as yoyPercent
+            from
+            (select a.eventDate as day, sum(a.stdWeight) as weight
+            from AdvanceFunctionAudit a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport
+            group by a.eventDate) s,
+            (select sum(a.stdWeight) as monthweight
+            from AdvanceFunctionAudit a
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) m,
+            (select sum(a.stdWeight) as pmweight
+            from AdvanceFunctionAudit a
+            where
             (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) pm, 
-            (select sum(a.stdWeight) as yearweight 			    
-            from AdvanceFunctionAudit a 
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) y, 
-            (select sum(a.stdWeight) as pyweight			    
-            from AdvanceFunctionAudit a 
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) py 
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) pm,
+            (select sum(a.stdWeight) as yearweight
+            from AdvanceFunctionAudit a
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) y,
+            (select sum(a.stdWeight) as pyweight
+            from AdvanceFunctionAudit a
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) py
             """, nativeQuery = true)
     List<Object[]> getPointOfSalesWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("originAirport") String originAirport);
@@ -1318,136 +1318,136 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Weight  for Country
     @Query(value = """
-            select s.day, s.weight, 
-            case 
-            when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1) 
-            when pm.pmweight = 0  and m.monthweight = 0 then 0 
-            when pm.pmweight = 0  then 100 
+            select s.day, s.weight,
+            case
+            when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1)
+            when pm.pmweight = 0  and m.monthweight = 0 then 0
+            when pm.pmweight = 0  then 100
             end as momPercent,
-            case 
-            when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1) 
-            when py.pyweight = 0  and y.yearweight = 0 then 0 
-            when py.pyweight = 0  then 100 
-            end as yoyPercent 
-            from 
-            (select a.eventDate as day, sum(a.stdWeight) as weight  
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where a.eventDate >= :startDate and a.eventDate <= :endDate 
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S' 
+            case
+            when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1)
+            when py.pyweight = 0  and y.yearweight = 0 then 0
+            when py.pyweight = 0  then 100
+            end as yoyPercent
+            from
+            (select a.eventDate as day, sum(a.stdWeight) as weight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and b.countryCode = :country 
-            group by a.eventDate) s, 
-            (select sum(a.stdWeight) as monthweight 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) m, 
-            (select sum(a.stdWeight) as pmweight 			    
-            from AdvanceFunctionAudit a	
-            join CityCountryMaster b on a.org = b.code 				
-            where 
+            and b.countryCode = :country
+            group by a.eventDate) s,
+            (select sum(a.stdWeight) as monthweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) m,
+            (select sum(a.stdWeight) as pmweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where
             (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) pm, 
-            (select sum(a.stdWeight) as yearweight 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 	
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) y, 
-            (select sum(a.stdWeight) as pyweight			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 	
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) py 
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) pm,
+            (select sum(a.stdWeight) as yearweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) y,
+            (select sum(a.stdWeight) as pyweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) py
             """, nativeQuery = true)
     List<Object[]> getPointOfSalesWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("country") String country);
 
     //Point Of Sales - Total Number of Weight for Continent
     @Query(value = """
-            select s.day, s.weight, 
-            case 
-            when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1) 
-            when pm.pmweight = 0  and m.monthweight = 0 then 0 
-            when pm.pmweight = 0  then 100 
+            select s.day, s.weight,
+            case
+            when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1)
+            when pm.pmweight = 0  and m.monthweight = 0 then 0
+            when pm.pmweight = 0  then 100
             end as momPercent,
-            case 
-            when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1) 
-            when py.pyweight = 0  and y.yearweight = 0 then 0 
-            when py.pyweight = 0  then 100 
-            end as yoyPercent 
-            from 
+            case
+            when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1)
+            when py.pyweight = 0  and y.yearweight = 0 then 0
+            when py.pyweight = 0  then 100
+            end as yoyPercent
+            from
             (select a.eventDate as day, sum(a.stdWeight) as weight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and b.continent = :continent 
-            group by a.eventDate) s, 
-            (select sum(a.stdWeight) as monthweight 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) m, 
-            (select sum(a.stdWeight) as pmweight 			    
-            from AdvanceFunctionAudit a	
-            join CityCountryMaster b on a.org = b.code 				
-            where 
+            and b.continent = :continent
+            group by a.eventDate) s,
+            (select sum(a.stdWeight) as monthweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) m,
+            (select sum(a.stdWeight) as pmweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where
             (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) pm, 
-            (select sum(a.stdWeight) as yearweight 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) y, 
-            (select sum(a.stdWeight) as pyweight			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) py 
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) pm,
+            (select sum(a.stdWeight) as yearweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) y,
+            (select sum(a.stdWeight) as pyweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) py
             """, nativeQuery = true)
     List<Object[]> getPointOfSalesWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                   @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Point Of Sales - Total Number of Weight  for Region
     @Query(value = """
-            select s.day, s.weight, 
-            case 
-            when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1) 
-            when pm.pmweight = 0  and m.monthweight = 0 then 0 
-            when pm.pmweight = 0  then 100 
+            select s.day, s.weight,
+            case
+            when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1)
+            when pm.pmweight = 0  and m.monthweight = 0 then 0
+            when pm.pmweight = 0  then 100
             end as momPercent,
-            case 
-            when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1) 
-            when py.pyweight = 0  and y.yearweight = 0 then 0 
-            when py.pyweight = 0  then 100 
-            end as yoyPercent 
-            from 
+            case
+            when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1)
+            when py.pyweight = 0  and y.yearweight = 0 then 0
+            when py.pyweight = 0  then 100
+            end as yoyPercent
+            from
             (select a.eventDate as day, sum(a.stdWeight) as weight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
@@ -1455,45 +1455,45 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and c.regionName = :region 
-            group by a.eventDate) s, 
-            (select sum(a.stdWeight) as monthweight 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            join RegionMaster c on b.continent = c.continent 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) m, 
-            (select sum(a.stdWeight) as pmweight 			    
-            from AdvanceFunctionAudit a	
-            join CityCountryMaster b on a.org = b.code 
-            join RegionMaster c on b.continent = c.continent 			
-            where 
-            (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) pm, 
-            (select sum(a.stdWeight) as yearweight 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
+            and c.regionName = :region
+            group by a.eventDate) s,
+            (select sum(a.stdWeight) as monthweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) y, 
-            (select sum(a.stdWeight) as pyweight			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            join RegionMaster c on b.continent = c.continent 
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) py 
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) m,
+            (select sum(a.stdWeight) as pmweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            join RegionMaster c on b.continent = c.continent
+            where
+            (
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) pm,
+            (select sum(a.stdWeight) as yearweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            join RegionMaster c on b.continent = c.continent
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) y,
+            (select sum(a.stdWeight) as pyweight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            join RegionMaster c on b.continent = c.continent
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) py
             """, nativeQuery = true)
     List<Object[]> getPointOfSalesWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("region") String region);
@@ -1501,190 +1501,190 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Volume  for Airport
     @Query(value = """
-            select s.day, s.volume, 
-            case 
-            when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1) 
-            when pm.pmvolume = 0  and m.monthvolume = 0 then 0 
-            when pm.pmvolume = 0  then 100 
+            select s.day, s.volume,
+            case
+            when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1)
+            when pm.pmvolume = 0  and m.monthvolume = 0 then 0
+            when pm.pmvolume = 0  then 100
             end as momPercent,
-            case 
-            when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1) 
-            when py.pyvolume = 0  and y.yearvolume = 0 then 0 
-            when py.pyvolume = 0  then 100 
-            end as yoyPercent 
-            from 
-            (select a.eventDate as day, sum(a.stdVolume) as volume 		    
-            from AdvanceFunctionAudit a 
-            where a.eventDate >= :startDate and a.eventDate <= :endDate 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport 
-            group by a.eventDate) s, 
-            (select sum(a.stdVolume) as monthvolume 			    
-            from AdvanceFunctionAudit a 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) m, 
-            (select sum(a.stdVolume) as pmvolume 			    
-            from AdvanceFunctionAudit a				
-            where 
+            case
+            when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1)
+            when py.pyvolume = 0  and y.yearvolume = 0 then 0
+            when py.pyvolume = 0  then 100
+            end as yoyPercent
+            from
+            (select a.eventDate as day, sum(a.stdVolume) as volume
+            from AdvanceFunctionAudit a
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport
+            group by a.eventDate) s,
+            (select sum(a.stdVolume) as monthvolume
+            from AdvanceFunctionAudit a
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) m,
+            (select sum(a.stdVolume) as pmvolume
+            from AdvanceFunctionAudit a
+            where
             (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) pm, 
-            (select sum(a.stdVolume) as yearvolume 			    
-            from AdvanceFunctionAudit a 
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) y, 
-            (select sum(a.stdVolume) as pyvolume			    
-            from AdvanceFunctionAudit a 
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and a.org = :originAirport) py 
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) pm,
+            (select sum(a.stdVolume) as yearvolume
+            from AdvanceFunctionAudit a
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) y,
+            (select sum(a.stdVolume) as pyvolume
+            from AdvanceFunctionAudit a
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and a.org = :originAirport) py
             """, nativeQuery = true)
     List<Object[]> getPointOfSalesVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("originAirport") String originAirport);
 
     //Point Of Sales - Total Number of Volume  for Country
     @Query(value = """
-            select s.day, s.volume, 
-            case 
-            when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1) 
-            when pm.pmvolume = 0  and m.monthvolume = 0 then 0 
-            when pm.pmvolume = 0  then 100 
+            select s.day, s.volume,
+            case
+            when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1)
+            when pm.pmvolume = 0  and m.monthvolume = 0 then 0
+            when pm.pmvolume = 0  then 100
             end as momPercent,
-            case 
-            when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1) 
-            when py.pyvolume = 0  and y.yearvolume = 0 then 0 
-            when py.pyvolume = 0  then 100 
-            end as yoyPercent 
-            from 
-            (select a.eventDate as day, sum(a.stdVolume) as volume  
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where a.eventDate >= :startDate and a.eventDate <= :endDate 
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S' 
+            case
+            when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1)
+            when py.pyvolume = 0  and y.yearvolume = 0 then 0
+            when py.pyvolume = 0  then 100
+            end as yoyPercent
+            from
+            (select a.eventDate as day, sum(a.stdVolume) as volume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and b.countryCode = :country 
-            group by a.eventDate) s, 
-            (select sum(a.stdVolume) as monthvolume 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) m, 
-            (select sum(a.stdVolume) as pmvolume 			    
-            from AdvanceFunctionAudit a	
-            join CityCountryMaster b on a.org = b.code 				
-            where 
+            and b.countryCode = :country
+            group by a.eventDate) s,
+            (select sum(a.stdVolume) as monthvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) m,
+            (select sum(a.stdVolume) as pmvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where
             (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) pm, 
-            (select sum(a.stdVolume) as yearvolume 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 	
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) y, 
-            (select sum(a.stdVolume) as pyvolume			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 	
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.countryCode = :country) py 
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) pm,
+            (select sum(a.stdVolume) as yearvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) y,
+            (select sum(a.stdVolume) as pyvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country) py
             """, nativeQuery = true)
     List<Object[]> getPointOfSalesVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("country") String country);
 
     //Point Of Sales - Total Number of Volume  for Continent
     @Query(value = """
-            select s.day, s.volume, 
-            case 
-            when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1) 
-            when pm.pmvolume = 0  and m.monthvolume = 0 then 0 
-            when pm.pmvolume = 0  then 100 
+            select s.day, s.volume,
+            case
+            when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1)
+            when pm.pmvolume = 0  and m.monthvolume = 0 then 0
+            when pm.pmvolume = 0  then 100
             end as momPercent,
-            case 
-            when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1) 
-            when py.pyvolume = 0  and y.yearvolume = 0 then 0 
-            when py.pyvolume = 0  then 100 
-            end as yoyPercent 
-            from 
+            case
+            when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1)
+            when py.pyvolume = 0  and y.yearvolume = 0 then 0
+            when py.pyvolume = 0  then 100
+            end as yoyPercent
+            from
             (select a.eventDate as day, sum(a.stdVolume) as volume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and b.continent = :continent 
-            group by a.eventDate) s, 
-            (select sum(a.stdVolume) as monthvolume 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) m, 
-            (select sum(a.stdVolume) as pmvolume 			    
-            from AdvanceFunctionAudit a	
-            join CityCountryMaster b on a.org = b.code 				
-            where 
+            and b.continent = :continent
+            group by a.eventDate) s,
+            (select sum(a.stdVolume) as monthvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) m,
+            (select sum(a.stdVolume) as pmvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where
             (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) pm, 
-            (select sum(a.stdVolume) as yearvolume 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) y, 
-            (select sum(a.stdVolume) as pyvolume			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and b.continent = :continent) py 
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) pm,
+            (select sum(a.stdVolume) as yearvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) y,
+            (select sum(a.stdVolume) as pyvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent) py
             """, nativeQuery = true)
     List<Object[]> getPointOfSalesVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                   @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Point Of Sales - Total Number of Volume  for Region
     @Query(value = """
-            select s.day, s.volume, 
-            case 
-            when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1) 
-            when pm.pmvolume = 0  and m.monthvolume = 0 then 0 
-            when pm.pmvolume = 0  then 100 
+            select s.day, s.volume,
+            case
+            when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1)
+            when pm.pmvolume = 0  and m.monthvolume = 0 then 0
+            when pm.pmvolume = 0  then 100
             end as momPercent,
-            case 
-            when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1) 
-            when py.pyvolume = 0  and y.yearvolume = 0 then 0 
-            when py.pyvolume = 0  then 100 
-            end as yoyPercent 
-            from 
+            case
+            when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1)
+            when py.pyvolume = 0  and y.yearvolume = 0 then 0
+            when py.pyvolume = 0  then 100
+            end as yoyPercent
+            from
             (select a.eventDate as day, sum(a.stdVolume) as volume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
@@ -1692,45 +1692,45 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and c.regionName = :region 
-            group by a.eventDate) s, 
-            (select sum(a.stdVolume) as monthvolume 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            join RegionMaster c on b.continent = c.continent 
-            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) m, 
-            (select sum(a.stdVolume) as pmvolume 			    
-            from AdvanceFunctionAudit a	
-            join CityCountryMaster b on a.org = b.code 
-            join RegionMaster c on b.continent = c.continent 			
-            where 
-            (
-            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate()) 
-            or 
-            month(getdate()) = 1 and month(a.eventDate)= 12 and  year(a.eventDate)=(year(getdate())-1) 
-            ) 			
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) pm, 
-            (select sum(a.stdVolume) as yearvolume 			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
+            and c.regionName = :region
+            group by a.eventDate) s,
+            (select sum(a.stdVolume) as monthvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
-            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) y, 
-            (select sum(a.stdVolume) as pyvolume			    
-            from AdvanceFunctionAudit a 
-            join CityCountryMaster b on a.org = b.code 
-            join RegionMaster c on b.continent = c.continent 
-            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate()) 
-            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S' 
-            and a.carrier = :carrier 
-            and c.regionName = :region) py 
+            where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) m,
+            (select sum(a.stdVolume) as pmvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            join RegionMaster c on b.continent = c.continent
+            where
+            (
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)= 12 and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) pm,
+            (select sum(a.stdVolume) as yearvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            join RegionMaster c on b.continent = c.continent
+            where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) y,
+            (select sum(a.stdVolume) as pyvolume
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b on a.org = b.code
+            join RegionMaster c on b.continent = c.continent
+            where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
+            and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region) py
             """, nativeQuery = true)
     List<Object[]> getPointOfSalesVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("region") String region);
@@ -1757,7 +1757,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                   month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
                                 )
                                 and a.carrier = :carrier
-                                and a.org = :originAirport			       
+                                and a.org = :originAirport
                                 group by a.commodity
                                    ) m
                                 on s.commodity = m.commodity left join
@@ -1765,7 +1765,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                    from   AdvanceFunctionAudit a
                                    where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
                                    and a.carrier = :carrier
-                                and a.org = :originAirport				       
+                                and a.org = :originAirport
                                 group by a.commodity
                                    ) y
                                 on s.commodity = y.commodity
@@ -1799,8 +1799,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             or
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
-            AND a.carrier = :carrier		
-            AND b.countryCode = :country	       
+            AND a.carrier = :carrier
+            AND b.countryCode = :country
             group by a.commodity
             ) m
             on s.commodity = m.commodity left join
@@ -1808,8 +1808,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             join CityCountryMaster b ON a.ORG = b.code
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            and a.carrier = :carrier	
-            AND b.countryCode = :country			       
+            and a.carrier = :carrier
+            AND b.countryCode = :country
             group by a.commodity
             ) y
             on s.commodity = y.commodity
@@ -1843,8 +1843,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             or
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
-            AND a.carrier = :carrier	
-            AND b.continent = :continent						
+            AND a.carrier = :carrier
+            AND b.continent = :continent
             group by a.commodity
             ) m
             on s.commodity = m.commodity left join
@@ -1852,8 +1852,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            and a.carrier = :carrier	
-            AND b.continent = :continent						
+            and a.carrier = :carrier
+            AND b.continent = :continent
             group by a.commodity
             ) y
             on s.commodity = y.commodity
@@ -1889,7 +1889,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
             and a.carrier = :carrier
-            AND r.regionName = :region			       
+            AND r.regionName = :region
             group by a.commodity
             ) m
             on s.commodity = m.commodity left join
@@ -1899,13 +1899,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             JOIN RegionMaster r ON b.continent = r.continent
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
             and a.carrier = :carrier
-            AND r.regionName = :region				       
+            AND r.regionName = :region
             group by a.commodity
             ) y
             on s.commodity = y.commodity
             order by s.COMMODITY_COUNT desc
             offset 0 rows
-            fetch next 6 rows only	
+            fetch next 6 rows only
             """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("region") String region);
@@ -1914,14 +1914,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
             ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
-            from        
+            from
             (select a.commodity, SUM(a.stdWeight) AS totalWeight
             from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             and a.ORG = :originAirport
-            group by a.commodity        
+            group by a.commodity
             ) s left join
             (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
             from   AdvanceFunctionAudit a
@@ -1930,21 +1930,21 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             or
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
-            AND a.carrier = :carrier	
-            and a.ORG = :originAirport						
+            AND a.carrier = :carrier
+            and a.ORG = :originAirport
             group by a.commodity
             ) m
             on s.commodity = m.commodity left join
             (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
             from   AdvanceFunctionAudit a
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            and a.carrier = :carrier				       
+            and a.carrier = :carrier
             group by a.commodity
             ) y
-            on s.commodity = y.commodity            						
+            on s.commodity = y.commodity
             order by s.totalWeight desc
             offset 0 rows
-            fetch next 6 rows only 	
+            fetch next 6 rows only
             """,nativeQuery = true)
     List<Object[]> getTopCommodityWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("originAirport") String originAirport);
@@ -1954,14 +1954,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
                ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
-               from        
+               from
                       (select a.commodity, SUM(a.stdWeight) AS totalWeight
                            from AdvanceFunctionAudit a
                            JOIN CityCountryMaster b ON a.ORG = b.code
                            where a.eventDate >= :startDate and a.eventDate <= :endDate
                            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                            and a.carrier = :carrier
-                           AND b.countryCode = :country     
+                           AND b.countryCode = :country
                         group by a.commodity
                         ) s left join
                            (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
@@ -1972,8 +1972,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                       or
                                       month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
                                     )
-                                     AND a.carrier = :carrier	
-                                     AND b.countryCode = :country			       
+                                     AND a.carrier = :carrier
+                                     AND b.countryCode = :country
                                     group by a.commodity
                                        ) m
                                     on s.commodity = m.commodity left join
@@ -1981,8 +1981,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                        from   AdvanceFunctionAudit a
                                        JOIN CityCountryMaster b ON a.ORG = b.code
                                        where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                       and a.carrier = :carrier	
-                                       AND b.countryCode = :country			       
+                                       and a.carrier = :carrier
+                                       AND b.countryCode = :country
                                     group by a.commodity
                                        ) y
                                     on s.commodity = y.commodity
@@ -1998,7 +1998,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
             ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
-            from        
+            from
             (select a.commodity, SUM(a.stdWeight) AS totalWeight
             from AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
@@ -2017,7 +2017,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
             AND a.carrier = :carrier
-            AND b.continent = :continent				       
+            AND b.continent = :continent
             group by a.commodity
             ) m
             on s.commodity = m.commodity left join
@@ -2025,8 +2025,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            and a.carrier = :carrier	
-            AND b.continent = :continent						
+            and a.carrier = :carrier
+            AND b.continent = :continent
             group by a.commodity
             ) y
             on s.commodity = y.commodity
@@ -2041,7 +2041,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
             ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
-            from        
+            from
             (select a.commodity, SUM(a.stdWeight) AS totalWeight
             from AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
@@ -2061,8 +2061,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             or
             month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
-            AND a.carrier = :carrier	
-            AND r.regionName = :region						
+            AND a.carrier = :carrier
+            AND r.regionName = :region
             group by a.commodity
             ) m
             on s.commodity = m.commodity left join
@@ -2071,8 +2071,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster r ON b.continent = r.continent
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            and a.carrier = :carrier	
-            AND r.regionName = :region						
+            and a.carrier = :carrier
+            AND r.regionName = :region
             group by a.commodity
             ) y
             on s.commodity = y.commodity
@@ -2088,14 +2088,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
            select s.commodity,s.totalvolume, ROUND(((s.totalvolume - m.totalvolume)*100/ m.totalvolume),2) as MOMPercent,
            ROUND(((s.totalvolume - y.totalvolume)*100/ y.totalvolume),2) as YOYPercent
-           from        
+           from
            (select a.commodity, SUM(a.STDVOLUME) AS totalvolume
            from AdvanceFunctionAudit a
            where a.eventDate >= :startDate and a.eventDate <= :endDate
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
            and a.carrier = :carrier
            and a.ORG = :originAirport
-           group by a.commodity        
+           group by a.commodity
            ) s left join
            (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
            from   AdvanceFunctionAudit a
@@ -2104,18 +2104,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            or
            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
            )
-           AND a.carrier = :carrier	
-           and a.ORG = :originAirport						
+           AND a.carrier = :carrier
+           and a.ORG = :originAirport
            group by a.commodity
            ) m
            on s.commodity = m.commodity left join
            (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
            from   AdvanceFunctionAudit a
            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-           and a.carrier = :carrier				       
+           and a.carrier = :carrier
            group by a.commodity
            ) y
-           on s.commodity = y.commodity                   						
+           on s.commodity = y.commodity
            order by s.totalvolume desc
            offset 0 rows
            fetch next 6 rows only
@@ -2127,40 +2127,40 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
            select s.commodity,s.totalvolume, ROUND(((s.totalvolume - m.totalvolume)*100/ m.totalvolume),2) as MOMPercent,
            ROUND(((s.totalvolume - y.totalvolume)*100/ y.totalvolume),2) as YOYPercent
-           from        
+           from
            (select a.commodity, SUM(a.STDVOLUME) AS totalvolume
-           from AdvanceFunctionAudit a 
-           JOIN CityCountryMaster b ON a.ORG = b.code                              
+           from AdvanceFunctionAudit a
+           JOIN CityCountryMaster b ON a.ORG = b.code
            where a.eventDate >= :startDate and a.eventDate <= :endDate
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
            and a.carrier = :carrier
-           AND b.countryCode = :country     
+           AND b.countryCode = :country
            group by a.commodity
            ) s left join
            (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
-           from   AdvanceFunctionAudit a  
-           JOIN CityCountryMaster b ON a.ORG = b.code                 						
+           from   AdvanceFunctionAudit a
+           JOIN CityCountryMaster b ON a.ORG = b.code
            where (
            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
            or
            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
            )
-           AND a.carrier = :carrier	
-           AND b.countryCode = :country   						
+           AND a.carrier = :carrier
+           AND b.countryCode = :country
            group by a.commodity
            ) m
            on s.commodity = m.commodity left join
            (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
-           from   AdvanceFunctionAudit a    
-           JOIN CityCountryMaster b ON a.ORG = b.code               						
+           from   AdvanceFunctionAudit a
+           JOIN CityCountryMaster b ON a.ORG = b.code
            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-           and a.carrier = :carrier				       
+           and a.carrier = :carrier
            group by a.commodity
            ) y
            on s.commodity = y.commodity
            order by s.totalvolume desc
            offset 0 rows
-           fetch next 6 rows only                   						
+           fetch next 6 rows only
            """,nativeQuery = true)
     List<Object[]> getTopCommodityVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("country") String country);
@@ -2169,7 +2169,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
            select s.commodity,s.totalvolume, ROUND(((s.totalvolume - m.totalvolume)*100/ m.totalvolume),2) as MOMPercent,
            ROUND(((s.totalvolume - y.totalvolume)*100/ y.totalvolume),2) as YOYPercent
-           from        
+           from
            (select a.commodity, SUM(a.STDVOLUME) AS totalvolume
            from AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
@@ -2183,8 +2183,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-           AND a.carrier = :carrier	
-           AND b.continent = :continent						
+           AND a.carrier = :carrier
+           AND b.continent = :continent
            group by a.commodity
            ) m
            on s.commodity = m.commodity left join
@@ -2193,7 +2193,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            JOIN CityCountryMaster b ON a.ORG = b.code
            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
            and a.carrier = :carrier
-           AND b.continent = :continent				       
+           AND b.continent = :continent
            group by a.commodity
            ) y
            on s.commodity = y.commodity
@@ -2208,7 +2208,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.commodity,s.totalvolume, ROUND(((s.totalvolume - m.totalvolume)*100/ m.totalvolume),2) as MOMPercent,
             ROUND(((s.totalvolume - y.totalvolume)*100/ y.totalvolume),2) as YOYPercent
-            from        
+            from
             (select a.commodity, SUM(a.STDVOLUME) AS totalvolume
             from AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
@@ -2229,7 +2229,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
               month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
             )
             AND a.carrier = :carrier
-            AND r.regionName = :region				       
+            AND r.regionName = :region
             group by a.commodity
             ) m
             on s.commodity = m.commodity left join
@@ -2238,14 +2238,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster r ON b.continent = r.continent
             where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            and a.carrier = :carrier	
-            AND r.regionName = :region						
+            and a.carrier = :carrier
+            AND r.regionName = :region
             group by a.commodity
             ) y
             on s.commodity = y.commodity
             order by s.totalvolume desc
             offset 0 rows
-            fetch next 6 rows only	
+            fetch next 6 rows only
             """,nativeQuery = true)
     List<Object[]> getTopCommodityVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("region") String region);
@@ -2795,7 +2795,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when COUNT(y.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(y.category)) * 100 / COUNT(y.category)), 1)
             when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
             when COUNT(y.category) = 0  then 100
-            end as yoyPercent		 
+            end as yoyPercent
            FROM AllCategories ac
            LEFT JOIN (
            SELECT
@@ -2893,7 +2893,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 when COUNT(y.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(y.category)) * 100 / COUNT(y.category)), 1)
                 when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
                 when COUNT(y.category) = 0  then 100
-            end as yoyPercent		
+            end as yoyPercent
            FROM AllCategories ac
            LEFT JOIN (
            SELECT
@@ -2939,7 +2939,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
            and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.CARRIER = :carrier           
+           AND a.CARRIER = :carrier
            and b.COUNTRYCODE = :country
            )  m
            ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
@@ -2963,7 +2963,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
            and month(a.eventDate)= month(:startDate) and year(a.eventDate)= (year(:startDate)-1)
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.CARRIER = :carrier           
+           AND a.CARRIER = :carrier
            and b.COUNTRYCODE = :country
            )  y
            ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
@@ -2994,7 +2994,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                             when COUNT(y.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(y.category)) * 100 / COUNT(y.category)), 1)
                             when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
                             when COUNT(y.category) = 0  then 100
-                        end as yoyPercent		
+                        end as yoyPercent
                        FROM AllCategories ac
                        LEFT JOIN (
                        SELECT
@@ -3040,7 +3040,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                        FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
                        and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                       AND a.CARRIER = :carrier          
+                       AND a.CARRIER = :carrier
                        AND b.CONTINENT=:continent
                        )  m
                        ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
@@ -3064,7 +3064,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                        FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
                        and month(a.eventDate)= month(:startDate) and year(a.eventDate)= (year(:startDate)-1)
                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                       AND a.CARRIER = :carrier          
+                       AND a.CARRIER = :carrier
                        AND b.CONTINENT=:continent
                        )  y
                        ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
@@ -3094,7 +3094,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                             when COUNT(y.category) <> 0 then round(((COUNT(CategoryCTE.category) - COUNT(y.category)) * 100 / COUNT(y.category)), 1)
                             when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
                             when COUNT(y.category) = 0  then 100
-                        end as yoyPercent		
+                        end as yoyPercent
                        FROM AllCategories ac
                        LEFT JOIN (
                        SELECT
@@ -3142,7 +3142,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                        a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
                        and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                       AND a.CARRIER = :carrier          
+                       AND a.CARRIER = :carrier
                        AND e.REGIONNAME= :region
                        )  m
                        ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
@@ -3167,12 +3167,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                        a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
                        and month(a.eventDate)= month(:startDate) and year(a.eventDate)= (year(:startDate)-1)
                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                       AND a.CARRIER = :carrier          
+                       AND a.CARRIER = :carrier
                        AND e.REGIONNAME= :region
                        )  y
                        ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
                        GROUP BY ac.category
-                       ORDER BY ac.category	
+                       ORDER BY ac.category
             """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -3197,7 +3197,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                     when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(y.STDVOLUME)) * 100 / SUM(y.STDVOLUME), 1)
                     when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
                     when COUNT(y.category) = 0  then 100
-                end as yoyPercent		
+                end as yoyPercent
                FROM AllCategories ac
                LEFT JOIN (
                SELECT
@@ -3269,7 +3269,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                )  y
                ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
                GROUP BY ac.category
-               ORDER BY ac.category			
+               ORDER BY ac.category
             """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -3294,7 +3294,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                         when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(y.STDVOLUME)) * 100 / SUM(y.STDVOLUME), 1)
                         when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
                         when COUNT(y.category) = 0  then 100
-                    end as yoyPercent		
+                    end as yoyPercent
                    FROM AllCategories ac
                    LEFT JOIN (
                    SELECT
@@ -3340,7 +3340,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                    FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
                    and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                   AND a.CARRIER = :carrier                   
+                   AND a.CARRIER = :carrier
                    and b.COUNTRYCODE = :country
                    )  m
                    ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
@@ -3364,12 +3364,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                    FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
                    AND month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                   AND a.CARRIER = :carrier                   
+                   AND a.CARRIER = :carrier
                    and b.COUNTRYCODE = :country
                    )  y
                    ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
                    GROUP BY ac.category
-                   ORDER BY ac.category	
+                   ORDER BY ac.category
             """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -3395,7 +3395,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(y.STDVOLUME)) * 100 / SUM(y.STDVOLUME), 1)
            when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
            when COUNT(y.category) = 0  then 100
-           end as yoyPercent	
+           end as yoyPercent
            FROM AllCategories ac
            LEFT JOIN (
            SELECT
@@ -3441,7 +3441,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
            and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.CARRIER = :carrier                                   
+           AND a.CARRIER = :carrier
            and b.CONTINENT=:continent
            )  m
            ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
@@ -3465,12 +3465,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
            month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.CARRIER = :carrier                                   
+           AND a.CARRIER = :carrier
            AND b.CONTINENT=:continent
            )  y
            ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
            GROUP BY ac.category
-           ORDER BY ac.category	
+           ORDER BY ac.category
            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -3495,7 +3495,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDVOLUME) - SUM(y.STDVOLUME)) * 100 / SUM(y.STDVOLUME), 1)
             when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
             when COUNT(y.category) = 0  then 100
-            end as yoyPercent	
+            end as yoyPercent
             FROM AllCategories ac
            LEFT JOIN (
            SELECT
@@ -3543,7 +3543,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
            and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.CARRIER = :carrier          
+           AND a.CARRIER = :carrier
            AND e.REGIONNAME= :region
            )  m
            ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
@@ -3568,12 +3568,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
            month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.CARRIER = :carrier          
+           AND a.CARRIER = :carrier
            AND e.REGIONNAME= :region
            )  y
            ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
            GROUP BY ac.category
-           ORDER BY ac.category	
+           ORDER BY ac.category
            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -3598,7 +3598,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                     when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(y.STDWEIGHT)) * 100 / SUM(y.STDWEIGHT), 1)
                     when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
                     when COUNT(y.category) = 0  then 100
-                end as yoyPercent		
+                end as yoyPercent
                FROM AllCategories ac
                LEFT JOIN (
                SELECT
@@ -3670,7 +3670,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                )  y
                ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
                GROUP BY ac.category
-               ORDER BY ac.category	
+               ORDER BY ac.category
             """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -3695,7 +3695,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                         when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(y.STDWEIGHT)) * 100 / SUM(y.STDWEIGHT), 1)
                         when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
                         when COUNT(y.category) = 0  then 100
-                    end as yoyPercent		
+                    end as yoyPercent
                    FROM AllCategories ac
                    LEFT JOIN (
                    SELECT
@@ -3741,7 +3741,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                    FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
                    and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                   AND a.CARRIER = :carrier                   
+                   AND a.CARRIER = :carrier
                    and b.COUNTRYCODE = :country
                    )  m
                    ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
@@ -3765,12 +3765,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                    FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
                    month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                   AND a.CARRIER = :carrier                   
+                   AND a.CARRIER = :carrier
                    and b.COUNTRYCODE = :country
                    )  y
                    ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
                    GROUP BY ac.category
-                   ORDER BY ac.category	
+                   ORDER BY ac.category
             """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -3795,7 +3795,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(y.STDWEIGHT)) * 100 / SUM(y.STDWEIGHT), 1)
            when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
            when COUNT(y.category) = 0  then 100
-           end as yoyPercent	
+           end as yoyPercent
            FROM AllCategories ac
            LEFT JOIN (
            SELECT
@@ -3841,7 +3841,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
            and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.CARRIER = :carrier                                   
+           AND a.CARRIER = :carrier
            and b.CONTINENT=:continent
            )  m
            ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
@@ -3865,12 +3865,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
            month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.CARRIER = :carrier                                   
+           AND a.CARRIER = :carrier
            AND b.CONTINENT=:continent
            )  y
            ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
            GROUP BY ac.category
-           ORDER BY ac.category	
+           ORDER BY ac.category
            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -3895,7 +3895,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            when COUNT(y.category) <> 0 then round((SUM(CategoryCTE.STDWEIGHT) - SUM(y.STDWEIGHT)) * 100 / SUM(y.STDWEIGHT), 1)
            when COUNT(CategoryCTE.category) = 0  and COUNT(y.category) = 0 then 0
            when COUNT(y.category) = 0  then 100
-           end as yoyPercent	
+           end as yoyPercent
            FROM AllCategories ac
            LEFT JOIN (
            SELECT
@@ -3943,7 +3943,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
            and month(a.eventDate)=(month(:startDate)-1) and year(a.eventDate)= year(:startDate)
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.CARRIER = :carrier          
+           AND a.CARRIER = :carrier
            AND e.REGIONNAME= :region
            )  m
            ON  month(m.EVENTDATE) = (month(CategoryCTE.EVENTDATE)-1)
@@ -3968,12 +3968,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
            month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.CARRIER = :carrier          
+           AND a.CARRIER = :carrier
            AND e.REGIONNAME= :region
            )  y
            ON year(y.EVENTDATE) = (year(CategoryCTE.EVENTDATE)-1)
            GROUP BY ac.category
-           ORDER BY ac.category	
+           ORDER BY ac.category
            """,nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
