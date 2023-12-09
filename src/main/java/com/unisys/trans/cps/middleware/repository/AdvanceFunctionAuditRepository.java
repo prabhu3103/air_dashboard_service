@@ -864,7 +864,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Weight for AirPort
     @Query(value="""
-            select s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent,
+            select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent,
             ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
             from
             (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a
@@ -3463,7 +3463,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            ELSE 'false'
            END AS category
            FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-           month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+           and month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
            AND a.CARRIER = :carrier
            AND b.CONTINENT=:continent
@@ -3566,7 +3566,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            END AS category
            FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b, REGIONMASTER e WHERE
            a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
-           month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+           and month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
            AND a.CARRIER = :carrier
            AND e.REGIONNAME= :region
@@ -3763,7 +3763,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                    ELSE 'false'
                    END AS category
                    FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-                   month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+                   and month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                    AND a.CARRIER = :carrier
                    and b.COUNTRYCODE = :country
@@ -3863,7 +3863,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            ELSE 'false'
            END AS category
            FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-           month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+           and month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
            AND a.CARRIER = :carrier
            AND b.CONTINENT=:continent
@@ -3966,7 +3966,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            END AS category
            FROM ADVANCEFUNCTIONAUDIT a,CITYCOUNTRYMASTER b, REGIONMASTER e WHERE
            a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
-           month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
+           and month(a.eventDate)= month(:startDate)-1 and year(a.eventDate)= year(:startDate)-1
            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
            AND a.CARRIER = :carrier
            AND e.REGIONNAME= :region
