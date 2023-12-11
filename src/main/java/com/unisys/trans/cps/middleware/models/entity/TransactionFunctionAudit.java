@@ -24,26 +24,14 @@ public class TransactionFunctionAudit {
     @Column(name = "AUDITID")
     private long auditID;
     
-    @Column(name = "BRANCHID")
-    private long branchID;
-    
     @Column(name = "EVENTDATE")
     private LocalDateTime eventDate;
     
     @Column(name = "CARRIER")
     private String carrier;
     
-    @Column(name = "AWBNUMBER")
-    private String awbNumber;
-    
     @Column(name = "PORTALFUNCTION")
     private String portalFunction;
-    
-    @Column(name = "SUBFUNCTION")
-    private String subFunction;
-    
-    @Column(name = "USERID")
-    private String userId;
     
     @Column(name = "TXNSTATUS")
     private String txnStatus;
@@ -51,29 +39,6 @@ public class TransactionFunctionAudit {
     @Column(name = "STATUS")
     private String status;
     
-    @Column(name = "DOCUMENT",columnDefinition = "TEXT")
-    private String document;
-    
-    @Column(name = "CONFNUMBER")
-    private String confNumber;
-    
-    @Column(name = "SERVERNAME")
-    private String serverName;
-    
-    @Column(name = "ERRORTXT")
-    private String errorTxt;
-    
-    @Column(name = "IPADDRESS")
-    private String ipAddress;
-    
-    @Column(name = "PORTALIDENTITY")
-    private String portalIdentity;
-    
     @Column(name = "HOSTERROR")
     private String hostError;
-    
-    @Column(name = "FROMPAGE")
-    private String fromPage;
-
-
 }
