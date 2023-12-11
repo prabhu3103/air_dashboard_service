@@ -26,7 +26,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND a.org= :originAirport
             GROUP BY a.org, a.DEST
             ) s left join
-            (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
+            (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
             from   AdvanceFunctionAudit a
             where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -78,7 +78,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND b.countryCode = :country
             GROUP BY a.org, a.DEST
             ) s left join
-            (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
+            (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.org = b.code
             where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
@@ -133,7 +133,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            AND b.continent =:continent
            GROUP BY a.ORG, a.DEST
            ) s left join
-           (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
+           (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.org = b.code
            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
@@ -190,7 +190,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            AND c.regionName = :region
            GROUP BY a.ORG, a.DEST
            ) s left join           
-           (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
+           (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.org = b.code
            JOIN RegionMaster c ON b.continent = c.continent
