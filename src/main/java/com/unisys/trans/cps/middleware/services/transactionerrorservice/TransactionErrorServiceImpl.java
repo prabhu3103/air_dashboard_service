@@ -4,9 +4,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.springframework.stereotype.Service;
+
+import com.unisys.trans.cps.middleware.constants.AirlineDashboardConstants;
 import com.unisys.trans.cps.middleware.models.entity.TransactionFunctionAudit;
 import com.unisys.trans.cps.middleware.models.request.TransactionRequest;
 import com.unisys.trans.cps.middleware.models.response.TransactionData;
@@ -31,6 +35,48 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 		this.transactionErrorRepository = transactionErrorRepository;
 	}
 	
+
+	/**
+	 * This method of serviceImpl class is used to fetch data for particular portal function
+	 * 
+	 * @param portalFunction
+	 * @param request
+	 * @return
+	 */
+	@Override
+	public TransactionData getTransactionErrors(TransactionRequest request) {
+
+		// Date Manipulation for 30 days interval
+		String getDate = request.getDate();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+		LocalDateTime currentDate = LocalDateTime.parse(getDate, formatter);
+		LocalDateTime past30Date = currentDate.minus(30, ChronoUnit.DAYS);
+		
+		List<String> portalFunctions = Arrays.asList(request.getPortalFunction());
+				 
+		// Fetching data for portal function-Booking Transaction
+		if(portalFunctions.contains(AirlineDashboardConstants.BKG)) {
+			portalFunctions = new ArrayList<>(
+				Arrays.asList(AirlineDashboardConstants.BKG, AirlineDashboardConstants.TMPLTBKG, AirlineDashboardConstants.MULTIBKG, 
+						AirlineDashboardConstants.SSHT, AirlineDashboardConstants.SSHTQ, AirlineDashboardConstants.USSHT, AirlineDashboardConstants.USSHTQ));
+		}
+		
+		List<TransactionFunctionAudit> transactionFunctionAuditList = transactionErrorRepository
+				.getAllTransactionErrorsData(request.getCarrier(), currentDate, past30Date, portalFunctions);
+
+		TransactionData transactionsTotalData = getTransactionErrorsCount(transactionFunctionAuditList);
+
+		List<TransactionErrorData> transactionsErrorData = getTransactionErrorData(transactionFunctionAuditList);
+
+		List<TransactionErrorCount> transactionErrorCountForPortalFunctions=getTransactionErrorCountForOtherPortalFunctions(request.getCarrier(), currentDate, past30Date);
+		
+		transactionsTotalData.setPortalFunction(request.getPortalFunction());
+		transactionsTotalData.setErrorTransactions(transactionsErrorData);
+		transactionsTotalData.setTransactionErrorCount(transactionErrorCountForPortalFunctions);
+		
+		return transactionsTotalData;
+	}
+	
 	/**
 	 * This method of serviceImpl class is used to get all transaction errors of particular carrier from database
 	 * calculate total transaction count,errorCount and successCount and their respective percentage
@@ -40,18 +86,8 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 	 * @return TransactionData
 	 */
 
-	@Override
-	public TransactionData getTransactionErrors(final TransactionRequest request) {
-		String getDate = request.getDate();
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-		LocalDateTime currentDate = LocalDateTime.parse(getDate, formatter);
-		LocalDateTime past30Date = currentDate.minus(30, ChronoUnit.DAYS);
-		// Getting all transaction data from database
-		List<TransactionFunctionAudit> transactionFunctionAuditList = transactionErrorRepository
-				.getAllTransactionErrorsData(request.getCarrier(), currentDate, past30Date,
-						request.getPortalFunction());
-		
-		 List<TransactionErrorCount> transactionErrorCount=getTransctionErrorCount(request.getCarrier(), currentDate, past30Date);
+//	@Override
+	public TransactionData getTransactionErrorsCount(List<TransactionFunctionAudit> transactionFunctionAuditList) {
 		
 		 List<TransactionErrorData> transactionErrorData=getTransactionErrorData(transactionFunctionAuditList);
 		// Getting errorCount and successCount to calculate totalTransactions and respective percentage
@@ -75,13 +111,12 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 				transactionDataCount.setNormalCountPercent(0.0f);
 				transactionDataCount.setErrorCountPercent(0.0f);
 			}
-		transactionDataCount.setPortalFunction(request.getPortalFunction());
 		transactionDataCount.setTotalTransaction(totalTransactions);
 		transactionDataCount.setNormalCount(successCount);
 		transactionDataCount.setErrorCount(totalErrorCount);
 		transactionDataCount.setErrorTransactions(transactionErrorData);
-		transactionDataCount.setTransactionErrorCount(transactionErrorCount);
 		bookingDataList.add(transactionDataCount);
+		
 		return transactionDataCount;
 	}
 
@@ -130,21 +165,31 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 	 * @param past30Date
 	 * @return
 	 */
-	private List<TransactionErrorCount> getTransctionErrorCount(String carrier, LocalDateTime todayDate,
+	private List<TransactionErrorCount> getTransactionErrorCountForOtherPortalFunctions(String carrier, LocalDateTime todayDate,
 			LocalDateTime past30Date) {
+		List<String> portalFunctions=Arrays.asList(AirlineDashboardConstants.BKG, AirlineDashboardConstants.TMPLTBKG, AirlineDashboardConstants.MULTIBKG, 
+				AirlineDashboardConstants.SSHT, AirlineDashboardConstants.SSHTQ, AirlineDashboardConstants.USSHT, AirlineDashboardConstants.USSHTQ,AirlineDashboardConstants.MAWB,AirlineDashboardConstants.ADVRATE);
 		// Getting error count for portal function depending on txnStatus and Status
 		List<TransactionFunctionAudit> transactionFunctionAuditList = transactionErrorRepository
-				.getAllTransactionErrorsCount(carrier, todayDate, past30Date);
+				.getAllTransactionErrorsCount(carrier, todayDate, past30Date, portalFunctions);
 
 		return transactionFunctionAuditList.stream()
 				.filter(audit -> ("E".equals(audit.getTxnStatus()) && "S".equals(audit.getStatus()))
 						|| (" ".equals(audit.getTxnStatus()) && "F".equals(audit.getStatus())))
 				.collect(Collectors.groupingBy(TransactionFunctionAudit::getPortalFunction, Collectors.counting()))
 				.entrySet().stream().map(entry -> {
+					
 					TransactionErrorCount transactionErrorCount = new TransactionErrorCount();
-					transactionErrorCount.setPortalFunction(entry.getKey());
+					if(entry.getKey().equals(AirlineDashboardConstants.TMPLTBKG) || entry.getKey().equals(AirlineDashboardConstants.MULTIBKG) || entry.getKey().equals(AirlineDashboardConstants.SSHT) 
+							|| entry.getKey().equals(AirlineDashboardConstants.SSHTQ) ||entry.getKey().equals(AirlineDashboardConstants.USSHT) || entry.getKey().equals(AirlineDashboardConstants.USSHTQ) ) 
+					{
+					transactionErrorCount.setPortalFunction(AirlineDashboardConstants.BKG);
+					}
+					else {
+						transactionErrorCount.setPortalFunction(entry.getKey());
+					}
 					transactionErrorCount.setErrorCount(entry.getValue().intValue());
-
+					
 					return transactionErrorCount;
 				}).toList();
 	}

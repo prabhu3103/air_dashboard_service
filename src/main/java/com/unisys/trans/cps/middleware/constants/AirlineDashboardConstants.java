@@ -17,4 +17,14 @@ public class AirlineDashboardConstants {
     public static final Float  FLOAT_ZERO = 0.0f;
     public static final String INVALID_FILTER_VALUE = "Invalid Filter Value";
     public static final String AA_CARRIER = "AA";
+    
+    public static final String TMPLTBKG = "TMPLTBKG";
+    public static final String MULTIBKG =  "MULTIBKG";
+    public static final String SSHT= "SSHT";
+    public static final String SSHTQ ="SSHTQ";
+    public static final String USSHT ="USSHT";
+    public static final String USSHTQ = "USSHTQ";
+    public static final String BKG = "BKG";
+    public static final String MAWB = "MAWB";
+    public static final String ADVRATE = "ADVRATE";
 }
