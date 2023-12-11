@@ -6,5 +6,4 @@ import com.unisys.trans.cps.middleware.models.response.TransactionData;
 public interface TransactionErrorService {
 
 	 public TransactionData getTransactionErrors(TransactionRequest request);
-	 
 }
