@@ -50,19 +50,19 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 switch (areaBy) {
                     case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsBookingAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects);
+                        buildTopAgentsResponseDTO(response, topObjects, airlineDashboardRequest.getCarrier());
                     }
                     case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsBookingCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects);
+                        buildTopAgentsResponseDTO(response, topObjects, airlineDashboardRequest.getCarrier());
                     }
                     case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsBookingContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects);
+                        buildTopAgentsResponseDTO(response, topObjects, airlineDashboardRequest.getCarrier());
                     }
                     case AirlineDashboardConstants.AREA_BY_REGION -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects);
+                        buildTopAgentsResponseDTO(response, topObjects, airlineDashboardRequest.getCarrier());
                     }
                     default ->
                             throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
@@ -74,19 +74,19 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 switch (areaBy) {
                     case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsVolumeAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit());
+                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit(), airlineDashboardRequest.getCarrier());
                     }
                     case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsVolumeCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit());
+                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit(), airlineDashboardRequest.getCarrier());
                     }
                     case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsVolumeContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit());
+                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME,masterRecord.getStdVolumeUnit(), airlineDashboardRequest.getCarrier());
                     }
                     case AirlineDashboardConstants.AREA_BY_REGION -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION,masterRecord.getStdVolumeUnit());
+                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION,masterRecord.getStdVolumeUnit(), airlineDashboardRequest.getCarrier());
                     }
                     default ->
                             throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
@@ -98,19 +98,19 @@ public class TopAgentsServiceImpl implements TopAgentsService{
                 switch (areaBy) {
                     case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsWeightAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit());
+                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit(), airlineDashboardRequest.getCarrier());
                     }
                     case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsWeightCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit());
+                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit(), airlineDashboardRequest.getCarrier());
                     }
                     case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsWeightContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit());
+                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT,masterRecord.getStdWeightUnit(), airlineDashboardRequest.getCarrier());
                     }
                     case AirlineDashboardConstants.AREA_BY_REGION -> {
                         topObjects = advanceFunctionAuditRepository.getTopAgentsWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION,masterRecord.getStdWeightUnit());
+                        buildTopAgentsResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION,masterRecord.getStdWeightUnit(), airlineDashboardRequest.getCarrier());
                     }
                     default ->
                             throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
@@ -123,9 +123,9 @@ public class TopAgentsServiceImpl implements TopAgentsService{
         return response;
     }
 
-    private void buildTopAgentsResponseDTO(AgentResponseDTO response, List<Object[]> topObjects, String valueType, String stdUnit) {
+    private void buildTopAgentsResponseDTO(AgentResponseDTO response, List<Object[]> topObjects, String valueType, String stdUnit, String carrierCode) {
         List<TopAgentsResponseDTO> topAgentsResponseDTOS = new ArrayList<>();
-        Object[] newAccounts = advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(LocalDateTime.now());
+        Object[] newAccounts = advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(LocalDateTime.now(), carrierCode);
         if(topObjects != null) {
             for (Object[] array : topObjects) {
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
@@ -154,10 +154,10 @@ public class TopAgentsServiceImpl implements TopAgentsService{
         }
     }
 
-    private void buildTopAgentsResponseDTO(AgentResponseDTO response, List<Object[]> topObjects) {
+    private void buildTopAgentsResponseDTO(AgentResponseDTO response, List<Object[]> topObjects, String carrierCode) {
         if(topObjects != null) {
             List<TopAgentsResponseDTO> topAgentsResponseDTOS = new ArrayList<>();
-            Object[] newAccounts = advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(LocalDateTime.now());
+            Object[] newAccounts = advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(LocalDateTime.now(), carrierCode);
             for (Object[] array : topObjects) {
                 TopAgentsResponseDTO topAgentsResponseDTO = new TopAgentsResponseDTO();
                 topAgentsResponseDTO.setAccNo((String) array[1]);
