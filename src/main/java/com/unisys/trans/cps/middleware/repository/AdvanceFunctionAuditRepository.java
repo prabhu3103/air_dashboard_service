@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFunctionAudit, Long> {
 
-    //Top Lanes - Total Number of Booking Count for Airport
+    //Top Lanes - Number of Booking Count for airport
     @Query(value="""
             select s.ORG,s.DEST,s.TOPLANE, ROUND(((c.TOPLANE - m.TOPLANE)*100/ m.TOPLANE),1) as MOMPercent,
             ROUND(((c.TOPLANE - y.TOPLANE)*100/ y.TOPLANE),1) as YOYPercent
