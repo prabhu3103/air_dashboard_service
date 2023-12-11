@@ -3982,9 +3982,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     @Query("""
             select count(*) from BranchAccount a  where MONTH(a.actionDate)=MONTH(:currentDate)
-            and YEAR(a.actionDate)=YEAR(:currentDate)""")
+            and YEAR(a.actionDate)=YEAR(:currentDate) and a.carrierCode = (:carrierCode)""")
 
-    Object[] getNewAgentsInCurrentMonth(@Param("currentDate") LocalDateTime currentDate);
+    Object[] getNewAgentsInCurrentMonth(@Param("currentDate") LocalDateTime currentDate, @Param("carrierCode") String carrierCode);
 
 
     @Query(value = """
@@ -4198,7 +4198,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by s.totalWeight desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsWeightAirportForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                               @Param("carrier") String carrier,@Param("originAirport") String originAirport);
+                                                    @Param("carrier") String carrier,@Param("originAirport") String originAirport);
 
 
     @Query(value = """
@@ -4242,7 +4242,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by s.totalWeight desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsWeightCountryForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                               @Param("carrier") String carrier, @Param("country") String country);
+                                                    @Param("carrier") String carrier, @Param("country") String country);
 
 
     @Query(value = """
@@ -4286,7 +4286,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by s.totalWeight desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsWeightContinentForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                 @Param("carrier") String carrier, @Param("continent") String continent);
+                                                      @Param("carrier") String carrier, @Param("continent") String continent);
 
 
 
@@ -4335,7 +4335,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by s.totalWeight desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsWeightRegionForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                              @Param("carrier") String carrier, @Param("region") String region);
+                                                   @Param("carrier") String carrier, @Param("region") String region);
 
 
     @Query(value = """
@@ -4376,7 +4376,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by s.totalVolume desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsVolumeAirportForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                               @Param("carrier") String carrier,@Param("originAirport") String originAirport);
+                                                    @Param("carrier") String carrier,@Param("originAirport") String originAirport);
 
 
     @Query(value = """
@@ -4420,7 +4420,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by s.totalVolume desc offset 0 rows fetch next 5 rows only
             """,nativeQuery = true)
     List<Object[]> getTopProductsVolumeCountryForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                               @Param("carrier") String carrier, @Param("country") String country);
+                                                    @Param("carrier") String carrier, @Param("country") String country);
 
 
 
@@ -4464,7 +4464,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by s.totalVolume desc offset 0 rows fetch next 5 rows only
             """, nativeQuery = true)
     List<Object[]> getTopProductsVolumeContinentForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                 @Param("carrier") String carrier, @Param("continent") String continent);
+                                                      @Param("carrier") String carrier, @Param("continent") String continent);
 
     @Query(value = """
             select s.productCode,s.description,s.totalVolume, ROUND(((s.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
@@ -4510,6 +4510,6 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             order by s.totalVolume desc offset 0 rows fetch next 5 rows only
             """,nativeQuery = true)
     List<Object[]> getTopProductsVolumeRegionForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                              @Param("carrier") String carrier, @Param("region") String region);
+                                                   @Param("carrier") String carrier, @Param("region") String region);
 
 }

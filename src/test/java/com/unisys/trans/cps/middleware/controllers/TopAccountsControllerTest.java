@@ -43,7 +43,7 @@ class TopAccountsControllerTest{
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsBookingAirport(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -63,7 +63,7 @@ class TopAccountsControllerTest{
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsBookingCountry(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -83,7 +83,7 @@ class TopAccountsControllerTest{
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsBookingContinent(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -103,7 +103,7 @@ class TopAccountsControllerTest{
         mockObjects.add(mockObject);
         Object[] mockObjectCurrentMonth = {10};
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsBookingContinent(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -124,7 +124,7 @@ class TopAccountsControllerTest{
         Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsVolumeAirport(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -145,7 +145,7 @@ class TopAccountsControllerTest{
         Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsVolumeCountry(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -166,7 +166,7 @@ class TopAccountsControllerTest{
         Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsVolumeContinent(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -187,7 +187,7 @@ class TopAccountsControllerTest{
         Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("MC").stdWeightUnit("").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsVolumeRegion(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -208,7 +208,7 @@ class TopAccountsControllerTest{
         Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsWeightAirport(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -229,7 +229,7 @@ class TopAccountsControllerTest{
         Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsWeightCountry(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -250,7 +250,7 @@ class TopAccountsControllerTest{
         Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsWeightContinent(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
@@ -271,7 +271,7 @@ class TopAccountsControllerTest{
         Object[] mockObjectCurrentMonth = {10};
         when(aAirlineHostCountryMasterService.findByCarrierCode(anyString())).thenReturn(AirlineHostCountryMaster.builder().carrierCode("AI").stdVolumeUnit("").stdWeightUnit("KG").build());
         Mockito.when(advanceFunctionAuditRepository.getTopAgentsWeightRegion(any(), any(), any(), any())).thenReturn(mockObjects);
-        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any())).thenReturn(mockObjectCurrentMonth);
+        Mockito.when(advanceFunctionAuditRepository.getNewAgentsInCurrentMonth(any(), any())).thenReturn(mockObjectCurrentMonth);
         mockMvc.perform(MockMvcRequestBuilders.get("/v1/airline-dashboard/top-accounts")
                         .queryParam("startDate", "2010-01-01").
                         queryParam("endDate",  "2023-01-01").
