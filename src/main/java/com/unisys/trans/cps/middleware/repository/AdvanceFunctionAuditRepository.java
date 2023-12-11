@@ -29,9 +29,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
             from   AdvanceFunctionAudit a
             where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
             or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
             )
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
@@ -41,7 +41,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             on s.ORG = m.ORG and s.DEST = m.DEST left join
             (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
             from   AdvanceFunctionAudit a
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
             AND a.org= :originAirport
@@ -73,9 +73,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.org = b.code
             where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
             or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
             )
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
@@ -86,7 +86,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.org = b.code
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
             AND b.countryCode = :country
@@ -118,9 +118,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            where (
-           month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+           month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
            or
-           month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+           month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
            )
            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
            AND a.carrier = :carrier
@@ -131,7 +131,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
-           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+           where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
            AND a.carrier = :carrier
            AND b.continent =:continent
@@ -166,9 +166,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            JOIN CityCountryMaster b ON a.ORG = b.code
            JOIN RegionMaster c ON b.continent = c.continent
            where (
-           month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+           month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
            or
-           month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+           month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
            )
            AND a.carrier = :carrier
            AND c.regionName = :region
@@ -179,7 +179,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            JOIN RegionMaster c ON b.continent = c.continent
-           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+           where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
            and a.carrier = :carrier
            AND c.regionName = :region
            group by a.ORG, a.DEST
@@ -209,9 +209,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
           from   AdvanceFunctionAudit a
           where (
-          month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+          month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
           or
-          month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+          month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
           )
           AND a.carrier = :carrier
           AND a.org=:originAirport
@@ -220,7 +220,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           on s.ORG = m.ORG and s.DEST = m.DEST left join
           (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
           from   AdvanceFunctionAudit a
-          where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+          where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
           AND a.carrier = :carrier
           AND a.org=:originAirport
           group by a.ORG, a.DEST
@@ -252,9 +252,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
             or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
             )
             AND a.carrier = :carrier
             AND b.countryCode = :country
@@ -264,7 +264,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
             AND a.carrier = :carrier
             AND b.countryCode = :country
             group by a.ORG, a.DEST
@@ -295,9 +295,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            where (
-           month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+           month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
            or
-           month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+           month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
            )
            AND a.carrier = :carrier
            AND b.continent = :continent
@@ -307,7 +307,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
-           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+           where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
            and a.carrier = :carrier
            AND b.continent = :continent
            group by a.ORG, a.DEST
@@ -339,7 +339,11 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent
-            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            where (
+            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            or
+            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            )
             AND a.carrier = :carrier
             AND c.regionName = :region
             group by a.ORG, a.DEST
@@ -349,11 +353,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent
-            where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-            or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-            )
+            where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)           
             and a.carrier = :carrier
             AND c.regionName = :region
             group by a.ORG, a.DEST
@@ -383,9 +383,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
             where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
             or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.endDate)=(year(:endDate)-1)
             )
             AND a.carrier = :carrier
             AND a.org = :originAirport
@@ -394,7 +394,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             on s.ORG = m.ORG and s.DEST = m.DEST left join
             (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
             AND a.carrier = :carrier
             AND a.org = :originAirport
             group by a.ORG, a.DEST
@@ -425,9 +425,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
             or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
             )
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
@@ -438,7 +438,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
             AND b.countryCode = :country
@@ -470,9 +470,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            month(:endDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:endDate)
             or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
             )
             AND a.carrier = :carrier
             AND b.continent = :continent
@@ -482,7 +482,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
             and a.carrier = :carrier
             AND b.continent = :continent
             group by a.ORG, a.DEST
@@ -513,8 +513,12 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
-            JOIN RegionMaster c ON b.continent = c.continent
-            where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
+            JOIN RegionMaster c ON b.continent = c.continent            
+            where (
+            month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
+            or
+            month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
+            )
             AND a.carrier = :carrier
             AND c.regionName = :region
             group by a.ORG, a.DEST
@@ -524,11 +528,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent
-            where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-            or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-            )
+            where month(a.eventDate)= (month(:endDate)-1) and year(a.eventDate)= year(:endDate)
             and a.carrier = :carrier
             AND c.regionName = :region
             group by a.ORG, a.DEST
@@ -556,9 +556,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           ) s left join
           (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
           where (
-          month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+          month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
           or
-          month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+          month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
           )
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
           and a.carrier = :carrier
@@ -566,7 +566,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           group by a.carrier, a.accNo
           ) m on s.accNo = m.accNo left join
           (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
-          where  month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+          where  month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
           and a.carrier = :carrier
           and a.ORG = :origin
