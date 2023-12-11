@@ -130,9 +130,7 @@ class TransactionErrorControllerTest {
        
        List<TransactionErrorCount> transactionErrorCountList=new ArrayList<>();
        transactionErrorCountList.add(transactionErrorCount);
-        when(transactionErrorDescRepository.getAllTransactionErrorsData(Mockito.anyString(), Mockito.eq(currentDate), Mockito.eq(past30Date), Mockito.anyList()))
-                .thenReturn(list);
-        when(transactionErrorDescRepository.getAllTransactionErrorsCount(Mockito.anyString(), Mockito.eq(currentDate), Mockito.eq(past30Date),Mockito.anyList()))
+        when(transactionErrorDescRepository.getAllTransactionErrors(Mockito.anyString(), Mockito.eq(currentDate), Mockito.eq(past30Date)))
         .thenReturn(list);
        when(transactionErrorDescService.getTransactionErrors(request)).thenThrow(new CpsException("Test CpsException"));
         mockMvc.perform(MockMvcRequestBuilders.post("/v1/airline-dashboard/transaction-error-count")
