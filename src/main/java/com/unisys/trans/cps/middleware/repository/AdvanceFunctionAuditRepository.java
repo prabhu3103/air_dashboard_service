@@ -189,8 +189,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            AND a.carrier = :carrier
            AND c.regionName = :region
            GROUP BY a.ORG, a.DEST
-           ) s left join
-           left join
+           ) s left join           
            (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.org = b.code
@@ -201,7 +200,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            AND c.regionName = :region
            group by a.org, a.DEST
            ) c
-           on s.ORG = c.ORG and s.DEST = c.DEST
+           on s.ORG = c.ORG and s.DEST = c.DEST left join
            (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
@@ -243,20 +242,20 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           FROM AdvanceFunctionAudit a
           JOIN CityCountryMaster b ON a.org = b.code
           where a.eventDate >= :startDate and a.eventDate <= :endDate
-            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            AND a.carrier = :carrier
-            AND a.org= :originAirport
-            GROUP BY a.org, a.DEST
-            ) s left join
-            (SELECT a.org, a.DEST, SUM(a.stdWeight) AS TOPLANE
-            from   AdvanceFunctionAudit a
-            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
-            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            AND a.carrier = :carrier
-            AND a.org= :originAirport
-            group by a.org, a.DEST
-            ) c
-            on s.ORG = c.ORG and s.DEST = c.DEST left join
+          AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          AND a.carrier = :carrier
+          AND a.org= :originAirport
+          GROUP BY a.org, a.DEST
+          ) s left join
+          (SELECT a.org, a.DEST, SUM(a.stdWeight) AS TOPLANE
+          from   AdvanceFunctionAudit a
+          where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+          AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          AND a.carrier = :carrier
+          AND a.org= :originAirport
+          group by a.org, a.DEST
+          ) c
+          on s.ORG = c.ORG and s.DEST = c.DEST left join
             (SELECT a.org, a.DEST, SUM(a.stdWeight) AS TOPLANE
             from   AdvanceFunctionAudit a
             where (
