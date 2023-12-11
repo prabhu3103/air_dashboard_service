@@ -15,23 +15,13 @@ import com.unisys.trans.cps.middleware.models.entity.TransactionFunctionAudit;
  */
 @Repository
 public interface TransactionErrorRepository extends JpaRepository<TransactionFunctionAudit, Long> {
+	String SQL_TRANSACTION_ERRORS_NAMED_QUERY = "SELECT tfa FROM TransactionFunctionAudit tfa " +
+			"WHERE tfa.eventDate  <= (?2) "
+			+ "AND tfa.eventDate >= (?3) "
+			+ "AND tfa.carrier IN (?1)";
+	@Query(value = SQL_TRANSACTION_ERRORS_NAMED_QUERY)
+	public List<TransactionFunctionAudit> getAllTransactionErrors(String carrier, LocalDateTime todayDate,
+																	  LocalDateTime past30Date);
 
-	String SQL_NAMED_QUERY = "SELECT tfa FROM TransactionFunctionAudit tfa " +
-			  "WHERE tfa.eventDate  <= (?2) "
-	            + "AND tfa.eventDate >= (?3) " 
-	            + "AND tfa.carrier IN (?1)"
-	            + "AND tfa.portalFunction IN(?4)";
-	@Query(value = SQL_NAMED_QUERY)
-	public List<TransactionFunctionAudit> getAllTransactionErrorsData(String carrier, LocalDateTime todayDate,
-				LocalDateTime past30Date, List<String> portalFunctions);
-	      
-	    
-  String SQL_NAMED_QUERY_COUNT = "SELECT tfa FROM TransactionFunctionAudit tfa " +
-          "WHERE tfa.eventDate  <= (?2) "
-          + "AND tfa.eventDate >= (?3) " 
-          + "AND tfa.carrier IN (?1)"
-          + "AND tfa.portalFunction IN(?4)";
-  @Query(value = SQL_NAMED_QUERY_COUNT )
-	public List<TransactionFunctionAudit> getAllTransactionErrorsCount(String carrier, LocalDateTime todayDate,
-			LocalDateTime past30Date, List<String> portalFunctions);
+
 }

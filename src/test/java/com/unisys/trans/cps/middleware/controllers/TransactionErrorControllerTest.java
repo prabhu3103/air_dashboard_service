@@ -83,23 +83,12 @@ class TransactionErrorControllerTest {
  
         TransactionFunctionAudit transactionFunctionAudit=new TransactionFunctionAudit();
         transactionFunctionAudit.setAuditID(1);
-        transactionFunctionAudit.setAwbNumber("123");
-        transactionFunctionAudit.setBranchID(10010);
         transactionFunctionAudit.setCarrier("AC");
-        transactionFunctionAudit.setConfNumber("");
-        transactionFunctionAudit.setDocument("<ECIDRQ-INP><SVCHEADER><SVCVERSION>0</SVCVERSION><TRANSID>T2304187160505</TRANSID><USERID>CPSGUEST</USERID><STATION>HDQ</STATION><AGENT>299</AGENT></SVCHEADER><OPTION>P</OPTION><DRA-INP><OPTION><DIST-UNIT>M</DIST-UNIT><ORIGIN><STATION>YVR</STATION></ORIGIN><DEST><STATION>SYD</STATION></DEST><LAT><DATE>19APR23</DATE><TIME>0630</TIME></LAT><TOA><DATE>22Apr23</DATE><TIME>0630</TIME></TOA><REJS>N</REJS><WUNI>KG</WUNI><VUNI>MC</VUNI><SKIP-HEIRARCHY>Y</SKIP-HEIRARCHY><PROD1>PPR</PROD1><PROD2>PFH</PROD2><PROD3>AFH</PROD3></OPTION><SPACE><PIECES>1</PIECES><IND>E</IND><WGT>1</WGT><VOL>1</VOL><DVOL>1</DVOL></SPACE><PART-INFO><PARTICIPANT><NAME> </NAME><STATION>YVR</STATION><TYPE>F</TYPE><ACCNO>093225</ACCNO><ACCID> </ACCID></PARTICIPANT></PART-INFO><RATING-INFO><SHIPMENT-DATE>19APR23</SHIPMENT-DATE><COM-CLS> </COM-CLS></RATING-INFO></DRA-INP></ECIDRQ-INP>");
-        transactionFunctionAudit.setErrorTxt("Q533: ALLOTMENT DOES NOT EXIST");
         transactionFunctionAudit.setEventDate(currentDate);
-        transactionFunctionAudit.setFromPage("");
         transactionFunctionAudit.setHostError("Q533: ALLOTMENT DOES NOT EXIST");
-        transactionFunctionAudit.setIpAddress("127.0.0.1");
         transactionFunctionAudit.setPortalFunction("ADVRATE");
-        transactionFunctionAudit.setPortalIdentity("CPS");
-        transactionFunctionAudit.setServerName("HSEAN230");
         transactionFunctionAudit.setStatus("F");
-        transactionFunctionAudit.setSubFunction("INQUIRY");
         transactionFunctionAudit.setTxnStatus(" ");
-        transactionFunctionAudit.setUserId("BiswalT");
         
         List<TransactionFunctionAudit>  list=new ArrayList<>();
        list.add(transactionFunctionAudit);
