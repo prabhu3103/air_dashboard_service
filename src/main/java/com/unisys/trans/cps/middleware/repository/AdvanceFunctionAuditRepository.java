@@ -14,8 +14,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Number of Booking Count for airport
     @Query(value="""
-            select s.ORG,s.DEST,s.TOPLANE, ROUND(((c.TOPLANE - m.TOPLANE)*100/ m.TOPLANE),1) as MOMPercent,
-            ROUND(((c.TOPLANE - y.TOPLANE)*100/ y.TOPLANE),1) as YOYPercent
+            select s.ORG,s.DEST,s.TOPLANE,
+            case
+            when m.TOPLANE <> 0 then round(((c.TOPLANE - m.TOPLANE) * 100 / m.TOPLANE), 1)
+            when m.TOPLANE = 0  and c.TOPLANE = 0 then 0
+            when m.TOPLANE = 0  then 100
+            end as momPercent,
+            case
+            when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
+            when y.TOPLANE = 0  and c.TOPLANE = 0 then 0
+            when y.TOPLANE = 0  then 100
+            end as yoyPercent              
             from
             (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
             FROM AdvanceFunctionAudit a
@@ -35,7 +44,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by a.org, a.DEST
             ) c
             on s.ORG = c.ORG and s.DEST = c.DEST left join
-            (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
+            (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
             from   AdvanceFunctionAudit a
             where (
             month(getdate()) <> 1 and month(a.eventDate)=month(getdate())-1  and  year(a.eventDate)=year(getdate())
@@ -48,7 +57,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by a.org, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
-            (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
+            (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
             from   AdvanceFunctionAudit a
             where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -66,8 +75,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Booking Count for Country
     @Query(value="""
-            select s.ORG,s.DEST,s.TOPLANE, ROUND(((c.TOPLANE - m.TOPLANE)*100/ m.TOPLANE),1) as MOMPercent,
-            ROUND(((c.TOPLANE - y.TOPLANE)*100/ y.TOPLANE),2) as YOYPercent
+            select s.ORG,s.DEST,s.TOPLANE,
+            case
+            when m.TOPLANE <> 0 then round(((c.TOPLANE - m.TOPLANE) * 100 / m.TOPLANE), 1)
+            when m.TOPLANE = 0  and c.TOPLANE = 0 then 0
+            when m.TOPLANE = 0  then 100
+            end as momPercent,
+            case
+            when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
+            when y.TOPLANE = 0  and c.TOPLANE = 0 then 0
+            when y.TOPLANE = 0  then 100
+            end as yoyPercent
             from
             (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
             FROM AdvanceFunctionAudit a
@@ -88,7 +106,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by a.org, a.DEST
             ) c
             on s.ORG = c.ORG and s.DEST = c.DEST left join
-            (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
+            (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.org = b.code
             where (
@@ -102,7 +120,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by a.org, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
-            (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
+            (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.org = b.code
             where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
@@ -121,8 +139,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Booking Count for Continent
     @Query(value="""
-           select s.ORG,s.DEST,s.TOPLANE, ROUND(((c.TOPLANE - m.TOPLANE)*100/ m.TOPLANE),2) as MOMPercent,
-           ROUND(((c.TOPLANE - y.TOPLANE)*100/ y.TOPLANE),2) as YOYPercent
+           select s.ORG,s.DEST,s.TOPLANE,
+           case
+           when m.TOPLANE <> 0 then round(((c.TOPLANE - m.TOPLANE) * 100 / m.TOPLANE), 1)
+           when m.TOPLANE = 0  and c.TOPLANE = 0 then 0
+           when m.TOPLANE = 0  then 100
+           end as momPercent,
+           case
+           when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
+           when y.TOPLANE = 0  and c.TOPLANE = 0 then 0
+           when y.TOPLANE = 0  then 100
+           end as yoyPercent
            from
            (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
            FROM AdvanceFunctionAudit a
@@ -143,7 +170,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            group by a.org, a.DEST
            ) c
            on s.ORG = c.ORG and s.DEST = c.DEST left join
-           (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
+           (SELECT a.ORG, a.DEST,COALESCE( COUNT(*), 0) AS TOPLANE
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            where (
@@ -157,7 +184,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            group by a.ORG, a.DEST
            ) m
            on s.ORG = m.ORG and s.DEST = m.DEST  left join
-           (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
+           (SELECT a.ORG, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
@@ -177,8 +204,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Booking Count for Region
     @Query(value="""
-           select s.ORG,s.DEST,s.TOPLANE, ROUND(((c.TOPLANE - m.TOPLANE)*100/ m.TOPLANE),1) as MOMPercent,
-           ROUND(((c.TOPLANE - y.TOPLANE)*100/ y.TOPLANE),1) as YOYPercent
+           select s.ORG,s.DEST,s.TOPLANE,
+           case
+           when m.TOPLANE <> 0 then round(((c.TOPLANE - m.TOPLANE) * 100 / m.TOPLANE), 1)
+           when m.TOPLANE = 0  and c.TOPLANE = 0 then 0
+           when m.TOPLANE = 0  then 100
+           end as momPercent,
+           case
+           when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
+           when y.TOPLANE = 0  and c.TOPLANE = 0 then 0
+           when y.TOPLANE = 0  then 100
+           end as yoyPercent
            from
            (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
            FROM AdvanceFunctionAudit a
@@ -201,7 +237,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            group by a.org, a.DEST
            ) c
            on s.ORG = c.ORG and s.DEST = c.DEST left join
-           (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
+           (SELECT a.ORG, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            JOIN RegionMaster c ON b.continent = c.continent
@@ -215,7 +251,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            group by a.ORG, a.DEST
            ) m
            on s.ORG = m.ORG and s.DEST = m.DEST left join
-           (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
+           (SELECT a.ORG, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            JOIN RegionMaster c ON b.continent = c.continent
@@ -235,10 +271,19 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Weight Count for Airport
     @Query(value="""
-          select s.ORG,s.DEST,s.TOPLANE, ROUND(((c.TOPLANE - m.TOPLANE)*100/ m.TOPLANE),1) as MOMPercent,
-          ROUND(((c.TOPLANE - y.TOPLANE)*100/ y.TOPLANE),1) as YOYPercent
+          select s.ORG,s.DEST,s.totalWeight, 
+          case
+          when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
+          when m.totalWeight = 0  and c.totalWeight = 0 then 0
+          when m.totalWeight = 0  then 100
+          end as momPercent,
+          case
+          when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
+          when y.totalWeight = 0  and c.totalWeight = 0 then 0
+          when y.totalWeight = 0  then 100
+          end as yoyPercent
           from
-          (SELECT a.org, a.DEST, SUM(a.stdWeight) AS TOPLANE
+          (SELECT a.org, a.DEST, SUM(a.stdWeight) AS totalWeight
           FROM AdvanceFunctionAudit a
           JOIN CityCountryMaster b ON a.org = b.code
           where a.eventDate >= :startDate and a.eventDate <= :endDate
@@ -247,7 +292,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           AND a.org= :originAirport
           GROUP BY a.org, a.DEST
           ) s left join
-          (SELECT a.org, a.DEST, SUM(a.stdWeight) AS TOPLANE
+          (SELECT a.org, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight,
           from   AdvanceFunctionAudit a
           where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
           AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -256,31 +301,31 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           group by a.org, a.DEST
           ) c
           on s.ORG = c.ORG and s.DEST = c.DEST left join
-            (SELECT a.org, a.DEST, SUM(a.stdWeight) AS TOPLANE
-            from   AdvanceFunctionAudit a
-            where (
-            month(getdate()) <> 1 and month(a.eventDate)=month(getdate())-1  and  year(a.eventDate)=year(getdate())
-            or
-            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
-            )
-            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            AND a.carrier = :carrier
-            AND a.org= :originAirport
-            group by a.org, a.DEST
-            ) m
-            on s.ORG = m.ORG and s.DEST = m.DEST left join
-            (SELECT a.org, a.DEST, SUM(a.stdWeight) AS TOPLANE
-            from   AdvanceFunctionAudit a
-            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
-            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            AND a.carrier = :carrier
-            AND a.org= :originAirport
-            group by a.org, a.DEST
-            ) y
-            on s.org = y.org and s.DEST = y.DEST
-            order by s.TOPLANE desc
-            offset 0 rows
-            fetch next 5 rows only
+          (SELECT a.org, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
+          from   AdvanceFunctionAudit a
+          where (
+          month(getdate()) <> 1 and month(a.eventDate)=month(getdate())-1  and  year(a.eventDate)=year(getdate())
+          or
+          month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+          )
+          AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          AND a.carrier = :carrier
+          AND a.org= :originAirport
+          group by a.org, a.DEST
+          ) m
+          on s.ORG = m.ORG and s.DEST = m.DEST left join
+          (SELECT a.org, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
+          from   AdvanceFunctionAudit a
+          where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+          AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          AND a.carrier = :carrier
+          AND a.org= :originAirport
+          group by a.org, a.DEST
+          ) y
+          on s.org = y.org and s.DEST = y.DEST
+          order by s.totalWeight desc
+          offset 0 rows
+          fetch next 5 rows only
           """,nativeQuery = true)
     List<Object[]> getTopLanesWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("originAirport") String originAirport);
@@ -288,8 +333,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Weight  for Country
     @Query(value="""
-            select s.ORG,s.DEST,s.totalWeight, ROUND(((c.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
-            ROUND(((c.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
+            select s.ORG,s.DEST,s.totalWeight, 
+            case
+            when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0
+            when m.totalWeight = 0  then 100
+            end as momPercent,
+            case
+            when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0
+            when y.totalWeight = 0  then 100
+            end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
             FROM AdvanceFunctionAudit a
@@ -300,7 +354,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND b.countryCode = :country
             GROUP BY a.ORG, a.DEST
             ) s left join
-            (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
+            (select a.ORG, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             WHERE month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
@@ -309,7 +363,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND b.countryCode = :country
             GROUP BY a.ORG, a.DEST
             ) c on s.ORG = c.ORG and s.DEST = c.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where (
@@ -322,7 +376,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
@@ -340,8 +394,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Weight  for Continent
     @Query(value="""
-           select s.ORG,s.DEST,s.totalWeight, ROUND(((c.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
-           ROUND(((c.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
+           select s.ORG,s.DEST,s.totalWeight, 
+           case
+           when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
+           when m.totalWeight = 0  and c.totalWeight = 0 then 0
+           when m.totalWeight = 0  then 100
+           end as momPercent,
+           case
+           when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
+           when y.totalWeight = 0  and c.totalWeight = 0 then 0
+           when y.totalWeight = 0  then 100
+           end as yoyPercent
            from
            (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
            FROM AdvanceFunctionAudit a
@@ -352,7 +415,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            AND b.continent = :continent
            GROUP BY a.ORG, a.DEST
            ) s left join
-           (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
+           (select a.ORG, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
            FROM AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            WHERE month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
@@ -361,7 +424,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            AND b.continent = :continent
            GROUP BY a.ORG, a.DEST
            ) c on s.ORG = c.ORG and s.DEST = c.DEST left join
-           (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
+           (SELECT a.ORG, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            where (
@@ -374,7 +437,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            group by a.ORG, a.DEST
            ) m
            on s.ORG = m.ORG and s.DEST = m.DEST left join
-           (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
+           (SELECT a.ORG, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
            from   AdvanceFunctionAudit a
            JOIN CityCountryMaster b ON a.ORG = b.code
            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
@@ -392,8 +455,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Weight  for Region
     @Query(value="""
-            select s.ORG,s.DEST,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
-            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
+            select s.ORG,s.DEST,s.totalWeight, 
+            case
+            when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0
+            when m.totalWeight = 0  then 100
+            end as momPercent,
+            case
+            when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0
+            when y.totalWeight = 0  then 100
+            end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
             FROM AdvanceFunctionAudit a
@@ -405,7 +477,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND c.regionName = :region
             group by a.ORG, a.DEST
             ) s left join
-            (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
+            (select a.ORG, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent
@@ -415,7 +487,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND c.regionName = :region
             group by a.ORG, a.DEST
             ) c on s.ORG = c.ORG and s.DEST = c.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent
@@ -429,7 +501,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent
@@ -449,8 +521,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Volume  for Airport
     @Query(value="""
-            select s.ORG,s.DEST,s.totalVolume, ROUND(((c.totalVolume - m.totalVolume)*100/ m.totalVolume),1) as MOMPercent,
-            ROUND(((c.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent
+            select s.ORG,s.DEST,s.totalVolume, 
+            case
+            when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0
+            when m.totalVolume = 0  then 100
+            end as momPercent,
+            case
+            when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0
+            when y.totalVolume = 0  then 100
+            end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             from   AdvanceFunctionAudit a
@@ -460,7 +541,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.org=:originAirport
             group by a.ORG, a.DEST
             ) s left join
-            (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (select a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             from   AdvanceFunctionAudit a
             where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -468,7 +549,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.org=:originAirport
             group by a.ORG, a.DEST
             ) c on s.ORG = c.ORG and s.DEST = c.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             from   AdvanceFunctionAudit a
             where (
             month(getdate()) <> 1 and month(a.eventDate)=month(getdate())-1  and  year(a.eventDate)=year(getdate())
@@ -480,7 +561,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             from   AdvanceFunctionAudit a
             where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
             AND a.carrier = :carrier
@@ -497,8 +578,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Volume  for Country
     @Query(value="""
-            select s.ORG,s.DEST,s.totalVolume, ROUND(((c.totalVolume - m.totalVolume)*100/ m.totalVolume),1) as MOMPercent,
-            ROUND(((c.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent
+            select s.ORG,s.DEST,s.totalVolume, 
+            case
+            when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0
+            when m.totalVolume = 0  then 100
+            end as momPercent,
+            case
+            when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0
+            when y.totalVolume = 0  then 100
+            end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             FROM AdvanceFunctionAudit a
@@ -509,7 +599,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND b.countryCode = :country
             GROUP BY a.ORG, a.DEST
             ) s left join
-            (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (select a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             WHERE  month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
@@ -518,7 +608,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND b.countryCode = :country
             GROUP BY a.ORG, a.DEST
             ) c on s.ORG = c.ORG and s.DEST = c.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where (
@@ -532,7 +622,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
@@ -551,8 +641,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Volume  for Continent
     @Query(value="""
-            select s.ORG,s.DEST,s.totalVolume, ROUND(((c.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
-            ROUND(((c.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent
+            select s.ORG,s.DEST,s.totalVolume, 
+            case
+            when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0
+            when m.totalVolume = 0  then 100
+            end as momPercent,
+            case
+            when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0
+            when y.totalVolume = 0  then 100
+            end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             FROM AdvanceFunctionAudit a
@@ -563,7 +662,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND b.continent =:continent
             GROUP BY a.ORG, a.DEST
             ) s left join
-            (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (select a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             WHERE month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
@@ -572,7 +671,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND b.continent =:continent
             GROUP BY a.ORG, a.DEST
             ) c on s.ORG = c.ORG and s.DEST = c.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where (
@@ -585,7 +684,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
@@ -603,8 +702,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Volume  for Region
     @Query(value="""
-            select s.ORG,s.DEST,s.totalVolume, ROUND(((c.totalVolume - m.totalVolume)*100/ m.totalVolume),2) as MOMPercent,
-            ROUND(((c.totalVolume - y.totalVolume)*100/ y.totalVolume),2) as YOYPercent
+            select s.ORG,s.DEST,s.totalVolume, 
+            case
+            when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0
+            when m.totalVolume = 0  then 100
+            end as momPercent,
+            case
+            when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0
+            when y.totalVolume = 0  then 100
+            end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
             FROM AdvanceFunctionAudit a
@@ -616,7 +724,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND c.regionName = :region
             group by a.ORG, a.DEST
             ) s left join
-            (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (select a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             FROM AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent
@@ -626,7 +734,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND c.regionName = :region
             group by a.ORG, a.DEST
             ) c on s.ORG = c.ORG and s.DEST = c.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent            
@@ -640,7 +748,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by a.ORG, a.DEST
             ) m
             on s.ORG = m.ORG and s.DEST = m.DEST left join
-            (SELECT a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
+            (SELECT a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent
@@ -660,8 +768,8 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Booking Count for AirPort
     @Query(value="""
-          select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent,
-          ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
+          select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),1) as MOMPercent,
+          ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),1) as YOYPercent
           from
           (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
           where a.eventDate >= :startDate and a.eventDate <= :endDate
@@ -1124,7 +1232,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                 group by a.carrier, a.accNo
                    ) m on s.accNo = m.accNo left join
             (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-                where a.ORG = b.code and b.continent = c.continent and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)\s
+                where a.ORG = b.code and b.continent = c.continent and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
                 and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
                 and a.carrier = :carrier
                 and c.regionName = :region
