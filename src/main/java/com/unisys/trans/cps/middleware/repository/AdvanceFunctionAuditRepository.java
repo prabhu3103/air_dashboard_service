@@ -269,7 +269,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
                                             @Param("carrier") String carrier, @Param("region") String region);
 
 
-    //Top Lanes - Total Number of Weight Count for Airport
+    //Top Lanes - Total of Weight Count for Airport
     @Query(value="""
           select s.ORG,s.DEST,s.totalWeight, 
           case
