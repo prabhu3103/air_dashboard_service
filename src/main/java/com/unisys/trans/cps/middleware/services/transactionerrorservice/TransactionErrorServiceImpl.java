@@ -5,7 +5,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -51,7 +53,7 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 		LocalDateTime currentDate = LocalDateTime.parse(getDate, formatter);
 		LocalDateTime past30Date = currentDate.minus(30, ChronoUnit.DAYS);
 
-		List<String> portalFunctions = new ArrayList<>();
+		List<String> portalFunctions;
 
 		// Fetching data for portal function-Booking Transaction
 		if(request.getPortalFunction().contains(AirlineDashboardConstants.BKG)) {
@@ -95,8 +97,11 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 		TransactionData transactionDataCount = new TransactionData();
 		long totalErrorCount = getErrorCount(transactionFunctionAuditList);
 		
-		long successCount = transactionFunctionAuditList.parallelStream()
-				.filter(item -> " ".equals(item.getTxnStatus()) && "S".equals(item.getStatus())).count();
+		long successCount = transactionFunctionAuditList.stream()
+				.filter(item -> " ".equals(item.getTxnStatus()) && "S".equals(item.getStatus())
+						 || ("C".equals(item.getTxnStatus()) && "S".equals(item.getStatus())
+						|| ("U".equals(item.getTxnStatus()) && "S".equals(item.getStatus()))))
+				.count();
 		// Calculating total transactions by adding successCount and errorCount
 		long totalTransactions = successCount + totalErrorCount;
 		
@@ -165,6 +170,7 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 	 * @return
 	 */
 	private List<TransactionErrorCount> getTransactionErrorCountForOtherPortalFunctions(List<TransactionFunctionAudit> transactionFunctionAuditList) {
+		Map<String,TransactionErrorCount> transanctionErrorCountMap=new HashMap<>();
 		return transactionFunctionAuditList.parallelStream()
 				.filter(audit -> ("E".equals(audit.getTxnStatus()) && "S".equals(audit.getStatus()))
 						|| (" ".equals(audit.getTxnStatus()) && "F".equals(audit.getStatus())))
@@ -172,17 +178,36 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 				.entrySet().stream().map(entry -> {
 					
 					TransactionErrorCount transactionErrorCount = new TransactionErrorCount();
-					if(entry.getKey().equals(AirlineDashboardConstants.TMPLTBKG) || entry.getKey().equals(AirlineDashboardConstants.MULTIBKG) || entry.getKey().equals(AirlineDashboardConstants.SSHT) 
-							|| entry.getKey().equals(AirlineDashboardConstants.SSHTQ) ||entry.getKey().equals(AirlineDashboardConstants.USSHT) || entry.getKey().equals(AirlineDashboardConstants.USSHTQ) ) 
-					{
-					transactionErrorCount.setPortalFunction(AirlineDashboardConstants.BKG);
-					}
-					else {
-						transactionErrorCount.setPortalFunction(entry.getKey());
-					}
-					transactionErrorCount.setErrorCount(entry.getValue().intValue());
-					
-					return transactionErrorCount;
-				}).toList();
+	                String portalFunctionKey = getPortalFunctionKey(entry.getKey());
+
+	                if (transanctionErrorCountMap.containsKey(portalFunctionKey)) {
+	                    TransactionErrorCount getTransactionErrorCount = transanctionErrorCountMap.get(portalFunctionKey);
+	                    getTransactionErrorCount.setErrorCount(getTransactionErrorCount.getErrorCount() + entry.getValue().intValue());
+
+	                    transanctionErrorCountMap.put(portalFunctionKey, getTransactionErrorCount);
+
+	                } else {
+	                    transactionErrorCount.setPortalFunction(portalFunctionKey);
+	                    transactionErrorCount.setErrorCount(entry.getValue().intValue());
+	                 transanctionErrorCountMap.put(portalFunctionKey, transactionErrorCount);
+	                }
+
+	                return transactionErrorCount;
+	            }).distinct()
+	            .toList();
+	}
+
+	private String getPortalFunctionKey(String portalFunction) {
+	    List<String> bookingPortalFunctions = Arrays.asList(
+	            AirlineDashboardConstants.BKG,
+	            AirlineDashboardConstants.TMPLTBKG,
+	            AirlineDashboardConstants.MULTIBKG,
+	            AirlineDashboardConstants.SSHT,
+	            AirlineDashboardConstants.SSHTQ,
+	            AirlineDashboardConstants.USSHT,
+	            AirlineDashboardConstants.USSHTQ
+	    );
+
+	    return bookingPortalFunctions.contains(portalFunction) ? AirlineDashboardConstants.BKG : portalFunction;
 	}
 	}

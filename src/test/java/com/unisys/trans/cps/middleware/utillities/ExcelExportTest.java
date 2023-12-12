@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-public class ExcelExportTest {
+class ExcelExportTest {
 
 
 
