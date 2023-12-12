@@ -179,8 +179,8 @@ public class PointOfSalesServiceImpl implements PointOfSalesService {
             PointOfSalesResponseDTO pointOfSalesResponseDTO = new PointOfSalesResponseDTO();
             pointOfSalesResponseDTO.setTotalValue(totalValue[0]);
             pointOfSalesResponseDTO.setMaxValue(maxPosValue[0]);
-            pointOfSalesResponseDTO.setYoyData(momValue[0]);
-            pointOfSalesResponseDTO.setMomData(yoyValue[0]);
+            pointOfSalesResponseDTO.setYoyData(yoyValue[0]);
+            pointOfSalesResponseDTO.setMomData(momValue[0]);
             pointOfSalesResponseDTO.setPosList(posResponseDTOList);
 
             response.add(pointOfSalesResponseDTO);
