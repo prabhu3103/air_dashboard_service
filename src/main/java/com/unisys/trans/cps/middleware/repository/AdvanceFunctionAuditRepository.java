@@ -292,7 +292,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           AND a.org= :originAirport
           GROUP BY a.org, a.DEST
           ) s left join
-          (SELECT a.org, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight,
+          (SELECT a.org, a.DEST, COALESCE(SUM(a.stdWeight),0) AS totalWeight
           from   AdvanceFunctionAudit a
           where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
           AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
