@@ -962,7 +962,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           when y.totalNoOfBookingCount = 0  then 100
           end as yoyPercent
           from
-          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c\s
+          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
           where a.ORG = b.code and b.continent = c.continent
           and a.eventDate >= :startDate and a.eventDate <= :endDate
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -970,7 +970,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           and c.regionName = :region
           group by  a.carrier, a.accNo
           ) s left join
-          (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c\s
+          (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
           where a.ORG = b.code and b.continent = c.continent
           and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -979,7 +979,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           group by  a.carrier, a.accNo
           ) c
           on s.accNo = c.accNo left join
-          (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c\s
+          (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
           where a.ORG = b.code and b.continent = c.continent
           and (month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
           or
@@ -991,7 +991,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           and c.regionName = :region
           group by  a.carrier, a.accNo
           ) m on s.accNo = m.accNo left join
-          (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c\s
+          (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
           where a.ORG = b.code and b.continent = c.continent
           and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -2266,95 +2266,142 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Commodity - Total Number of Booking Count for Country
     @Query(value="""
-            select s.commodity,s.COMMODITY_COUNT, ROUND(((s.COMMODITY_COUNT - m.COMMODITY_COUNT)*100/ m.COMMODITY_COUNT),2) as MOMPercent,
-            ROUND(((s.COMMODITY_COUNT - y.COMMODITY_COUNT)*100/ y.COMMODITY_COUNT),2) as YOYPercent
-            from
-            (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-            from AdvanceFunctionAudit a
-            join CityCountryMaster b ON a.ORG = b.code
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            AND b.countryCode = :country
-            group by a.commodity
-            ) s left join
-            (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-            from   AdvanceFunctionAudit a
-            join CityCountryMaster b ON a.ORG = b.code
-            where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-            or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-            )
-            AND a.carrier = :carrier
-            AND b.countryCode = :country
-            group by a.commodity
-            ) m
-            on s.commodity = m.commodity left join
-            (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-            from   AdvanceFunctionAudit a
-            join CityCountryMaster b ON a.ORG = b.code
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            and a.carrier = :carrier
-            AND b.countryCode = :country
-            group by a.commodity
-            ) y
-            on s.commodity = y.commodity
-            order by s.COMMODITY_COUNT desc
-            offset 0 rows
-            fetch next 6 rows only
-            """,nativeQuery = true)
+          select s.commodity,s.COMMODITY_COUNT,
+          case
+          when m.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - m.COMMODITY_COUNT) * 100 / m.COMMODITY_COUNT), 1)
+          when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
+          when m.COMMODITY_COUNT = 0  then 100
+          end as momPercent,
+          case
+          when y.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - y.COMMODITY_COUNT) * 100 / y.COMMODITY_COUNT), 1)
+          when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
+          when y.COMMODITY_COUNT = 0  then 100
+          end as yoyPercent
+          from
+          (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+          from AdvanceFunctionAudit a
+          join CityCountryMaster b ON a.ORG = b.code
+          where a.eventDate >= :startDate and a.eventDate <= :endDate
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          AND b.countryCode = :country
+          group by a.commodity
+          ) s left join
+          (select a.commodity, COALESCE(COUNT(a.commodity), 0) AS COMMODITY_COUNT
+          from AdvanceFunctionAudit a
+          join CityCountryMaster b ON a.ORG = b.code
+          where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          AND b.countryCode = :country
+          group by a.commodity
+          ) c
+          on s.commodity = c.commodity left join
+          (SELECT a.commodity, COALESCE(COUNT(a.commodity), 0) AS COMMODITY_COUNT
+          from   AdvanceFunctionAudit a
+          join CityCountryMaster b ON a.ORG = b.code
+          where (
+          month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+          or
+          month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+          )
+          AND a.carrier = :carrier
+          AND b.countryCode = :country
+          group by a.commodity
+          ) m
+          on s.commodity = m.commodity left join
+          (SELECT a.commodity, COALESCE(COUNT(a.commodity), 0) AS COMMODITY_COUNT
+          from   AdvanceFunctionAudit a
+          join CityCountryMaster b ON a.ORG = b.code
+          where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+          and a.carrier = :carrier
+          AND b.countryCode = :country
+          group by a.commodity
+          ) y
+          on s.commodity = y.commodity
+          order by s.COMMODITY_COUNT desc
+          offset 0 rows
+          fetch next 6 rows only		  
+          """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                  @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Commodity - Total Number of Booking Count for Continent
     @Query(value="""
-            select s.commodity,s.COMMODITY_COUNT, ROUND(((s.COMMODITY_COUNT - m.COMMODITY_COUNT)*100/ m.COMMODITY_COUNT),2) as MOMPercent,
-            ROUND(((s.COMMODITY_COUNT - y.COMMODITY_COUNT)*100/ y.COMMODITY_COUNT),2) as YOYPercent
-            from
-            (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-            from  AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.ORG = b.code
-            where a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            AND b.continent =  :continent
-            group by a.commodity
-            ) s left join
-            (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-            from   AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.ORG = b.code
-            where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-            or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-            )
-            AND a.carrier = :carrier
-            AND b.continent = :continent
-            group by a.commodity
-            ) m
-            on s.commodity = m.commodity left join
-            (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-            from   AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.ORG = b.code
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            and a.carrier = :carrier
-            AND b.continent = :continent
-            group by a.commodity
-            ) y
-            on s.commodity = y.commodity
-            order by s.COMMODITY_COUNT desc
-            offset 0 rows
-            fetch next 6 rows only
-            """,nativeQuery = true)
+          select s.commodity,s.COMMODITY_COUNT,
+          case
+          when m.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - m.COMMODITY_COUNT) * 100 / m.COMMODITY_COUNT), 1)
+          when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
+          when m.COMMODITY_COUNT = 0  then 100
+          end as momPercent,
+          case
+          when y.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - y.COMMODITY_COUNT) * 100 / y.COMMODITY_COUNT), 1)
+          when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
+          when y.COMMODITY_COUNT = 0  then 100
+          end as yoyPercent
+          from
+          (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+          from AdvanceFunctionAudit a
+          join CityCountryMaster b ON a.ORG = b.code
+          where a.eventDate >= :startDate and a.eventDate <= :endDate
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          AND b.continent =  :continent
+          group by a.commodity
+          ) s left join
+          (select a.commodity, COALESCE(COUNT(a.commodity), 0) AS COMMODITY_COUNT
+          from AdvanceFunctionAudit a
+          join CityCountryMaster b ON a.ORG = b.code
+          where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          AND b.continent =  :continent
+          group by a.commodity
+          ) c
+          on s.commodity = c.commodity left join
+          (SELECT a.commodity, COALESCE(COUNT(a.commodity), 0) AS COMMODITY_COUNT
+          from   AdvanceFunctionAudit a
+          join CityCountryMaster b ON a.ORG = b.code
+          where (
+          month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+          or
+          month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+          )
+          AND a.carrier = :carrier
+          AND b.continent =  :continent
+          group by a.commodity
+          ) m
+          on s.commodity = m.commodity left join
+          (SELECT a.commodity, COALESCE(COUNT(a.commodity), 0) AS COMMODITY_COUNT
+          from   AdvanceFunctionAudit a
+          join CityCountryMaster b ON a.ORG = b.code
+          where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+          and a.carrier = :carrier
+          AND b.continent =  :continent
+          group by a.commodity
+          ) y
+          on s.commodity = y.commodity
+          order by s.COMMODITY_COUNT desc
+          offset 0 rows
+          fetch next 6 rows only		  
+          """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                    @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Commodity - Total Number of Booking Count for Region
     @Query(value="""
-            select s.commodity,s.COMMODITY_COUNT, ROUND(((s.COMMODITY_COUNT - m.COMMODITY_COUNT)*100/ m.COMMODITY_COUNT),2) as MOMPercent,
-            ROUND(((s.COMMODITY_COUNT - y.COMMODITY_COUNT)*100/ y.COMMODITY_COUNT),2) as YOYPercent
+            select s.commodity,s.COMMODITY_COUNT,
+            case
+            when m.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - m.COMMODITY_COUNT) * 100 / m.COMMODITY_COUNT), 1)
+            when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
+            when m.COMMODITY_COUNT = 0  then 100
+            end as momPercent,
+            case
+            when y.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - y.COMMODITY_COUNT) * 100 / y.COMMODITY_COUNT), 1)
+            when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
+            when y.COMMODITY_COUNT = 0  then 100
+            end as yoyPercent
             from
             (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
             from AdvanceFunctionAudit a
@@ -2366,14 +2413,25 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND r.regionName = :region
             group by a.commodity
             ) s left join
+            (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+            from AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.ORG = b.code
+            JOIN RegionMaster r ON b.continent = r.continent
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND r.regionName = :region
+            group by a.commodity
+            ) c
+            on s.commodity = c.commodity left join
             (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster r ON b.continent = r.continent
             where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
             or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
             )
             and a.carrier = :carrier
             AND r.regionName = :region
@@ -2384,7 +2442,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster r ON b.continent = r.continent
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
             and a.carrier = :carrier
             AND r.regionName = :region
             group by a.commodity
@@ -2392,40 +2450,121 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             on s.commodity = y.commodity
             order by s.COMMODITY_COUNT desc
             offset 0 rows
-            fetch next 6 rows only
+            fetch next 6 rows only	  
             """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("region") String region);
 
     //Top Commodity - Total Number of Weight Count for Airport
     @Query(value="""
-            select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
-            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
+          select s.commodity,s.totalWeight,
+          case
+          when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
+          when m.totalWeight = 0  and c.totalWeight = 0 then 0
+          when m.totalWeight = 0  then 100
+          end as momPercent,
+          case
+          when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
+          when y.totalWeight = 0  and c.totalWeight = 0 then 0
+          when y.totalWeight = 0  then 100
+          end as yoyPercent
+          from
+          (select a.commodity, SUM(a.stdWeight) AS totalWeight
+          from AdvanceFunctionAudit a
+          where a.eventDate >= :startDate and a.eventDate <= :endDate
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and a.org = :originAirport
+          group by a.commodity
+          ) s left join
+          (select a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
+          from AdvanceFunctionAudit a
+          where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and a.org = :originAirport
+          group by a.commodity
+          ) c
+          on s.commodity = c.commodity left join
+          (SELECT a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
+          from   AdvanceFunctionAudit a
+          where (
+          month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+          or
+          month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1))
+          and a.carrier = :carrier
+          and a.org = :originAirport
+          group by a.commodity
+          ) m
+          on s.commodity = m.commodity left join
+          (SELECT a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
+          from   AdvanceFunctionAudit a
+          where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+          and a.carrier = :carrier
+          and a.org = :originAirport
+          group by a.commodity
+          ) y
+          on s.commodity = y.commodity
+          order by s.totalWeight desc
+          offset 0 rows
+          fetch next 6 rows only
+          """,nativeQuery = true)
+    List<Object[]> getTopCommodityWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                @Param("carrier") String carrier, @Param("originAirport") String originAirport);
+
+
+    //Top Commodity - Total Number of Weight Count for Country
+    @Query(value="""
+            select s.commodity,s.totalWeight,
+            case
+            when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0
+            when m.totalWeight = 0  then 100
+            end as momPercent,
+            case
+            when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0
+            when y.totalWeight = 0  then 100
+            end as yoyPercent
             from
             (select a.commodity, SUM(a.stdWeight) AS totalWeight
             from AdvanceFunctionAudit a
+            join CityCountryMaster b ON a.ORG = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
-            and a.ORG = :originAirport
+            AND b.countryCode = :country
             group by a.commodity
             ) s left join
-            (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+            (select a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b ON a.ORG = b.code
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND b.countryCode = :country
+            group by a.commodity
+            ) c
+            on s.commodity = c.commodity left join
+            (SELECT a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
             from   AdvanceFunctionAudit a
+            join CityCountryMaster b ON a.ORG = b.code
             where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
             or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
             )
             AND a.carrier = :carrier
-            and a.ORG = :originAirport
+            AND b.countryCode = :country
             group by a.commodity
             ) m
             on s.commodity = m.commodity left join
-            (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+            (SELECT a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
             from   AdvanceFunctionAudit a
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            join CityCountryMaster b ON a.ORG = b.code
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
             and a.carrier = :carrier
+            AND b.countryCode = :country
             group by a.commodity
             ) y
             on s.commodity = y.commodity
@@ -2433,85 +2572,60 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             offset 0 rows
             fetch next 6 rows only
             """,nativeQuery = true)
-    List<Object[]> getTopCommodityWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                @Param("carrier") String carrier, @Param("originAirport") String originAirport);
-
-
-    //Top Commodity - Total Number of Weight Count for Country
-    @Query(value="""
-            select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
-               ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
-               from
-                      (select a.commodity, SUM(a.stdWeight) AS totalWeight
-                           from AdvanceFunctionAudit a
-                           JOIN CityCountryMaster b ON a.ORG = b.code
-                           where a.eventDate >= :startDate and a.eventDate <= :endDate
-                           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                           and a.carrier = :carrier
-                           AND b.countryCode = :country
-                        group by a.commodity
-                        ) s left join
-                           (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
-                                       from   AdvanceFunctionAudit a
-                                       JOIN CityCountryMaster b ON a.ORG = b.code
-                                       where (
-                                      month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-                                      or
-                                      month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                                    )
-                                     AND a.carrier = :carrier
-                                     AND b.countryCode = :country
-                                    group by a.commodity
-                                       ) m
-                                    on s.commodity = m.commodity left join
-                        (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
-                                       from   AdvanceFunctionAudit a
-                                       JOIN CityCountryMaster b ON a.ORG = b.code
-                                       where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                       and a.carrier = :carrier
-                                       AND b.countryCode = :country
-                                    group by a.commodity
-                                       ) y
-                                    on s.commodity = y.commodity
-                                    order by s.totalWeight desc
-                                    offset 0 rows
-                                    fetch next 6 rows only
-            """,nativeQuery = true)
     List<Object[]> getTopCommodityWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("country") String country);
 
 
     //Top Commodity - Total Number of Weight Count for Continent
     @Query(value="""
-            select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
-            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
+            select s.commodity,s.totalWeight,
+            case
+            when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0
+            when m.totalWeight = 0  then 100
+            end as momPercent,
+            case
+            when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0
+            when y.totalWeight = 0  then 100
+            end as yoyPercent
             from
             (select a.commodity, SUM(a.stdWeight) AS totalWeight
             from AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.ORG = b.code
+            join CityCountryMaster b ON a.ORG = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             and a.carrier = :carrier
             AND b.continent = :continent
             group by a.commodity
             ) s left join
-            (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+            (select a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
+            from AdvanceFunctionAudit a
+            join CityCountryMaster b ON a.ORG = b.code
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND b.continent = :continent
+            group by a.commodity
+            ) c
+            on s.commodity = c.commodity left join
+            (SELECT a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
             from   AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.ORG = b.code
+            join CityCountryMaster b ON a.ORG = b.code
             where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
             or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
             )
             AND a.carrier = :carrier
             AND b.continent = :continent
             group by a.commodity
             ) m
             on s.commodity = m.commodity left join
-            (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+            (SELECT a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
             from   AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.ORG = b.code
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            join CityCountryMaster b ON a.ORG = b.code
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
             and a.carrier = :carrier
             AND b.continent = :continent
             group by a.commodity
@@ -2526,8 +2640,17 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Commodity - Total Number of Weight Count for Region
     @Query(value="""
-            select s.commodity,s.totalWeight, ROUND(((s.totalWeight - m.totalWeight)*100/ m.totalWeight),2) as MOMPercent,
-            ROUND(((s.totalWeight - y.totalWeight)*100/ y.totalWeight),2) as YOYPercent
+            select s.commodity,s.totalWeight,
+            case
+            when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0
+            when m.totalWeight = 0  then 100
+            end as momPercent,
+            case
+            when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0
+            when y.totalWeight = 0  then 100
+            end as yoyPercent
             from
             (select a.commodity, SUM(a.stdWeight) AS totalWeight
             from AdvanceFunctionAudit a
@@ -2539,25 +2662,36 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND r.regionName = :region
             group by a.commodity
             ) s left join
-            (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+            (select a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
+            from AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.ORG = b.code
+            JOIN RegionMaster r ON b.continent = r.continent
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND r.regionName = :region
+            group by a.commodity
+            ) c
+            on s.commodity = c.commodity left join
+            (SELECT a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster r ON b.continent = r.continent
             where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
             or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
             )
-            AND a.carrier = :carrier
+            and a.carrier = :carrier
             AND r.regionName = :region
             group by a.commodity
             ) m
             on s.commodity = m.commodity left join
-            (SELECT a.commodity, SUM(a.stdWeight) AS totalWeight
+            (SELECT a.commodity, COALESCE(SUM(a.stdWeight), 0) AS totalWeight
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster r ON b.continent = r.continent
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
             and a.carrier = :carrier
             AND r.regionName = :region
             group by a.commodity
@@ -2612,91 +2746,143 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Commodity - Total Number of volume Count for Country
     @Query(value="""
-           select s.commodity,s.totalvolume, ROUND(((s.totalvolume - m.totalvolume)*100/ m.totalvolume),2) as MOMPercent,
-           ROUND(((s.totalvolume - y.totalvolume)*100/ y.totalvolume),2) as YOYPercent
-           from
-           (select a.commodity, SUM(a.STDVOLUME) AS totalvolume
-           from AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           where a.eventDate >= :startDate and a.eventDate <= :endDate
-           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           and a.carrier = :carrier
-           AND b.countryCode = :country
-           group by a.commodity
-           ) s left join
-           (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
-           from   AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           where (
-           month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-           or
-           month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-           )
-           AND a.carrier = :carrier
-           AND b.countryCode = :country
-           group by a.commodity
-           ) m
-           on s.commodity = m.commodity left join
-           (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
-           from   AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-           and a.carrier = :carrier
-           group by a.commodity
-           ) y
-           on s.commodity = y.commodity
-           order by s.totalvolume desc
-           offset 0 rows
-           fetch next 6 rows only
-           """,nativeQuery = true)
+         select s.commodity,s.totalVolume,
+         case
+         when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
+         when m.totalVolume = 0  and c.totalVolume = 0 then 0
+         when m.totalVolume = 0  then 100
+         end as momPercent,
+         case
+         when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
+         when y.totalVolume = 0  and c.totalVolume = 0 then 0
+         when y.totalVolume = 0  then 100
+         end as yoyPercent
+         from
+         (select a.commodity, SUM(a.STDVOLUME) AS totalVolume
+         from AdvanceFunctionAudit a
+         join CityCountryMaster b ON a.ORG = b.code
+         where a.eventDate >= :startDate and a.eventDate <= :endDate
+         and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+         and a.carrier = :carrier
+         AND b.countryCode = :country
+         group by a.commodity
+         ) s left join
+         (select a.commodity, COALESCE(SUM(a.STDVOLUME), 0) AS totalVolume
+         from AdvanceFunctionAudit a
+         join CityCountryMaster b ON a.ORG = b.code
+         where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+         and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+         and a.carrier = :carrier
+         AND b.countryCode = :country
+         group by a.commodity
+         ) c
+         on s.commodity = c.commodity left join
+         (SELECT a.commodity, COALESCE(SUM(a.STDVOLUME), 0) AS totalVolume
+         from   AdvanceFunctionAudit a
+         join CityCountryMaster b ON a.ORG = b.code
+         where (
+         month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+         or
+         month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+         )
+         AND a.carrier = :carrier
+         AND b.countryCode = :country
+         group by a.commodity
+         ) m
+         on s.commodity = m.commodity left join
+         (SELECT a.commodity, COALESCE(SUM(a.STDVOLUME), 0) AS totalVolume
+         from   AdvanceFunctionAudit a
+         join CityCountryMaster b ON a.ORG = b.code
+         where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+         and a.carrier = :carrier
+         AND b.countryCode = :country
+         group by a.commodity
+         ) y
+         on s.commodity = y.commodity
+         order by s.totalVolume desc
+         offset 0 rows
+         fetch next 6 rows only
+         """,nativeQuery = true)
     List<Object[]> getTopCommodityVolumeCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("country") String country);
 
     //Top Commodity - Total Number of volume Count for Continent
     @Query(value="""
-           select s.commodity,s.totalvolume, ROUND(((s.totalvolume - m.totalvolume)*100/ m.totalvolume),2) as MOMPercent,
-           ROUND(((s.totalvolume - y.totalvolume)*100/ y.totalvolume),2) as YOYPercent
-           from
-           (select a.commodity, SUM(a.STDVOLUME) AS totalvolume
-           from AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           where a.eventDate >= :startDate and a.eventDate <= :endDate
-           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           and a.carrier = :carrier
-           AND b.continent = :continent
-           group by a.commodity
-           ) s left join
-           (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
-           from   AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           where month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-           AND a.carrier = :carrier
-           AND b.continent = :continent
-           group by a.commodity
-           ) m
-           on s.commodity = m.commodity left join
-           (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
-           from   AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-           and a.carrier = :carrier
-           AND b.continent = :continent
-           group by a.commodity
-           ) y
-           on s.commodity = y.commodity
-           order by s.totalvolume desc
-           offset 0 rows
-           fetch next 6 rows only
-           """,nativeQuery = true)
+         select s.commodity,s.totalVolume,
+         case
+         when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
+         when m.totalVolume = 0  and c.totalVolume = 0 then 0
+         when m.totalVolume = 0  then 100
+         end as momPercent,
+         case
+         when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
+         when y.totalVolume = 0  and c.totalVolume = 0 then 0
+         when y.totalVolume = 0  then 100
+         end as yoyPercent
+         from
+         (select a.commodity, SUM(a.STDVOLUME) AS totalVolume
+         from AdvanceFunctionAudit a
+         join CityCountryMaster b ON a.ORG = b.code
+         where a.eventDate >= :startDate and a.eventDate <= :endDate
+         and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+         and a.carrier = :carrier
+         AND b.continent = :continent
+         group by a.commodity
+         ) s left join
+         (select a.commodity, COALESCE(SUM(a.STDVOLUME), 0) AS totalVolume
+         from AdvanceFunctionAudit a
+         join CityCountryMaster b ON a.ORG = b.code
+         where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+         and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+         and a.carrier = :carrier
+         AND b.continent = :continent
+         group by a.commodity
+         ) c
+         on s.commodity = c.commodity left join
+         (SELECT a.commodity, COALESCE(SUM(a.STDVOLUME), 0) AS totalVolume
+         from   AdvanceFunctionAudit a
+         join CityCountryMaster b ON a.ORG = b.code
+         where (
+         month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+         or
+         month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+         )
+         AND a.carrier = :carrier
+         AND b.continent = :continent
+         group by a.commodity
+         ) m
+         on s.commodity = m.commodity left join
+         (SELECT a.commodity, COALESCE(SUM(a.STDVOLUME), 0) AS totalVolume
+         from   AdvanceFunctionAudit a
+         join CityCountryMaster b ON a.ORG = b.code
+         where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+         and a.carrier = :carrier
+         AND b.continent = :continent
+         group by a.commodity
+         ) y
+         on s.commodity = y.commodity
+         order by s.totalVolume desc
+         offset 0 rows
+         fetch next 6 rows only
+         """,nativeQuery = true)
     List<Object[]> getTopCommodityVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                   @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Commodity - Total Number of volume Count for Region
     @Query(value="""
-            select s.commodity,s.totalvolume, ROUND(((s.totalvolume - m.totalvolume)*100/ m.totalvolume),2) as MOMPercent,
-            ROUND(((s.totalvolume - y.totalvolume)*100/ y.totalvolume),2) as YOYPercent
+            select s.commodity,s.totalVolume,
+            case
+            when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0
+            when m.totalVolume = 0  then 100
+            end as momPercent,
+            case
+            when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0
+            when y.totalVolume = 0  then 100
+            end as yoyPercent
             from
-            (select a.commodity, SUM(a.STDVOLUME) AS totalvolume
+            (select a.commodity, SUM(a.STDVOLUME) AS totalVolume
             from AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster r ON b.continent = r.continent
@@ -2706,31 +2892,42 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND r.regionName = :region
             group by a.commodity
             ) s left join
-            (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
+            (select a.commodity, COALESCE(SUM(a.STDVOLUME), 0) AS totalVolume
+            from AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.ORG = b.code
+            JOIN RegionMaster r ON b.continent = r.continent
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            AND r.regionName = :region
+            group by a.commodity
+            ) c
+            on s.commodity = c.commodity left join
+            (SELECT a.commodity, COALESCE(SUM(a.STDVOLUME), 0) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster r ON b.continent = r.continent
             where (
-              month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-              or
-              month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
             )
-            AND a.carrier = :carrier
+            and a.carrier = :carrier
             AND r.regionName = :region
             group by a.commodity
             ) m
             on s.commodity = m.commodity left join
-            (SELECT a.commodity, SUM(a.STDVOLUME) AS totalvolume
+            (SELECT a.commodity, COALESCE(SUM(a.STDVOLUME), 0) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster r ON b.continent = r.continent
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
             and a.carrier = :carrier
             AND r.regionName = :region
             group by a.commodity
             ) y
             on s.commodity = y.commodity
-            order by s.totalvolume desc
+            order by s.totalVolume desc
             offset 0 rows
             fetch next 6 rows only
             """,nativeQuery = true)
@@ -3153,7 +3350,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.carrier = :carrier
             and a.org = b.code
             and b.countryCode = :country
-            group by a.productCode
+            group by a.productCode 
             ) m
             on s.productCode = m.productCode left join
             (select a.productCode, SUM(a.stdVolume) AS totalVolume
