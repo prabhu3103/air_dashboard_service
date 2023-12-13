@@ -768,39 +768,62 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Booking Count for AirPort
     @Query(value="""
-          select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),1) as MOMPercent,
-          ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),1) as YOYPercent
-          from
-          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
-          where a.eventDate >= :startDate and a.eventDate <= :endDate
-          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-          and a.carrier = :carrier
-          and a.ORG = :origin
-          group by a.carrier, a.accNo
-          ) s left join
-          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
-          where (
-          month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
-          or
-          month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
-          )
-          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-          and a.carrier = :carrier
-          and a.ORG = :origin
-          group by a.carrier, a.accNo
-          ) m on s.accNo = m.accNo left join
-          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a
-          where  month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
-          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-          and a.carrier = :carrier
-          and a.ORG = :origin
-          group by a.carrier, a.accNo
-          ) y
-          on s.accNo = y.accNo
-          order by s.totalNoOfBookingCount desc
-          offset 0 rows
-          fetch next 5 rows only
-          """,nativeQuery = true)
+        select s.carrier,s.accNo,s.totalNoOfBookingCount,
+        case
+        when m.totalNoOfBookingCount <> 0 then round(((c.totalNoOfBookingCount - m.totalNoOfBookingCount) * 100 / m.totalNoOfBookingCount), 1)
+        when m.totalNoOfBookingCount = 0  and c.totalNoOfBookingCount = 0 then 0
+        when m.totalNoOfBookingCount = 0  then 100
+        end as momPercent,
+        case
+        when y.totalNoOfBookingCount <> 0 then round(((c.totalNoOfBookingCount - y.totalNoOfBookingCount) * 100 / y.totalNoOfBookingCount), 1)
+        when y.totalNoOfBookingCount = 0  and c.totalNoOfBookingCount = 0 then 0
+        when y.totalNoOfBookingCount = 0  then 100
+        end as yoyPercent             
+        from
+        (SELECT a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount
+        FROM AdvanceFunctionAudit a
+        JOIN CityCountryMaster b ON a.org = b.code
+        where a.eventDate >= :startDate and a.eventDate <= :endDate
+        AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+        AND a.carrier = :carrier
+        AND a.org = :origin
+        group by a.carrier, a.accNo
+        ) s left join
+        (SELECT a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount
+        from   AdvanceFunctionAudit a
+        where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+        AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+        AND a.carrier = :carrier
+        AND a.org= :origin
+        group by a.carrier, a.accNo
+        ) c
+        on s.accNo = c.accNo left join
+        (SELECT a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount
+        from   AdvanceFunctionAudit a
+        where (
+        month(getdate()) <> 1 and month(a.eventDate)=month(getdate())-1  and  year(a.eventDate)=year(getdate())
+        or
+        month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+        )
+        AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+        AND a.carrier = :carrier
+        AND a.org= :origin
+        group by a.carrier, a.accNo
+        ) m
+        on s.accNo = m.accNo left join
+        (SELECT a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount
+        from   AdvanceFunctionAudit a
+        where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+        AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+        AND a.carrier = :carrier
+        AND a.org= :origin
+        group by a.carrier, a.accNo
+        ) y
+        on s.accNo = m.accNo
+        order by s.totalNoOfBookingCount desc
+        offset 0 rows
+        fetch next 5 rows only
+        """,nativeQuery = true)
 
     List<Object[]> getTopAgentsBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                               @Param("carrier") String carrier, @Param("origin") String origin);
@@ -808,34 +831,172 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Booking Count for Country
     @Query(value="""
-          select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent,
-          ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
+      select s.carrier,s.accNo,s.totalNoOfBookingCount, 
+      case
+      when m.totalNoOfBookingCount <> 0 then round(((c.totalNoOfBookingCount - m.totalNoOfBookingCount) * 100 / m.totalNoOfBookingCount), 1)
+      when m.totalNoOfBookingCount = 0  and c.totalNoOfBookingCount = 0 then 0
+      when m.totalNoOfBookingCount = 0  then 100
+      end as momPercent,
+      case
+      when y.totalNoOfBookingCount <> 0 then round(((c.totalNoOfBookingCount - y.totalNoOfBookingCount) * 100 / y.totalNoOfBookingCount), 1)
+      when y.totalNoOfBookingCount = 0  and c.totalNoOfBookingCount = 0 then 0
+      when y.totalNoOfBookingCount = 0  then 100
+      end as yoyPercent
+      from
+      (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+      where a.ORG = b.code
+      and a.eventDate >= :startDate and a.eventDate <= :endDate
+      and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+      and a.carrier = :carrier
+      and b.countryCode = :country
+      group by  a.carrier, a.accNo
+      ) s left join
+      (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+      where a.ORG = b.code
+      and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+      and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+      and a.carrier = :carrier
+      and b.countryCode = :country
+      group by  a.carrier, a.accNo
+      ) c
+      on s.accNo = c.accNo left join
+      (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+      where (
+      month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+      or
+      month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+      )
+      and a.ORG = b.code
+      and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+      and a.carrier = :carrier
+      and b.countryCode = :country
+      group by  a.carrier, a.accNo
+      ) m on s.accNo = m.accNo left join
+      (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+      where a.ORG = b.code and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+      and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+      and a.carrier = :carrier
+      and b.countryCode = :country
+      group by a.carrier, a.accNo
+      ) y
+      on  s.accNo = y.accNo
+      order by s.totalNoOfBookingCount desc
+      offset 0 rows
+      fetch next 5 rows only
+      """,nativeQuery = true)
+
+    List<Object[]> getTopAgentsBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                              @Param("carrier") String carrier, @Param("country") String country);
+
+
+    //Top Agents - Total Number of Booking Count for Continent
+    @Query(value="""
+      select s.carrier,s.accNo,s.totalNoOfBookingCount, 
+      case
+      when m.totalNoOfBookingCount <> 0 then round(((c.totalNoOfBookingCount - m.totalNoOfBookingCount) * 100 / m.totalNoOfBookingCount), 1)
+      when m.totalNoOfBookingCount = 0  and c.totalNoOfBookingCount = 0 then 0
+      when m.totalNoOfBookingCount = 0  then 100
+      end as momPercent,
+      case
+      when y.totalNoOfBookingCount <> 0 then round(((c.totalNoOfBookingCount - y.totalNoOfBookingCount) * 100 / y.totalNoOfBookingCount), 1)
+      when y.totalNoOfBookingCount = 0  and c.totalNoOfBookingCount = 0 then 0
+      when y.totalNoOfBookingCount = 0  then 100
+      end as yoyPercent
+      from
+      (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+      where a.ORG = b.code
+      and a.eventDate >= :startDate and a.eventDate <= :endDate
+      and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+      and a.carrier = :carrier
+      and b.continent = :continent
+      group by  a.carrier, a.accNo
+      ) s left join
+      (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+      where a.ORG = b.code
+      and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+      and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+      and a.carrier = :carrier
+      and b.continent = :continent
+      group by  a.carrier, a.accNo
+      ) c
+      on s.accNo = c.accNo left join
+      (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+      where (
+      month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+      or
+      month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+      )
+      and a.ORG = b.code
+      and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+      and a.carrier = :carrier
+      and b.continent = :continent
+      group by  a.carrier, a.accNo
+      ) m on s.accNo = m.accNo left join
+      (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
+      where a.ORG = b.code and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+      and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+      and a.carrier = :carrier
+      and b.continent = :continent
+      group by a.carrier, a.accNo
+      ) y
+      on  s.accNo = y.accNo
+      order by s.totalNoOfBookingCount desc
+      offset 0 rows
+      fetch next 5 rows only
+      """,nativeQuery = true)
+
+    List<Object[]> getTopAgentsBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                @Param("carrier") String carrier, @Param("continent") String continent);
+
+    //Top Agents - Total Number of Booking Count for Region
+    @Query(value="""
+          select s.carrier,s.accNo,s.totalNoOfBookingCount,
+          case
+          when m.totalNoOfBookingCount <> 0 then round(((c.totalNoOfBookingCount - m.totalNoOfBookingCount) * 100 / m.totalNoOfBookingCount), 1)
+          when m.totalNoOfBookingCount = 0  and c.totalNoOfBookingCount = 0 then 0
+          when m.totalNoOfBookingCount = 0  then 100
+          end as momPercent,
+          case
+          when y.totalNoOfBookingCount <> 0 then round(((c.totalNoOfBookingCount - y.totalNoOfBookingCount) * 100 / y.totalNoOfBookingCount), 1)
+          when y.totalNoOfBookingCount = 0  and c.totalNoOfBookingCount = 0 then 0
+          when y.totalNoOfBookingCount = 0  then 100
+          end as yoyPercent
           from
-          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
-          where a.ORG = b.code
+          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c\s
+          where a.ORG = b.code and b.continent = c.continent
           and a.eventDate >= :startDate and a.eventDate <= :endDate
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
           and a.carrier = :carrier
-          and b.countryCode = :country
+          and c.regionName = :region
           group by  a.carrier, a.accNo
           ) s left join
-          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
-          where (
-          month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
+          (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c\s
+          where a.ORG = b.code and b.continent = c.continent
+          and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and c.regionName = :region
+          group by  a.carrier, a.accNo
+          ) c
+          on s.accNo = c.accNo left join
+          (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c\s
+          where a.ORG = b.code and b.continent = c.continent
+          and (month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
           or
-          month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
+          month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
           )
           and a.ORG = b.code
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
           and a.carrier = :carrier
-          and b.countryCode = :country
+          and c.regionName = :region
           group by  a.carrier, a.accNo
           ) m on s.accNo = m.accNo left join
-          (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a,CityCountryMaster b
-          where a.ORG = b.code and month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
+          (select a.carrier, a.accNo, COALESCE( COUNT(*), 0) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c\s
+          where a.ORG = b.code and b.continent = c.continent
+          and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
           and a.carrier = :carrier
-          and b.countryCode = :country
+          and c.regionName = :region
           group by a.carrier, a.accNo
           ) y
           on  s.accNo = y.accNo
@@ -844,121 +1005,67 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           fetch next 5 rows only
           """,nativeQuery = true)
 
-    List<Object[]> getTopAgentsBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                              @Param("carrier") String carrier, @Param("country") String country);
-
-
-    //Top Agents - Total Number of Booking Count for Continent
-    @Query(value="""
-           select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent,
-           ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
-           from
-                       ( select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b
-                        where a.ORG = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
-                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                        and a.carrier = :carrier
-                        and b.continent = :continent
-                        group by a.carrier, a.accNo
-                        ) s left join
-                       (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b
-                        where (
-                          month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-                          or
-                          month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                         )
-                        and a.ORG = b.code
-                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                        and a.carrier = :carrier
-                        and b.continent = :continent
-                        group by a.carrier, a.accNo
-                            ) m on s.accNo = m.accNo left join
-                    (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b
-                        where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                        and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                        and a.carrier = :carrier
-                        and b.continent = :continent
-                        group by a.carrier, a.accNo
-                                   ) y
-                        on s.accNo = y.accNo
-                        order by s.totalNoOfBookingCount desc
-                        offset 0 rows
-                        fetch next 5 rows only
-            """,nativeQuery = true)
-
-    List<Object[]> getTopAgentsBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                @Param("carrier") String carrier, @Param("continent") String continent);
-
-    //Top Agents - Total Number of Booking Count for Region
-    @Query(value="""
-            select s.carrier,s.accNo,s.totalNoOfBookingCount, ROUND(((s.totalNoOfBookingCount - m.totalNoOfBookingCount)*100/ m.totalNoOfBookingCount),2) as MOMPercent,
-            ROUND(((s.totalNoOfBookingCount - y.totalNoOfBookingCount)*100/ y.totalNoOfBookingCount),2) as YOYPercent
-             from
-                (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c where a.ORG = b.code and b.continent = c.continent
-                    and a.eventDate >= :startDate and a.eventDate <= :endDate
-                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                    and a.carrier = :carrier
-                    and c.regionName = :region
-                    group by a.carrier, a.accNo
-                    ) s left join
-                   (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-                    where  month(a.eventDate)= (month(:startDate)-1) and year(a.eventDate)= year(:startDate)
-                    and a.ORG = b.code and b.continent = c.continent
-                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                    and a.carrier = :carrier
-                    and c.regionName = :region
-                    group by a.carrier, a.accNo
-                        ) m on s.accNo = m.accNo left join
-                (select a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-                    where a.ORG = b.code and b.continent = c.continent and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                    and a.carrier = :carrier
-                    and c.regionName = :region
-                    group by a.carrier, a.accNo
-                        ) y
-                    on s.accNo = y.accNo
-                    order by s.totalNoOfBookingCount desc
-                    offset 0 rows
-                    fetch next 5 rows only
-            """,nativeQuery = true)
-
     List<Object[]> getTopAgentsBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("region") String region);
 
     //Top Agents - Total Number of Volume for AirPort
     @Query(value = """
-            select s.carrier,s.accNo,s.totalNoOfVolumeCount, ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent,
-            ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
-                from
-              (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a
-                    where a.eventDate >= :startDate and a.eventDate <= :endDate
-                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                    and a.carrier = :carrier
-                    and a.ORG = :origin
-                    group by a.carrier, a.accNo
-                    ) s left join
-                (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a
-                    where (
-                      month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-                      or
-                      month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                     )
-                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                    and a.carrier = :carrier
-                    and a.ORG = :origin
-                    group by a.carrier, a.accNo
-                     ) m on s.accNo = m.accNo left join
-                (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a
-                    where  month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                    and a.carrier = :carrier
-                    and a.ORG = :origin
-                    group by a.carrier, a.accNo
-                            ) y
-                on s.accNo = y.accNo
-                order by s.totalNoOfVolumeCount desc
-                offset 0 rows
-                fetch next 5 rows only
-                """,nativeQuery = true)
+            select s.carrier,s.accNo,s.totalNoOfVolumeCount,
+            case
+            when m.totalNoOfVolumeCount <> 0 then round(((c.totalNoOfVolumeCount - m.totalNoOfVolumeCount) * 100 / m.totalNoOfVolumeCount), 1)
+            when m.totalNoOfVolumeCount = 0  and c.totalNoOfVolumeCount = 0 then 0
+            when m.totalNoOfVolumeCount = 0  then 100
+            end as momPercent,
+            case
+            when y.totalNoOfVolumeCount <> 0 then round(((c.totalNoOfVolumeCount - y.totalNoOfVolumeCount) * 100 / y.totalNoOfVolumeCount), 1)
+            when y.totalNoOfVolumeCount = 0  and c.totalNoOfVolumeCount = 0 then 0
+            when y.totalNoOfVolumeCount = 0  then 100
+            end as yoyPercent             
+            from
+            (SELECT a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.org = b.code
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND a.org = :origin
+            group by a.carrier, a.accNo
+            ) s left join
+            (SELECT a.carrier, a.accNo, COALESCE(SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount
+            from   AdvanceFunctionAudit a
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND a.org= :origin
+            group by a.carrier, a.accNo
+            ) c
+            on s.accNo = c.accNo left join
+            (SELECT a.carrier, a.accNo, COALESCE(SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount
+            from   AdvanceFunctionAudit a
+            where (
+            month(getdate()) <> 1 and month(a.eventDate)=month(getdate())-1  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND a.org= :origin
+            group by a.carrier, a.accNo
+            ) m
+            on s.accNo = m.accNo left join
+            (SELECT a.carrier, a.accNo, COALESCE(SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount
+            from   AdvanceFunctionAudit a
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND a.org= :origin
+            group by a.carrier, a.accNo
+            ) y
+            on s.accNo = m.accNo
+            order by s.totalNoOfVolumeCount desc
+            offset 0 rows
+            fetch next 5 rows only
+            """,nativeQuery = true)
 
     List<Object[]> getTopAgentsVolumeAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                              @Param("carrier") String carrier, @Param("origin") String origin);
@@ -966,37 +1073,55 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Volume for Country
     @Query(value="""
-            select s.carrier,s.accNo,s.totalNoOfVolumeCount, ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent, ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
+            select s.carrier,s.accNo,s.totalNoOfVolumeCount,
+            case
+            when m.totalNoOfVolumeCount <> 0 then round(((c.totalNoOfVolumeCount - m.totalNoOfVolumeCount) * 100 / m.totalNoOfVolumeCount), 1)
+            when m.totalNoOfVolumeCount = 0  and c.totalNoOfVolumeCount = 0 then 0
+            when m.totalNoOfVolumeCount = 0  then 100
+            end as momPercent,
+            case
+            when y.totalNoOfVolumeCount <> 0 then round(((c.totalNoOfVolumeCount - y.totalNoOfVolumeCount) * 100 / y.totalNoOfVolumeCount), 1)
+            when y.totalNoOfVolumeCount = 0  and c.totalNoOfVolumeCount = 0 then 0
+            when y.totalNoOfVolumeCount = 0  then 100
+            end as yoyPercent
             from
-            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
-                where a.eventDate >= :startDate and a.eventDate <= :endDate
-                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                and a.carrier = :carrier
-                and a.ORG = b.code
-                and b.countryCode = :country
-                group by a.carrier, a.accNo
-                ) s left join
-            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
-                where (
-                  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-                  or
-                  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                 )
-                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                and a.carrier = :carrier
-                and a.ORG = b.code
-                and b.countryCode = :country
-                group by a.carrier, a.accNo
-                 ) m on s.accNo = m.accNo left join
-            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
-                where  month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                and a.carrier = :carrier
-                and a.ORG = b.code
-                and b.countryCode = :country
-                group by a.carrier, a.accNo
-                 ) y
-            on s.accNo = y.accNo
+            (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where a.ORG = b.code
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country
+            group by  a.carrier, a.accNo
+            ) s left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where a.ORG = b.code
+            and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country
+            group by  a.carrier, a.accNo
+            ) c
+            on s.accNo = c.accNo left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where (
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.ORG = b.code
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country
+            group by  a.carrier, a.accNo
+            ) m on s.accNo = m.accNo left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where a.ORG = b.code and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country
+            group by a.carrier, a.accNo
+            ) y
+            on  s.accNo = y.accNo
             order by s.totalNoOfVolumeCount desc
             offset 0 rows
             fetch next 5 rows only
@@ -1008,79 +1133,119 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Volume for Continent
     @Query(value="""
-            select s.carrier,s.accNo,s.totalNoOfVolumeCount, ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent, ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
-            from
-            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b
-            where a.ORG = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and b.continent = :continent
-            group by a.carrier, a.accNo
-            ) s left join
-            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b
-            where (
-            month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-            or
-            month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-            )
-            and a.ORG = b.code
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and b.continent = :continent
-            group by a.carrier, a.accNo
-            ) m on s.accNo = m.accNo left join
-            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b
-            where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and b.continent = :continent
-            group by a.carrier, a.accNo
-            ) y
-            on s.accNo = y.accNo
-            order by s.totalNoOfVolumeCount desc
-            offset 0 rows
-            fetch next 5 rows only
-            """,nativeQuery = true)
+          select s.carrier,s.accNo,s.totalNoOfVolumeCount,
+          case
+          when m.totalNoOfVolumeCount <> 0 then round(((c.totalNoOfVolumeCount - m.totalNoOfVolumeCount) * 100 / m.totalNoOfVolumeCount), 1)
+          when m.totalNoOfVolumeCount = 0  and c.totalNoOfVolumeCount = 0 then 0
+          when m.totalNoOfVolumeCount = 0  then 100
+          end as momPercent,
+          case
+          when y.totalNoOfVolumeCount <> 0 then round(((c.totalNoOfVolumeCount - y.totalNoOfVolumeCount) * 100 / y.totalNoOfVolumeCount), 1)
+          when y.totalNoOfVolumeCount = 0  and c.totalNoOfVolumeCount = 0 then 0
+          when y.totalNoOfVolumeCount = 0  then 100
+          end as yoyPercent
+          from
+          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
+          where a.ORG = b.code
+          and a.eventDate >= :startDate and a.eventDate <= :endDate
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and b.continent = :continent
+          group by  a.carrier, a.accNo
+          ) s left join
+          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
+          where a.ORG = b.code
+          and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and b.continent = :continent
+          group by  a.carrier, a.accNo
+          ) c
+          on s.accNo = c.accNo left join
+          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
+          where (
+          month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+          or
+          month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+          )
+          and a.ORG = b.code
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and b.continent = :continent
+          group by  a.carrier, a.accNo
+          ) m on s.accNo = m.accNo left join
+          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a,CityCountryMaster b
+          where a.ORG = b.code and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and b.continent = :continent
+          group by a.carrier, a.accNo
+          ) y
+          on  s.accNo = y.accNo
+          order by s.totalNoOfVolumeCount desc
+          offset 0 rows
+          fetch next 5 rows only
+          """,nativeQuery = true)
 
     List<Object[]> getTopAgentsVolumeContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("continent") String continent);
 
     //Top Agents - Total Number of Volume for Region
     @Query(value="""
-            select s.carrier,s.accNo,s.totalNoOfVolumeCount,ROUND(((s.totalNoOfVolumeCount - m.totalNoOfVolumeCount)*100/ m.totalNoOfVolumeCount),2) as MOMPercent,
-            ROUND(((s.totalNoOfVolumeCount - y.totalNoOfVolumeCount)*100/ y.totalNoOfVolumeCount),2) as YOYPercent
-            from
-            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c where a.ORG = b.code and b.continent = c.continent
-            and a.eventDate >= :startDate and a.eventDate <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and c.regionName = :region
-            group by a.carrier, a.accNo
-            ) s left join
-            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-            where (
-                  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-                  or
-                  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                 )
-            and a.ORG = b.code and b.continent = c.continent
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and c.regionName = :region
-            group by a.carrier, a.accNo
-               ) m on s.accNo = m.accNo left join
-            (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-            where a.ORG = b.code and b.continent = c.continent and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)\s
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.carrier = :carrier
-            and c.regionName = :region
-            group by a.carrier, a.accNo
-               ) y
-            on s.accNo = y.accNo
-            order by s.totalNoOfVolumeCount desc
-            offset 0 rows
-            fetch next 5 rows only
-            """,nativeQuery = true)
+          select s.carrier,s.accNo,s.totalNoOfVolumeCount,
+          case
+          when m.totalNoOfVolumeCount <> 0 then round(((c.totalNoOfVolumeCount - m.totalNoOfVolumeCount) * 100 / m.totalNoOfVolumeCount), 1)
+          when m.totalNoOfVolumeCount = 0  and c.totalNoOfVolumeCount = 0 then 0
+          when m.totalNoOfVolumeCount = 0  then 100
+          end as momPercent,
+          case
+          when y.totalNoOfVolumeCount <> 0 then round(((c.totalNoOfVolumeCount - y.totalNoOfVolumeCount) * 100 / y.totalNoOfVolumeCount), 1)
+          when y.totalNoOfVolumeCount = 0  and c.totalNoOfVolumeCount = 0 then 0
+          when y.totalNoOfVolumeCount = 0  then 100
+          end as yoyPercent
+          from
+          (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+          where a.ORG = b.code and b.continent = c.continent
+          and a.eventDate >= :startDate and a.eventDate <= :endDate
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and c.regionName = :region
+          group by  a.carrier, a.accNo
+          ) s left join
+          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+          where a.ORG = b.code and b.continent = c.continent
+          and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and c.regionName = :region
+          group by  a.carrier, a.accNo
+          ) c
+          on s.accNo = c.accNo left join
+          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+          where a.ORG = b.code and b.continent = c.continent
+          and (month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+          or
+          month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+          )
+          and a.ORG = b.code
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and c.regionName = :region
+          group by  a.carrier, a.accNo
+          ) m on s.accNo = m.accNo left join
+          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+          where a.ORG = b.code and b.continent = c.continent
+          and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+          and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+          and a.carrier = :carrier
+          and c.regionName = :region
+          group by a.carrier, a.accNo
+          ) y
+          on  s.accNo = y.accNo
+          order by s.totalNoOfVolumeCount desc
+          offset 0 rows
+          fetch next 5 rows only
+          """,nativeQuery = true)
 
     List<Object[]> getTopAgentsVolumeRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("region") String region);
@@ -1088,38 +1253,61 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Weight for AirPort
     @Query(value="""
-            select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent,
-            ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
+            select s.carrier,s.accNo,s.totalNoOfVolumeCount,
+            case
+            when m.totalNoOfWeightCount <> 0 then round(((c.totalNoOfWeightCount - m.totalNoOfWeightCount) * 100 / m.totalNoOfWeightCount), 1)
+            when m.totalNoOfWeightCount = 0  and c.totalNoOfWeightCount = 0 then 0
+            when m.totalNoOfWeightCount = 0  then 100
+            end as momPercent,
+            case
+            when y.totalNoOfWeightCount <> 0 then round(((c.totalNoOfWeightCount - y.totalNoOfWeightCount) * 100 / y.totalNoOfWeightCount), 1)
+            when y.totalNoOfWeightCount = 0  and c.totalNoOfWeightCount = 0 then 0
+            when y.totalNoOfWeightCount = 0  then 100
+            end as yoyPercent             
             from
-            (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a
-                  where a.eventDate >= :startDate and a.eventDate <= :endDate
-                  and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                  and a.carrier = :carrier
-                  and a.ORG = :origin
-                  group by a.carrier, a.accNo
-                  ) s left join
-              (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a
-                  where (
-                    month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-                    or
-                    month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                   )
-                  and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                  and a.carrier = :carrier
-                  and a.ORG = :origin
-                  group by a.carrier, a.accNo
-                   ) m on s.accNo = m.accNo left join
-              (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a
-                  where  month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                  and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                  and a.carrier = :carrier
-                  and a.ORG = :origin
-                  group by a.carrier, a.accNo
-                          ) y
-              on s.accNo = y.accNo
-              order by s.totalNoOfWeightCount desc
-              offset 0 rows
-              fetch next 5 rows only
+            (SELECT a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.org = b.code
+            where a.eventDate >= :startDate and a.eventDate <= :endDate
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND a.org = :origin
+            group by a.carrier, a.accNo
+            ) s left join
+            (SELECT a.carrier, a.accNo, COALESCE(SUM(a.stdWeight), 0) as totalNoOfWeightCount
+            from   AdvanceFunctionAudit a
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND a.org= :origin
+            group by a.carrier, a.accNo
+            ) c
+            on s.accNo = c.accNo left join
+            (SELECT a.carrier, a.accNo, COALESCE(SUM(a.stdWeight), 0) as totalNoOfWeightCount
+            from   AdvanceFunctionAudit a
+            where (
+            month(getdate()) <> 1 and month(a.eventDate)=month(getdate())-1  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND a.org= :origin
+            group by a.carrier, a.accNo
+            ) m
+            on s.accNo = m.accNo left join
+            (SELECT a.carrier, a.accNo, COALESCE(SUM(a.stdWeight), 0) as totalNoOfWeightCount
+            from   AdvanceFunctionAudit a
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND a.org= :origin
+            group by a.carrier, a.accNo
+            ) y
+            on s.accNo = m.accNo
+            order by s.totalNoOfWeightCount desc
+            offset 0 rows
+            fetch next 5 rows only
             """,nativeQuery = true)
 
     List<Object[]> getTopAgentsWeightAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -1128,40 +1316,58 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Weight for Country
     @Query(value="""
-            select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent, ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
+            select s.carrier,s.accNo,s.totalNoOfWeightCount,
+            case
+            when m.totalNoOfWeightCount <> 0 then round(((c.totalNoOfWeightCount - m.totalNoOfWeightCount) * 100 / m.totalNoOfWeightCount), 1)
+            when m.totalNoOfWeightCount = 0  and c.totalNoOfWeightCount = 0 then 0
+            when m.totalNoOfWeightCount = 0  then 100
+            end as momPercent,
+            case
+            when y.totalNoOfWeightCount <> 0 then round(((c.totalNoOfWeightCount - y.totalNoOfWeightCount) * 100 / y.totalNoOfWeightCount), 1)
+            when y.totalNoOfWeightCount = 0  and c.totalNoOfWeightCount = 0 then 0
+            when y.totalNoOfWeightCount = 0  then 100
+            end as yoyPercent
             from
-              (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
-                    where a.eventDate >= :startDate and a.eventDate <= :endDate
-                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                    and a.carrier = :carrier
-                    and a.ORG = b.code
-                    and b.countryCode = :country
-                    group by a.carrier, a.accNo
-                    ) s left join
-                  (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
-                    where (
-                      month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-                      or
-                      month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                     )
-                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                    and a.carrier = :carrier
-                    and a.ORG = b.code
-                    and b.countryCode = :country
-                    group by a.carrier, a.accNo
-                       ) m on s.accNo = m.accNo left join
-                (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
-                    where  month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                    and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                    and a.carrier = :carrier
-                    and a.ORG = b.code
-                    and b.countryCode = :country
-                    group by a.carrier, a.accNo
-                       ) y
-                on s.accNo = y.accNo
-                order by s.totalNoOfWeightCount desc
-                offset 0 rows
-                fetch next 5 rows only
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where a.ORG = b.code
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country
+            group by  a.carrier, a.accNo
+            ) s left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where a.ORG = b.code
+            and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country
+            group by  a.carrier, a.accNo
+            ) c
+            on s.accNo = c.accNo left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where (
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.ORG = b.code
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country
+            group by  a.carrier, a.accNo
+            ) m on s.accNo = m.accNo left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where a.ORG = b.code and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.countryCode = :country
+            group by a.carrier, a.accNo
+            ) y
+            on  s.accNo = y.accNo
+            order by s.totalNoOfWeightCount desc
+            offset 0 rows
+            fetch next 5 rows only
             """,nativeQuery = true)
 
     List<Object[]> getTopAgentsWeightCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -1170,38 +1376,58 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Weight for Continent
     @Query(value="""
-          select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent, ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
-          from
-          (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b
-                where a.ORG = b.code and a.eventDate >= :startDate and a.eventDate <= :endDate
-                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                and a.carrier = :carrier
-                and b.continent = :continent
-                group by a.carrier, a.accNo
-                ) s left join
-              (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b
-                where (
-                  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-                  or
-                  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                 )
-                and a.ORG = b.code
-                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                and a.carrier = :carrier
-                and b.continent = :continent
-                group by a.carrier, a.accNo
-                   ) m on s.accNo = m.accNo left join
-            (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b
-                where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)\s
-                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                and a.carrier = :carrier
-                and b.continent = :continent
-                group by a.carrier, a.accNo
-                          ) y
-                on s.accNo = y.accNo
-                order by s.totalNoOfWeightCount desc
-                offset 0 rows
-                fetch next 5 rows only
+            select s.carrier,s.accNo,s.totalNoOfWeightCount,
+            case
+            when m.totalNoOfWeightCount <> 0 then round(((c.totalNoOfWeightCount - m.totalNoOfWeightCount) * 100 / m.totalNoOfWeightCount), 1)
+            when m.totalNoOfWeightCount = 0  and c.totalNoOfWeightCount = 0 then 0
+            when m.totalNoOfWeightCount = 0  then 100
+            end as momPercent,
+            case
+            when y.totalNoOfWeightCount <> 0 then round(((c.totalNoOfWeightCount - y.totalNoOfWeightCount) * 100 / y.totalNoOfWeightCount), 1)
+            when y.totalNoOfWeightCount = 0  and c.totalNoOfWeightCount = 0 then 0
+            when y.totalNoOfWeightCount = 0  then 100
+            end as yoyPercent
+            from
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where a.ORG = b.code
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent
+            group by  a.carrier, a.accNo
+            ) s left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where a.ORG = b.code
+            and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent
+            group by  a.carrier, a.accNo
+            ) c
+            on s.accNo = c.accNo left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where (
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.ORG = b.code
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent
+            group by  a.carrier, a.accNo
+            ) m on s.accNo = m.accNo left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a,CityCountryMaster b
+            where a.ORG = b.code and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and b.continent = :continent
+            group by a.carrier, a.accNo
+            ) y
+            on  s.accNo = y.accNo
+            order by s.totalNoOfWeightCount desc
+            offset 0 rows
+            fetch next 5 rows only
             """,nativeQuery = true)
 
     List<Object[]> getTopAgentsWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
@@ -1209,39 +1435,59 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Weight for Region
     @Query(value="""
-            select s.carrier,s.accNo,s.totalNoOfWeightCount, ROUND(((s.totalNoOfWeightCount - m.totalNoOfWeightCount)*100/ m.totalNoOfWeightCount),2) as MOMPercent,
-            ROUND(((s.totalNoOfWeightCount - y.totalNoOfWeightCount)*100/ y.totalNoOfWeightCount),2) as YOYPercent
+            select s.carrier,s.accNo,s.totalNoOfWeightCount,
+            case
+            when m.totalNoOfWeightCount <> 0 then round(((c.totalNoOfWeightCount - m.totalNoOfWeightCount) * 100 / m.totalNoOfWeightCount), 1)
+            when m.totalNoOfWeightCount = 0  and c.totalNoOfWeightCount = 0 then 0
+            when m.totalNoOfWeightCount = 0  then 100
+            end as momPercent,
+            case
+            when y.totalNoOfWeightCount <> 0 then round(((c.totalNoOfWeightCount - y.totalNoOfWeightCount) * 100 / y.totalNoOfWeightCount), 1)
+            when y.totalNoOfWeightCount = 0  and c.totalNoOfWeightCount = 0 then 0
+            when y.totalNoOfWeightCount = 0  then 100
+            end as yoyPercent
             from
-            (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c where a.ORG = b.code and b.continent = c.continent
-                and a.eventDate >= :startDate and a.eventDate <= :endDate
-                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                and a.carrier = :carrier
-                and c.regionName = :region
-                group by a.carrier, a.accNo
-                ) s left join
-              (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-                where (
-                  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-                  or
-                  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                 )
-                and a.ORG = b.code and b.continent = c.continent
-                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                and a.carrier = :carrier
-                and c.regionName = :region
-                group by a.carrier, a.accNo
-                   ) m on s.accNo = m.accNo left join
-            (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
-                where a.ORG = b.code and b.continent = c.continent and month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                and a.carrier = :carrier
-                and c.regionName = :region
-                group by a.carrier, a.accNo
-                   ) y
-                on s.accNo = y.accNo
-                order by s.totalNoOfWeightCount desc
-                offset 0 rows
-                fetch next 5 rows only
+            (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+            where a.ORG = b.code and b.continent = c.continent
+            and a.eventDate >= :startDate and a.eventDate <= :endDate
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region
+            group by  a.carrier, a.accNo
+            ) s left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+            where a.ORG = b.code and b.continent = c.continent
+            and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region
+            group by  a.carrier, a.accNo
+            ) c
+            on s.accNo = c.accNo left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+            where a.ORG = b.code and b.continent = c.continent
+            and (month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            and a.ORG = b.code
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region
+            group by  a.carrier, a.accNo
+            ) m on s.accNo = m.accNo left join
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+            where a.ORG = b.code and b.continent = c.continent
+            and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            and a.carrier = :carrier
+            and c.regionName = :region
+            group by a.carrier, a.accNo
+            ) y
+            on  s.accNo = y.accNo
+            order by s.totalNoOfWeightCount desc
+            offset 0 rows
+            fetch next 5 rows only
             """,nativeQuery = true)
 
     List<Object[]> getTopAgentsWeightRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
