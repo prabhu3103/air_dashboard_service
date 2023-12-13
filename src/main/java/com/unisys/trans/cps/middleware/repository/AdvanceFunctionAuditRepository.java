@@ -1253,7 +1253,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Weight for AirPort
     @Query(value="""
-            select s.carrier,s.accNo,s.totalNoOfVolumeCount,
+            select s.carrier,s.accNo,s.totalNoOfWeightCount,
             case
             when m.totalNoOfWeightCount <> 0 then round(((c.totalNoOfWeightCount - m.totalNoOfWeightCount) * 100 / m.totalNoOfWeightCount), 1)
             when m.totalNoOfWeightCount = 0  and c.totalNoOfWeightCount = 0 then 0
@@ -2208,41 +2208,58 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Commodity - Total Number of Booking Count for Airport
     @Query(value="""
-             select s.commodity,s.COMMODITY_COUNT, ROUND(((s.COMMODITY_COUNT - m.COMMODITY_COUNT)*100/ m.COMMODITY_COUNT),2) as MOMPercent,
-           ROUND(((s.COMMODITY_COUNT - y.COMMODITY_COUNT)*100/ y.COMMODITY_COUNT),2) as YOYPercent
+           select s.commodity,s.COMMODITY_COUNT,
+           case
+           when m.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - m.COMMODITY_COUNT) * 100 / m.COMMODITY_COUNT), 1)
+           when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
+           when m.COMMODITY_COUNT = 0  then 100
+           end as momPercent,
+           case
+           when y.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - y.COMMODITY_COUNT) * 100 / y.COMMODITY_COUNT), 1)
+           when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
+           when y.COMMODITY_COUNT = 0  then 100
+           end as yoyPercent
            from
-                       (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-                       from AdvanceFunctionAudit a
-                       where a.eventDate >= :startDate and a.eventDate <= :endDate
-                       and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-                       and a.carrier = :carrier
-                       and a.org = :originAirport
-                       group by a.commodity
-                        ) s left join
-                       (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-                                   from   AdvanceFunctionAudit a
-                                   where (
-                                  month(:startDate) <> 1 and month(a.eventDate)=(month(:startDate)-1)  and  year(a.eventDate)=year(:startDate)
-                                  or
-                                  month(:startDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:startDate)-1)
-                                )
-                                and a.carrier = :carrier
-                                and a.org = :originAirport
-                                group by a.commodity
-                                   ) m
-                                on s.commodity = m.commodity left join
-                    (SELECT a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
-                                   from   AdvanceFunctionAudit a
-                                   where month(a.eventDate)= month(:startDate) and year(a.eventDate)=(year(:startDate)-1)
-                                   and a.carrier = :carrier
-                                and a.org = :originAirport
-                                group by a.commodity
-                                   ) y
-                                on s.commodity = y.commodity
-                                order by s.COMMODITY_COUNT desc
-                                offset 0 rows
-                                   fetch next 6 rows only
-            """,nativeQuery = true)
+           (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
+           from AdvanceFunctionAudit a
+           where a.eventDate >= :startDate and a.eventDate <= :endDate
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+           and a.carrier = :carrier
+           and a.org = :originAirport
+           group by a.commodity
+           ) s left join
+           (select a.commodity, COALESCE(COUNT(a.commodity), 0) AS COMMODITY_COUNT
+           from AdvanceFunctionAudit a
+           where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+           and a.carrier = :carrier
+           and a.org = :originAirport
+           group by a.commodity
+           ) c
+           on s.commodity = c.commodity left join
+           (SELECT a.commodity, COALESCE(COUNT(a.commodity), 0) AS COMMODITY_COUNT
+           from   AdvanceFunctionAudit a
+           where (
+           month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+           or
+           month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1))
+           and a.carrier = :carrier
+           and a.org = :originAirport
+           group by a.commodity
+           ) m
+           on s.commodity = m.commodity left join
+           (SELECT a.commodity, COALESCE(COUNT(a.commodity), 0) AS COMMODITY_COUNT
+           from   AdvanceFunctionAudit a
+           where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+           and a.carrier = :carrier
+           and a.org = :originAirport
+           group by a.commodity
+           ) y
+           on s.commodity = y.commodity
+           order by s.COMMODITY_COUNT desc
+           offset 0 rows
+           fetch next 6 rows only
+           """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                  @Param("carrier") String carrier, @Param("originAirport") String originAirport);
 
