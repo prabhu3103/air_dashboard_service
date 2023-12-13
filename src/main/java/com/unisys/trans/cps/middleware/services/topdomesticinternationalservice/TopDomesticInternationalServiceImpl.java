@@ -44,77 +44,77 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
         List<Object[]> topObjects;
 
         try {
-        if (airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_BOOKING)) {
+            if (airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_BOOKING)) {
 
-            switch (areaBy) {
-                case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects);
+                switch (areaBy) {
+                    case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects);
+                    }
+                    case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects);
+                    }
+                    case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects);
+                    }
+                    case AirlineDashboardConstants.AREA_BY_REGION -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects);
+                    }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
-                case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects);
-                }
-                case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects);
-                }
-                case AirlineDashboardConstants.AREA_BY_REGION -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects);
-                }
-                default ->
-                        throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
             }
-        }
 
-        else if(airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_VOLUME)) {
-            AirlineHostCountryMaster masterRecord = masterService.findByCarrierCode(airlineDashboardRequest.getCarrier());
-            switch (areaBy) {
-                case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME, masterRecord.getStdVolumeUnit());
+            else if(airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_VOLUME)) {
+                AirlineHostCountryMaster masterRecord = masterService.findByCarrierCode(airlineDashboardRequest.getCarrier());
+                switch (areaBy) {
+                    case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME, masterRecord.getStdVolumeUnit());
+                    }
+                    case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME, masterRecord.getStdVolumeUnit());
+                    }
+                    case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME, masterRecord.getStdVolumeUnit());
+                    }
+                    case AirlineDashboardConstants.AREA_BY_REGION -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION, masterRecord.getStdVolumeUnit());
+                    }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
-                case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME, masterRecord.getStdVolumeUnit());
-                }
-                case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME, masterRecord.getStdVolumeUnit());
-                }
-                case AirlineDashboardConstants.AREA_BY_REGION -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION, masterRecord.getStdVolumeUnit());
-                }
-                default ->
-                        throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
             }
-        }
 
-        else if(airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_WEIGHT)) {
-            AirlineHostCountryMaster masterRecord = masterService.findByCarrierCode(airlineDashboardRequest.getCarrier());
-            switch (areaBy) {
-                case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT, masterRecord.getStdWeightUnit());
+            else if(airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_WEIGHT)) {
+                AirlineHostCountryMaster masterRecord = masterService.findByCarrierCode(airlineDashboardRequest.getCarrier());
+                switch (areaBy) {
+                    case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT, masterRecord.getStdWeightUnit());
+                    }
+                    case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT, masterRecord.getStdWeightUnit());
+                    }
+                    case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT, masterRecord.getStdWeightUnit());
+                    }
+                    case AirlineDashboardConstants.AREA_BY_REGION -> {
+                        topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
+                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION, masterRecord.getStdWeightUnit());
+                    }
+                    default ->
+                            throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
-                case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT, masterRecord.getStdWeightUnit());
-                }
-                case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT, masterRecord.getStdWeightUnit());
-                }
-                case AirlineDashboardConstants.AREA_BY_REGION -> {
-                    topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                    buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.AREA_BY_REGION, masterRecord.getStdWeightUnit());
-                }
-                default ->
-                        throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
             }
-        }
         }catch (Exception exception){
             log.error(exception.getMessage());
             throw new CpsException(exception.getMessage());
@@ -139,18 +139,8 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
             }
             topDomesticInternationalResponseDTO.setValueType(valueType);
             topDomesticInternationalResponseDTO.setUnit(stdUnit);
-            if(array[3] != null){
-                Number mom = (Number) array[3];
-                topDomesticInternationalResponseDTO.setMomData(mom.floatValue());
-            }else{
-                topDomesticInternationalResponseDTO.setMomData(0.0f);
-            }
-            if(array[4] != null){
-                Number yoy = (Number) array[4];
-                topDomesticInternationalResponseDTO.setYoyData(yoy.floatValue());
-            }else{
-                topDomesticInternationalResponseDTO.setYoyData(0.0f);
-            }
+            topDomesticInternationalResponseDTO.setMomData(1.1f);
+            topDomesticInternationalResponseDTO.setYoyData(-1.1f);
             topDomesticInternationalResponseDTOS.add(topDomesticInternationalResponseDTO);
         }
         response.setTopDomesticInternationalResponseDTOList(topDomesticInternationalResponseDTOS);
@@ -172,18 +162,8 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                 topDomesticInternationalResponseDTO.setValueType(AirlineDashboardConstants.INFO_TYPE_BOOKING);
                 topDomesticInternationalResponseDTO.setUnit(AirlineDashboardConstants.EMPTY_STRING);
                 totalValue+=value.longValue();
-                if(array[2] != null){
-                    Number mom = (Number) array[2];
-                    topDomesticInternationalResponseDTO.setMomData(mom.floatValue());
-                }else{
-                    topDomesticInternationalResponseDTO.setMomData(0.0f);
-                }
-                if(array[3] != null){
-                    Number yoy = (Number) array[3];
-                    topDomesticInternationalResponseDTO.setYoyData(yoy.floatValue());
-                }else{
-                    topDomesticInternationalResponseDTO.setYoyData(0.0f);
-                }
+                topDomesticInternationalResponseDTO.setMomData(1.1f);
+                topDomesticInternationalResponseDTO.setYoyData(-1.1f);
                 topDomesticInternationalResponseDTOS.add(topDomesticInternationalResponseDTO);
 
             }
