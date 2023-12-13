@@ -1204,7 +1204,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           when y.totalNoOfVolumeCount = 0  then 100
           end as yoyPercent
           from
-          (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+          (select a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
           where a.ORG = b.code and b.continent = c.continent
           and a.eventDate >= :startDate and a.eventDate <= :endDate
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -1212,7 +1212,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           and c.regionName = :region
           group by  a.carrier, a.accNo
           ) s left join
-          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
           where a.ORG = b.code and b.continent = c.continent
           and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -1221,7 +1221,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           group by  a.carrier, a.accNo
           ) c
           on s.accNo = c.accNo left join
-          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
           where a.ORG = b.code and b.continent = c.continent
           and (month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
           or
@@ -1233,7 +1233,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           and c.regionName = :region
           group by  a.carrier, a.accNo
           ) m on s.accNo = m.accNo left join
-          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+          (select a.carrier, a.accNo, COALESCE( SUM(a.STDVOLUME), 0) as totalNoOfVolumeCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
           where a.ORG = b.code and b.continent = c.continent
           and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -1447,7 +1447,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when y.totalNoOfWeightCount = 0  then 100
             end as yoyPercent
             from
-            (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+            (select a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
             where a.ORG = b.code and b.continent = c.continent
             and a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -1455,7 +1455,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and c.regionName = :region
             group by  a.carrier, a.accNo
             ) s left join
-            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
             where a.ORG = b.code and b.continent = c.continent
             and month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
@@ -1464,7 +1464,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             group by  a.carrier, a.accNo
             ) c
             on s.accNo = c.accNo left join
-            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
             where a.ORG = b.code and b.continent = c.continent
             and (month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
             or
@@ -1476,7 +1476,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and c.regionName = :region
             group by  a.carrier, a.accNo
             ) m on s.accNo = m.accNo left join
-            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster cs
+            (select a.carrier, a.accNo, COALESCE( SUM(a.stdWeight), 0) as totalNoOfWeightCount from AdvanceFunctionAudit a, CityCountryMaster b, RegionMaster c
             where a.ORG = b.code and b.continent = c.continent
             and month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
             and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
