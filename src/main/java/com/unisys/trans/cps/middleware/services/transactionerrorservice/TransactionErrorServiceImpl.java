@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -169,45 +168,47 @@ public class TransactionErrorServiceImpl implements TransactionErrorService {
 	 * @param transactionFunctionAuditList
 	 * @return
 	 */
-	private List<TransactionErrorCount> getTransactionErrorCountForOtherPortalFunctions(List<TransactionFunctionAudit> transactionFunctionAuditList) {
-		Map<String,TransactionErrorCount> transanctionErrorCountMap=new HashMap<>();
-		return transactionFunctionAuditList.parallelStream()
-				.filter(audit -> ("E".equals(audit.getTxnStatus()) && "S".equals(audit.getStatus()))
-						|| (" ".equals(audit.getTxnStatus()) && "F".equals(audit.getStatus())))
-				.collect(Collectors.groupingBy(TransactionFunctionAudit::getPortalFunction, Collectors.counting()))
-				.entrySet().stream().map(entry -> {
-					
-					TransactionErrorCount transactionErrorCount = new TransactionErrorCount();
-	                String portalFunctionKey = getPortalFunctionKey(entry.getKey());
-
-	                if (transanctionErrorCountMap.containsKey(portalFunctionKey)) {
-	                    TransactionErrorCount getTransactionErrorCount = transanctionErrorCountMap.get(portalFunctionKey);
-	                    getTransactionErrorCount.setErrorCount(getTransactionErrorCount.getErrorCount() + entry.getValue().intValue());
-
-	                    transanctionErrorCountMap.put(portalFunctionKey, getTransactionErrorCount);
-
-	                } else {
-	                    transactionErrorCount.setPortalFunction(portalFunctionKey);
-	                    transactionErrorCount.setErrorCount(entry.getValue().intValue());
-	                 transanctionErrorCountMap.put(portalFunctionKey, transactionErrorCount);
-	                }
-
-	                return transactionErrorCount;
-	            }).distinct()
-	            .toList();
-	}
-
-	private String getPortalFunctionKey(String portalFunction) {
+	 public List<TransactionErrorCount> getTransactionErrorCountForOtherPortalFunctions(List<TransactionFunctionAudit> transactionFunctionAuditList) {
+	        return transactionFunctionAuditList.parallelStream()
+	                .filter(audit -> ("E".equals(audit.getTxnStatus()) && "S".equals(audit.getStatus()))
+	                        || (" ".equals(audit.getTxnStatus()) && "F".equals(audit.getStatus())))
+	                .collect(Collectors.groupingBy(TransactionFunctionAudit::getPortalFunction, Collectors.counting()))
+	                .entrySet().stream()
+	                .collect(Collectors.toMap(
+	                        entry -> getPortalFunctionKey(entry.getKey()),
+	                        entry -> {
+	                            TransactionErrorCount transactionErrorCount = new TransactionErrorCount();
+	                            transactionErrorCount.setPortalFunction(getPortalFunctionKey(entry.getKey()));
+	                            transactionErrorCount.setErrorCount(entry.getValue().intValue());
+	                            return transactionErrorCount;
+	                        },
+	                        (existing, replacement) -> {
+	                            existing.setErrorCount(existing.getErrorCount() + replacement.getErrorCount());
+	                            return existing;
+	                        },
+	                        HashMap::new
+	                ))
+	                .values()
+	                .stream()
+	                .toList();
+	    }
+	 /**
+	  * This method is used to declare portal function names for Booking Transactions
+	  * @param portalFunction
+	  * @return
+	  */
+	 private String getPortalFunctionKey(String portalFunction) {
+		 
 	    List<String> bookingPortalFunctions = Arrays.asList(
-	            AirlineDashboardConstants.BKG,
-	            AirlineDashboardConstants.TMPLTBKG,
-	            AirlineDashboardConstants.MULTIBKG,
-	            AirlineDashboardConstants.SSHT,
-	            AirlineDashboardConstants.SSHTQ,
-	            AirlineDashboardConstants.USSHT,
-	            AirlineDashboardConstants.USSHTQ
-	    );
+	                AirlineDashboardConstants.BKG,
+	                AirlineDashboardConstants.TMPLTBKG,
+	                AirlineDashboardConstants.MULTIBKG,
+	                AirlineDashboardConstants.SSHT,
+	                AirlineDashboardConstants.SSHTQ,
+	                AirlineDashboardConstants.USSHT,
+	                AirlineDashboardConstants.USSHTQ
+	        );
 
-	    return bookingPortalFunctions.contains(portalFunction) ? AirlineDashboardConstants.BKG : portalFunction;
-	}
+	        return bookingPortalFunctions.contains(portalFunction) ? AirlineDashboardConstants.BKG : portalFunction;
+	    }
 	}
