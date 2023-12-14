@@ -2,7 +2,6 @@ package com.unisys.trans.cps.middleware.services.branchrequestsservice;
 
 import com.unisys.trans.cps.middleware.models.response.BranchRequestDTO;
 import com.unisys.trans.cps.middleware.repository.BranchRequestsRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,8 +9,10 @@ import java.util.List;
 @Service
 public class BranchRequestsServiceImpl implements BranchRequestsService {
 
-    @Autowired
-    BranchRequestsRepository branchRequestsRepo;
+    private final BranchRequestsRepository branchRequestsRepo;
+    public BranchRequestsServiceImpl(BranchRequestsRepository branchRequestsRepo){
+        this.branchRequestsRepo = branchRequestsRepo;
+    }
 
     /*Get count of Carriers in Branch Account
     fetch reject

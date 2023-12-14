@@ -3,7 +3,6 @@ package com.unisys.trans.cps.middleware.services.customerinquiriesservice;
 import com.unisys.trans.cps.middleware.models.entity.ContactQuery;
 import com.unisys.trans.cps.middleware.models.request.InquiryRequest;
 import com.unisys.trans.cps.middleware.repository.CustomerInquiryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,8 +13,10 @@ import java.util.List;
 @Service
 public class CustomerInquiriesServiceImpl implements CustomerInquiriesService {
 
-    @Autowired
-    CustomerInquiryRepository contactRepo;
+    private final CustomerInquiryRepository contactRepo;
+    public CustomerInquiriesServiceImpl(CustomerInquiryRepository contactRepo){
+        this.contactRepo = contactRepo;
+    }
 
 
     /*Get carrier Count from contact query table

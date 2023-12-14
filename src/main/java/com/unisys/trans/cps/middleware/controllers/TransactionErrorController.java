@@ -31,8 +31,11 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/v1/airline-dashboard")
 public class TransactionErrorController {
 
-	@Autowired
-	private TransactionErrorService transactionErrorService;
+	private final TransactionErrorService transactionErrorService;
+
+	public TransactionErrorController(TransactionErrorService transactionErrorService){
+		this.transactionErrorService = transactionErrorService;
+	}
 
 	/**
 	 * This controller class method is used to fetch Transaction errors from database for last 30 days

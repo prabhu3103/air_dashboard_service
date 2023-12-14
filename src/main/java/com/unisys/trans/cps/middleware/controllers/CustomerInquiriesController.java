@@ -65,7 +65,6 @@ public class CustomerInquiriesController {
     }
 
 
-    @CrossOrigin(exposedHeaders = "Content-Disposition")
     @PostMapping("/customer-inquiry-export")
     org.springframework.http.ResponseEntity<Resource> customerInquiriesExportToExcel(@AuthenticationPrincipal Jwt principal, @RequestBody InquiryRequest request) throws IOException {
 
