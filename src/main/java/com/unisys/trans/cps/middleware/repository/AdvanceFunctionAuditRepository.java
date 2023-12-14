@@ -5079,6 +5079,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     List<Object[]> getTopProductsVolumeContinentForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                       @Param("carrier") String carrier, @Param("continent") String continent);
 
+    //For AA carrier
     @Query(value = """
             select s.productCode,s.description,s.totalVolume,
             case
