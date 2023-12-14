@@ -41,9 +41,9 @@ class BranchRequestServiceImplTest {
         BranchRequestDTO response = serviceImpl.getBranchRequests(anyString());
 
          Assertions.assertNotNull(response);
-         Assertions.assertEquals(response.getPending(), 1);
-         Assertions.assertEquals(response.getApproved(), 1);
-         Assertions.assertEquals(response.getRejected(), 1);
+         Assertions.assertEquals( 1,response.getPending());
+         Assertions.assertEquals( 1,response.getApproved());
+         Assertions.assertEquals( 1,response.getRejected());
 
     }
 }

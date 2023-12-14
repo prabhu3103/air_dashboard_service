@@ -45,7 +45,7 @@ class CustomerInquiriesServiceImplTest {
         when(repository.getCount(anyString(), any(LocalDateTime.class))).thenReturn(1);
         int response = serviceImpl.getInquiryCount(res);
 
-        Assertions.assertEquals(response, 1);
+        Assertions.assertEquals( 1,response);
 
     }
 
@@ -73,8 +73,8 @@ class CustomerInquiriesServiceImplTest {
         List<ContactQuery> response = serviceImpl.getAllContactQueries(res);
 
          assertNotNull(response);
-        Assertions.assertEquals(response.get(0).getCarrier(), "AC");
-        Assertions.assertEquals(response.get(0).getName(), "testName");
+        Assertions.assertEquals("AC",response.get(0).getCarrier());
+        Assertions.assertEquals( "testName",response.get(0).getName());
     }
 
 
