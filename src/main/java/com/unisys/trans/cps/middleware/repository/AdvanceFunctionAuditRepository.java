@@ -1745,20 +1745,20 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when py.pyweight = 0  then 100
             end as yoyPercent
             from
-            (select a.eventDate as day, sum(a.stdWeight) as weight
+            (select a.eventDate as day, SUM(COALESCE(a.stdWeight, 0)) as weight
             from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org = :originAirport
             group by a.eventDate) s,
-            (select sum(a.stdWeight) as monthweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as monthweight
             from AdvanceFunctionAudit a
             where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org = :originAirport) m,
-            (select sum(a.stdWeight) as pmweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as pmweight
             from AdvanceFunctionAudit a
             where
             (
@@ -1769,13 +1769,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org = :originAirport) pm,
-            (select sum(a.stdWeight) as yearweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as yearweight
             from AdvanceFunctionAudit a
             where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org = :originAirport) y,
-            (select sum(a.stdWeight) as pyweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as pyweight
             from AdvanceFunctionAudit a
             where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
@@ -1800,7 +1800,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when py.pyweight = 0  then 100
             end as yoyPercent
             from
-            (select a.eventDate as day, sum(a.stdWeight) as weight
+            (select a.eventDate as day, SUM(COALESCE(a.stdWeight, 0)) as weight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
@@ -1808,14 +1808,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.carrier = :carrier
             and b.countryCode = :country
             group by a.eventDate) s,
-            (select sum(a.stdWeight) as monthweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as monthweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country) m,
-            (select sum(a.stdWeight) as pmweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as pmweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where
@@ -1827,14 +1827,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country) pm,
-            (select sum(a.stdWeight) as yearweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as yearweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country) y,
-            (select sum(a.stdWeight) as pyweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as pyweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
@@ -1859,7 +1859,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when py.pyweight = 0  then 100
             end as yoyPercent
             from
-            (select a.eventDate as day, sum(a.stdWeight) as weight
+            (select a.eventDate as day, SUM(COALESCE(a.stdWeight, 0)) as weight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
@@ -1867,14 +1867,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.carrier = :carrier
             and b.continent = :continent
             group by a.eventDate) s,
-            (select sum(a.stdWeight) as monthweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as monthweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent = :continent) m,
-            (select sum(a.stdWeight) as pmweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as pmweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where
@@ -1886,14 +1886,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent = :continent) pm,
-            (select sum(a.stdWeight) as yearweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as yearweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent = :continent) y,
-            (select sum(a.stdWeight) as pyweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as pyweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
@@ -1918,7 +1918,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when py.pyweight = 0  then 100
             end as yoyPercent
             from
-            (select a.eventDate as day, sum(a.stdWeight) as weight
+            (select a.eventDate as day, SUM(COALESCE(a.stdWeight, 0)) as weight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -1927,7 +1927,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.carrier = :carrier
             and c.regionName = :region
             group by a.eventDate) s,
-            (select sum(a.stdWeight) as monthweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as monthweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -1935,7 +1935,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region) m,
-            (select sum(a.stdWeight) as pmweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as pmweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -1948,7 +1948,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region) pm,
-            (select sum(a.stdWeight) as yearweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as yearweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -1956,7 +1956,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region) y,
-            (select sum(a.stdWeight) as pyweight
+            (select SUM(COALESCE(a.stdWeight, 0)) as pyweight
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -1983,20 +1983,20 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when py.pyvolume = 0  then 100
             end as yoyPercent
             from
-            (select a.eventDate as day, sum(a.stdVolume) as volume
+            (select a.eventDate as day, SUM(COALESCE(a.stdVolume, 0)) as volume
             from AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org = :originAirport
             group by a.eventDate) s,
-            (select sum(a.stdVolume) as monthvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as monthvolume
             from AdvanceFunctionAudit a
             where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org = :originAirport) m,
-            (select sum(a.stdVolume) as pmvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as pmvolume
             from AdvanceFunctionAudit a
             where
             (
@@ -2007,13 +2007,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org = :originAirport) pm,
-            (select sum(a.stdVolume) as yearvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as yearvolume
             from AdvanceFunctionAudit a
             where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org = :originAirport) y,
-            (select sum(a.stdVolume) as pyvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as pyvolume
             from AdvanceFunctionAudit a
             where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
@@ -2037,7 +2037,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when py.pyvolume = 0  then 100
             end as yoyPercent
             from
-            (select a.eventDate as day, sum(a.stdVolume) as volume
+            (select a.eventDate as day, SUM(COALESCE(a.stdVolume, 0)) as volume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
@@ -2045,14 +2045,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.carrier = :carrier
             and b.countryCode = :country
             group by a.eventDate) s,
-            (select sum(a.stdVolume) as monthvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as monthvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country) m,
-            (select sum(a.stdVolume) as pmvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as pmvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where
@@ -2064,14 +2064,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country) pm,
-            (select sum(a.stdVolume) as yearvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as yearvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country) y,
-            (select sum(a.stdVolume) as pyvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as pyvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
@@ -2096,7 +2096,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when py.pyvolume = 0  then 100
             end as yoyPercent
             from
-            (select a.eventDate as day, sum(a.stdVolume) as volume
+            (select a.eventDate as day, SUM(COALESCE(a.stdVolume, 0)) as volume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where a.eventDate >= :startDate and a.eventDate <= :endDate
@@ -2104,14 +2104,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.carrier = :carrier
             and b.continent = :continent
             group by a.eventDate) s,
-            (select sum(a.stdVolume) as monthvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as monthvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent = :continent) m,
-            (select sum(a.stdVolume) as pmvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as pmvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where
@@ -2123,14 +2123,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent = :continent) pm,
-            (select sum(a.stdVolume) as yearvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as yearvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent = :continent) y,
-            (select sum(a.stdVolume) as pyvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as pyvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
@@ -2155,7 +2155,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when py.pyvolume = 0  then 100
             end as yoyPercent
             from
-            (select a.eventDate as day, sum(a.stdVolume) as volume
+            (select a.eventDate as day, SUM(COALESCE(a.stdVolume, 0)) as volume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -2164,7 +2164,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.carrier = :carrier
             and c.regionName = :region
             group by a.eventDate) s,
-            (select sum(a.stdVolume) as monthvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as monthvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -2172,7 +2172,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region) m,
-            (select sum(a.stdVolume) as pmvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as pmvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -2185,7 +2185,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region) pm,
-            (select sum(a.stdVolume) as yearvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as yearvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -2193,7 +2193,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region) y,
-            (select sum(a.stdVolume) as pyvolume
+            (select SUM(COALESCE(a.stdVolume, 0)) as pyvolume
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
