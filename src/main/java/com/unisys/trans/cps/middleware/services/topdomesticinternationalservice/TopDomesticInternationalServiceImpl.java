@@ -74,52 +74,35 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                 switch (areaBy) {
                     case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingAirport(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingAirport(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingAirport(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, moM , yoY);
                     }
                     case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingCountry(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingCountry(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingCountry(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, moM , yoY);
                     }
                     case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingContinent(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingContinent(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingContinent(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, moM , yoY);
                     }
                     case AirlineDashboardConstants.AREA_BY_REGION -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingRegion(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingRegion(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalBookingRegion(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, moM , yoY);
                     }
                     default ->
                             throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
 
+                List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
+                List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
+                buildTopDomesticInternationalResponseDTO(response, topObjects, moM , yoY);
             }
 
             else if(airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_VOLUME)) {
@@ -127,51 +110,35 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                 switch (areaBy) {
                     case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeAirport(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeAirport(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeAirport(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME, masterRecord.getStdVolumeUnit(), moM, yoY);
                     }
                     case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeCountry(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeCountry(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeCountry(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME, masterRecord.getStdVolumeUnit(), moM, yoY);
                     }
                     case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeContinent(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeContinent(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeContinent(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME, masterRecord.getStdVolumeUnit(), moM, yoY);
                     }
                     case AirlineDashboardConstants.AREA_BY_REGION -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeRegion(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeRegion(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalVolumeRegion(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME, masterRecord.getStdVolumeUnit(), moM, yoY);
                     }
                     default ->
                             throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
+                List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
+                List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
+                buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_VOLUME, masterRecord.getStdVolumeUnit(), moM, yoY);
+
             }
 
             else if(airlineDashboardRequest.getTypeOfInfo().equalsIgnoreCase(AirlineDashboardConstants.INFO_TYPE_WEIGHT)) {
@@ -179,51 +146,36 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                 switch (areaBy) {
                     case AirlineDashboardConstants.AREA_BY_AIRPORT -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightAirport(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightAirport(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightAirport(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightAirport(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT, masterRecord.getStdWeightUnit(), moM, yoY);
                     }
                     case AirlineDashboardConstants.AREA_BY_COUNTRY -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightCountry(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightCountry(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightCountry(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightCountry(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT, masterRecord.getStdWeightUnit(), moM, yoY);
                     }
                     case AirlineDashboardConstants.AREA_BY_CONTINENT -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightContinent(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightContinent(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightContinent(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightContinent(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT, masterRecord.getStdWeightUnit(), moM, yoY);
                     }
                     case AirlineDashboardConstants.AREA_BY_REGION -> {
                         topObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightRegion(startDate, endDate, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-
                         currentMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightRegion(startDateOfCurrentMonths, endDateOfCurrentMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightRegion(startDateOfPreviousMonths, endDateOfPreviousMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
                         previousYearSameMonthObjects = advanceFunctionAuditRepository.getTopDomesticInternationalWeightRegion(startDateOfPreviousYearMonths, endDateOfPreviousYearMonths, airlineDashboardRequest.getCarrier(), airlineDashboardRequest.getFilterValue());
-                        List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                        List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
-
-                        buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT, masterRecord.getStdWeightUnit(), moM, yoY);
                     }
                     default ->
                             throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
+
+                List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
+                List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
+                buildTopDomesticInternationalResponseDTO(response, topObjects, AirlineDashboardConstants.INFO_TYPE_WEIGHT, masterRecord.getStdWeightUnit(), moM, yoY);
+
             }
         }catch (Exception exception){
             log.error(exception.getMessage());
