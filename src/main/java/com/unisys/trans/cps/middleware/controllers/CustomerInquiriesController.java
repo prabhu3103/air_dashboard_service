@@ -74,7 +74,7 @@ public class CustomerInquiriesController {
 
         //Service call
         List<ContactQuery> listUsers = customerInquiriesService.getAllContactQueries(request);
-
+      //  log.info("Export_listUsers {} ", listUsers);
         HttpHeaders header = new HttpHeaders();
         header.add(HttpHeaders.CONTENT_DISPOSITION, fileName);
 

@@ -5,16 +5,21 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 
 @Getter
 @Setter
 public class ContactQueryKey implements Serializable {
 
-    @Column(name = "phone")
-    private String phone;
+    @Column(name = "USER_ID")
+    private String userId;
 
-    @Column(name = "NAME")
-    private String name;
-    
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "CREATIONDATE")
+    private LocalDateTime date;
+
+
 }

@@ -13,10 +13,20 @@ import java.time.LocalDateTime;
 public class ContactQuery  implements Serializable {
 
     @Id
+    @Column(name = "EMAIL")
+    private String email;
+
+    @Id
+    @Column(name = "CREATIONDATE")
+    private LocalDateTime date;
+
+    @Id
+    @Column(name = "USER_ID")
+    private String userId;
+
     @Column(name = "NAME")
     private String name;
 
-    @Id
     @Column(name = "phone")
     private String phone;
 
@@ -25,12 +35,6 @@ public class ContactQuery  implements Serializable {
 
     @Column(name = "PROBLEM_DESC")
     private String problemDesc;
-
-    @Column(name = "EMAIL")
-    private String email;
-
-    @Column(name = "CREATIONDATE")
-    private LocalDateTime date;
 
     @Column(name = "TOCARRIER")
     private String carrier;
