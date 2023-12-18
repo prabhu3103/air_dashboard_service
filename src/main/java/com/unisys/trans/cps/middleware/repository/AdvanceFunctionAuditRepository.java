@@ -16,14 +16,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.TOPLANE,
             case
+            when c.TOPLANE is null and m.TOPLANE <> 0 then -100
             when m.TOPLANE <> 0 then round(((c.TOPLANE - m.TOPLANE) * 100 / m.TOPLANE), 1)
-            when m.TOPLANE = 0  and c.TOPLANE = 0 then 0
-            when m.TOPLANE = 0  then 100
+            when m.TOPLANE = 0  and c.TOPLANE = 0 then 0 when m.TOPLANE is null  and c.TOPLANE is null then 0
+            when m.TOPLANE = 0 or m.TOPLANE is null then 100
             end as momPercent,
             case
+            when c.TOPLANE is null and y.TOPLANE <> 0 then -100
             when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
-            when y.TOPLANE = 0  and c.TOPLANE = 0 then 0
-            when y.TOPLANE = 0  then 100
+            when y.TOPLANE = 0  and c.TOPLANE = 0 then 0 when y.TOPLANE is null  and c.TOPLANE is null then 0
+            when y.TOPLANE = 0 or y.TOPLANE is null then 100
             end as yoyPercent              
             from
             (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
@@ -77,14 +79,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.TOPLANE,
             case
+            when c.TOPLANE is null and m.TOPLANE <> 0 then -100
             when m.TOPLANE <> 0 then round(((c.TOPLANE - m.TOPLANE) * 100 / m.TOPLANE), 1)
-            when m.TOPLANE = 0  and c.TOPLANE = 0 then 0
-            when m.TOPLANE = 0  then 100
+            when m.TOPLANE = 0  and c.TOPLANE = 0 then 0 when m.TOPLANE is null  and c.TOPLANE is null then 0
+            when m.TOPLANE = 0 or m.TOPLANE is null then 100
             end as momPercent,
             case
+            when c.TOPLANE is null and y.TOPLANE <> 0 then -100
             when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
-            when y.TOPLANE = 0  and c.TOPLANE = 0 then 0
-            when y.TOPLANE = 0  then 100
+            when y.TOPLANE = 0  and c.TOPLANE = 0 then 0 when y.TOPLANE is null  and c.TOPLANE is null then 0
+            when y.TOPLANE = 0 or y.TOPLANE is null then 100
             end as yoyPercent
             from
             (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
@@ -110,9 +114,9 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.org = b.code
             where (
-            month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
+            month(getdate()) <> 1 and month(a.eventDate)=month(getdate())-1  and  year(a.eventDate)=year(getdate())
             or
-            month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
             )
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
@@ -123,7 +127,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.org = b.code
-            where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
             AND b.countryCode = :country
@@ -139,132 +143,136 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Booking Count for Continent
     @Query(value="""
-           select s.ORG,s.DEST,s.TOPLANE,
-           case
-           when m.TOPLANE <> 0 then round(((c.TOPLANE - m.TOPLANE) * 100 / m.TOPLANE), 1)
-           when m.TOPLANE = 0  and c.TOPLANE = 0 then 0
-           when m.TOPLANE = 0  then 100
-           end as momPercent,
-           case
-           when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
-           when y.TOPLANE = 0  and c.TOPLANE = 0 then 0
-           when y.TOPLANE = 0  then 100
-           end as yoyPercent
-           from
-           (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
-           FROM AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           WHERE a.eventDate >= :startDate and a.eventDate <= :endDate
-           AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.carrier = :carrier
-           AND b.continent =:continent
-           GROUP BY a.ORG, a.DEST
-           ) s left join
-           (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
-           from   AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.org = b.code
-           where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
-           AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.carrier = :carrier
-           AND b.continent =:continent
-           group by a.org, a.DEST
-           ) c
-           on s.ORG = c.ORG and s.DEST = c.DEST left join
-           (SELECT a.ORG, a.DEST,COALESCE( COUNT(*), 0) AS TOPLANE
-           from   AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           where (
-           month(:endDate) <> 1 and month(a.eventDate)=(month(:endDate)-1)  and  year(a.eventDate)=year(:endDate)
-           or
-           month(:endDate) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(:endDate)-1)
-           )
-           AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.carrier = :carrier
-           AND b.continent =:continent
-           group by a.ORG, a.DEST
-           ) m
-           on s.ORG = m.ORG and s.DEST = m.DEST  left join
-           (SELECT a.ORG, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
-           from   AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           where month(a.eventDate)= month(:endDate) and year(a.eventDate)=(year(:endDate)-1)
-           AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.carrier = :carrier
-           AND b.continent =:continent
-           group by a.ORG, a.DEST
-           ) y
-           on s.org = y.org and s.DEST = y.DEST
-           order by s.TOPLANE desc
-           offset 0 rows
-           fetch next 5 rows only
-           """,nativeQuery = true)
+            select s.ORG,s.DEST,s.TOPLANE,
+            case
+            when c.TOPLANE is null and m.TOPLANE <> 0 then -100
+            when m.TOPLANE <> 0 then round(((c.TOPLANE - m.TOPLANE) * 100 / m.TOPLANE), 1)
+            when m.TOPLANE = 0  and c.TOPLANE = 0 then 0 when m.TOPLANE is null  and c.TOPLANE is null then 0
+            when m.TOPLANE = 0 or m.TOPLANE is null then 100
+            end as momPercent,
+            case
+            when c.TOPLANE is null and y.TOPLANE <> 0 then -100
+            when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
+            when y.TOPLANE = 0  and c.TOPLANE = 0 then 0 when y.TOPLANE is null  and c.TOPLANE is null then 0
+            when y.TOPLANE = 0 or y.TOPLANE is null then 100
+            end as yoyPercent
+            from
+            (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.ORG = b.code
+            WHERE a.eventDate >= :startDate and a.eventDate <= :endDate
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND b.continent =:continent
+            GROUP BY a.ORG, a.DEST
+            ) s left join
+            (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
+            from   AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.org = b.code
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND b.continent =:continent
+            group by a.org, a.DEST
+            ) c
+            on s.ORG = c.ORG and s.DEST = c.DEST left join
+            (SELECT a.ORG, a.DEST,COALESCE( COUNT(*), 0) AS TOPLANE
+            from   AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.ORG = b.code
+            where (
+            month(getdate()) <> 1 and month(a.eventDate)=month(getdate())-1  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND b.continent =:continent
+            group by a.ORG, a.DEST
+            ) m
+            on s.ORG = m.ORG and s.DEST = m.DEST  left join
+            (SELECT a.ORG, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
+            from   AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.ORG = b.code
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND b.continent =:continent
+            group by a.ORG, a.DEST
+            ) y
+            on s.org = y.org and s.DEST = y.DEST
+            order by s.TOPLANE desc
+            offset 0 rows
+            fetch next 5 rows only
+            """,nativeQuery = true)
     List<Object[]> getTopLanesBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                @Param("carrier") String carrier, @Param("continent") String continent);
 
 
     //Top Lanes - Total Number of Booking Count for Region
     @Query(value="""
-           select s.ORG,s.DEST,s.TOPLANE,
-           case
-           when m.TOPLANE <> 0 then round(((c.TOPLANE - m.TOPLANE) * 100 / m.TOPLANE), 1)
-           when m.TOPLANE = 0  and c.TOPLANE = 0 then 0
-           when m.TOPLANE = 0  then 100
-           end as momPercent,
-           case
-           when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
-           when y.TOPLANE = 0  and c.TOPLANE = 0 then 0
-           when y.TOPLANE = 0  then 100
-           end as yoyPercent
-           from
-           (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
-           FROM AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           JOIN RegionMaster c ON b.continent = c.continent
-           WHERE a.eventDate >= :startDate and a.eventDate <= :endDate
-           AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.carrier = :carrier
-           AND c.regionName = :region
-           GROUP BY a.ORG, a.DEST
-           ) s left join           
-           (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
-           from   AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.org = b.code
-           JOIN RegionMaster c ON b.continent = c.continent
-           where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
-           AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-           AND a.carrier = :carrier
-           AND c.regionName = :region
-           group by a.org, a.DEST
-           ) c
-           on s.ORG = c.ORG and s.DEST = c.DEST left join
-           (SELECT a.ORG, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
-           from   AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           JOIN RegionMaster c ON b.continent = c.continent
-           where (
-           month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
-           or
-           month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
-           )
-           AND a.carrier = :carrier
-           AND c.regionName = :region
-           group by a.ORG, a.DEST
-           ) m
-           on s.ORG = m.ORG and s.DEST = m.DEST left join
-           (SELECT a.ORG, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
-           from   AdvanceFunctionAudit a
-           JOIN CityCountryMaster b ON a.ORG = b.code
-           JOIN RegionMaster c ON b.continent = c.continent
-           where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(:endDate)-1)
-           and a.carrier = :carrier
-           AND c.regionName = :region
-           group by a.ORG, a.DEST
-           ) y
-           on s.org = y.org and s.DEST = y.DEST
-           order by s.TOPLANE desc
-           offset 0 rows
-           fetch next 5 rows only
-           """,nativeQuery = true)
+            select s.ORG,s.DEST,s.TOPLANE,
+            case
+            when c.TOPLANE is null and m.TOPLANE <> 0 then -100
+            when m.TOPLANE <> 0 then round(((c.TOPLANE - m.TOPLANE) * 100 / m.TOPLANE), 1)
+            when m.TOPLANE = 0  and c.TOPLANE = 0 then 0 when m.TOPLANE is null  and c.TOPLANE is null then 0
+            when m.TOPLANE = 0 or m.TOPLANE is null then 100
+            end as momPercent,
+            case
+            when c.TOPLANE is null and y.TOPLANE <> 0 then -100
+            when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
+            when y.TOPLANE = 0  and c.TOPLANE = 0 then 0 when y.TOPLANE is null  and c.TOPLANE is null then 0
+            when y.TOPLANE = 0 or y.TOPLANE is null then 100
+            end as yoyPercent
+            from
+            (SELECT a.ORG, a.DEST, COUNT(*) AS TOPLANE
+            FROM AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.ORG = b.code
+            JOIN RegionMaster c ON b.continent = c.continent
+            WHERE a.eventDate >= :startDate and a.eventDate <= :endDate
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND c.regionName = :region
+            GROUP BY a.ORG, a.DEST
+            ) s left join           
+            (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
+            from   AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.org = b.code
+            JOIN RegionMaster c ON b.continent = c.continent
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=year(getdate())
+            AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+            AND a.carrier = :carrier
+            AND c.regionName = :region
+            group by a.org, a.DEST
+            ) c
+            on s.ORG = c.ORG and s.DEST = c.DEST left join
+            (SELECT a.ORG, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
+            from   AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.ORG = b.code
+            JOIN RegionMaster c ON b.continent = c.continent
+            where (
+            month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
+            or
+            month(getdate()) = 1 and month(a.eventDate)=12  and  year(a.eventDate)=(year(getdate())-1)
+            )
+            AND a.carrier = :carrier
+            AND c.regionName = :region
+            group by a.ORG, a.DEST
+            ) m
+            on s.ORG = m.ORG and s.DEST = m.DEST left join
+            (SELECT a.ORG, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
+            from   AdvanceFunctionAudit a
+            JOIN CityCountryMaster b ON a.ORG = b.code
+            JOIN RegionMaster c ON b.continent = c.continent
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
+            and a.carrier = :carrier
+            AND c.regionName = :region
+            group by a.ORG, a.DEST
+            ) y
+            on s.org = y.org and s.DEST = y.DEST
+            order by s.TOPLANE desc
+            offset 0 rows
+            fetch next 5 rows only
+            """,nativeQuery = true)
     List<Object[]> getTopLanesBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                             @Param("carrier") String carrier, @Param("region") String region);
 
@@ -273,13 +281,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
           select s.ORG,s.DEST,s.totalWeight, 
           case
+          when c.totalWeight is null and m.totalWeight <> 0 then -100
           when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-          when m.totalWeight = 0  and c.totalWeight = 0 then 0
+          when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
           when m.totalWeight = 0  then 100
           end as momPercent,
           case
+          when c.totalWeight is null and y.totalWeight <> 0 then -100
           when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-          when y.totalWeight = 0  and c.totalWeight = 0 then 0
+          when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
           when y.totalWeight = 0  then 100
           end as yoyPercent
           from
@@ -335,13 +345,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalWeight, 
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
             when m.totalWeight = 0  then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
             when y.totalWeight = 0  then 100
             end as yoyPercent
             from
@@ -396,13 +408,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
            select s.ORG,s.DEST,s.totalWeight, 
            case
+           when c.totalWeight is null and m.totalWeight <> 0 then -100
            when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-           when m.totalWeight = 0  and c.totalWeight = 0 then 0
+           when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
            when m.totalWeight = 0  then 100
            end as momPercent,
            case
+           when c.totalWeight is null and y.totalWeight <> 0 then -100
            when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-           when y.totalWeight = 0  and c.totalWeight = 0 then 0
+           when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
            when y.totalWeight = 0  then 100
            end as yoyPercent
            from
@@ -457,13 +471,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalWeight, 
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
             when m.totalWeight = 0  then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
             when y.totalWeight = 0  then 100
             end as yoyPercent
             from
@@ -523,13 +539,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalVolume, 
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
             when m.totalVolume = 0  then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
             when y.totalVolume = 0  then 100
             end as yoyPercent
             from
@@ -580,13 +598,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalVolume, 
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
             when m.totalVolume = 0  then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
             when y.totalVolume = 0  then 100
             end as yoyPercent
             from
@@ -643,13 +663,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalVolume, 
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
             when m.totalVolume = 0  then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
             when y.totalVolume = 0  then 100
             end as yoyPercent
             from
@@ -704,13 +726,15 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.ORG,s.DEST,s.totalVolume, 
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
             when m.totalVolume = 0  then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
             when y.totalVolume = 0  then 100
             end as yoyPercent
             from
