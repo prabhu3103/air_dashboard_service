@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFunctionAudit, Long> {
 
-    //Top Lanes - Number of Booking Count for airport
+    //Top Lanes - Number of Booking Count airport
     @Query(value="""
             select s.ORG,s.DEST,s.TOPLANE,
             case
