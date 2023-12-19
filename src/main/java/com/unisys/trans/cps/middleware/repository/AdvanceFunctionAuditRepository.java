@@ -807,8 +807,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
         end as yoyPercent             
         from
         (SELECT a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount
-        FROM AdvanceFunctionAudit a
-        JOIN CityCountryMaster b ON a.org = b.code
+        FROM AdvanceFunctionAudit a        
         where a.eventDate >= :startDate and a.eventDate <= :endDate
         AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
         AND a.carrier = :carrier
@@ -845,7 +844,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
         AND a.org= :origin
         group by a.carrier, a.accNo
         ) y
-        on s.accNo = m.accNo
+        on s.accNo = y.accNo
         order by s.totalNoOfBookingCount desc
         offset 0 rows
         fetch next 5 rows only
@@ -1057,8 +1056,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             end as yoyPercent             
             from
             (SELECT a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount
-            FROM AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.org = b.code
+            FROM AdvanceFunctionAudit a            
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
@@ -1308,8 +1306,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             end as yoyPercent            
             from
             (SELECT a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount
-            FROM AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.org = b.code
+            FROM AdvanceFunctionAudit a            
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
@@ -1346,7 +1343,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND a.org= :origin
             group by a.carrier, a.accNo
             ) y
-            on s.accNo = m.accNo
+            on s.accNo = y.accNo
             order by s.totalNoOfWeightCount desc
             offset 0 rows
             fetch next 5 rows only
