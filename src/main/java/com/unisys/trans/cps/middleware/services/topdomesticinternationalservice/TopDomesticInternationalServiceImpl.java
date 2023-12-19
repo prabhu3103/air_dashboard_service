@@ -265,8 +265,14 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
         for (int i = 0; i < previousMonthData.size(); i++) {
             Object[] previousData = previousMonthData.get(i);
             Object[] currentData = currentMonthData.get(i);
-            Number previousValue = (Number) previousData[1];
-            Number currentValue = (Number) currentData[1];
+            Number previousValue = (Number) previousData[2];
+            if(previousValue==null){
+                previousValue=0;
+            }
+            Number currentValue = (Number) currentData[2];
+            if(currentValue==null){
+                currentValue=0;
+            }
             double momPercentageChange = calculatePercentageChange(previousValue.doubleValue(), currentValue.doubleValue());
             momPercentageChange = Math.round(momPercentageChange * 10.0) / 10.0;
             Object[] result = new Object[]{previousValue, currentValue, momPercentageChange};
