@@ -2542,7 +2542,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           when c.totalWeight is null and m.totalWeight <> 0 then -100
           when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
           when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-          when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+          when m.totalWeight = 0 or m.totalWeight is null then 100
           end as momPercent,
           case
           when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -2602,7 +2602,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -2667,7 +2667,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -2731,7 +2731,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -2800,7 +2800,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
          when c.totalVolume is null and m.totalVolume <> 0 then -100
          when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
          when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-         when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+         when m.totalVolume = 0 or m.totalVolume is null then 100
          end as momPercent,
          case
          when c.totalVolume is null and y.totalVolume <> 0 then -100
@@ -2858,7 +2858,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
          when c.totalVolume is null and m.totalVolume <> 0 then -100
          when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
          when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-         when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+         when m.totalVolume = 0 or m.totalVolume is null then 100
          end as momPercent,
          case
          when c.totalVolume is null and y.totalVolume <> 0 then -100
@@ -2922,7 +2922,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
          when c.totalVolume is null and m.totalVolume <> 0 then -100
          when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
          when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-         when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+         when m.totalVolume = 0 or m.totalVolume is null then 100
          end as momPercent,
          case
          when c.totalVolume is null and y.totalVolume <> 0 then -100
@@ -2986,7 +2986,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
@@ -3054,7 +3054,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
          when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
          when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
          when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
-         when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS = 0 is null then 100
+         when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
          end as momPercent,
          case
          when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
@@ -3121,7 +3121,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
             when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
-            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS = 0 is null then 100
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
             when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
@@ -3192,7 +3192,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
             when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
-            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS = 0 is null then 100
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
             when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
@@ -3264,7 +3264,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
             when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
-            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS = 0 is null then 100
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
             when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
@@ -3339,7 +3339,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -3408,7 +3408,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -3481,7 +3481,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -3553,7 +3553,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -3629,7 +3629,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
@@ -3698,7 +3698,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
@@ -3772,7 +3772,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
@@ -3844,7 +3844,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
@@ -4433,7 +4433,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
          when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
          when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
          when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
-         when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS = 0 is null then 100
+         when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
          end as momPercent,
          case
          when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
@@ -4500,7 +4500,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
             when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
-            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS = 0 is null then 100
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
             when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
@@ -4571,7 +4571,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
             when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
-            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS = 0 is null then 100
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
             when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
@@ -4643,7 +4643,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
             when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
-            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS = 0 is null then 100
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
             when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
@@ -4718,7 +4718,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -4787,7 +4787,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -4860,7 +4860,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -4935,7 +4935,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0 or m.totalWeight = 0 is null then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
@@ -5011,7 +5011,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
@@ -5080,7 +5080,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
@@ -5152,7 +5152,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
@@ -5225,7 +5225,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0 or m.totalVolume = 0 is null then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
