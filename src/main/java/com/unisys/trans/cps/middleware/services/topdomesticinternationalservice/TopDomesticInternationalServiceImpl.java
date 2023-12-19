@@ -100,8 +100,8 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
                             throw new CpsException(AirlineDashboardConstants.INVALID_FILTER_VALUE);
                 }
 
-                List<Object[]> moM = calculateMomYoyPercentageChange(previousMonthObjects, currentMonthObjects);
-                List<Object[]> yoY = calculateMomYoyPercentageChange(previousYearSameMonthObjects, currentMonthObjects);
+                List<Object[]> moM = calculateMomYoyPercentageChangeBookingCount(previousMonthObjects, currentMonthObjects);
+                List<Object[]> yoY = calculateMomYoyPercentageChangeBookingCount(previousYearSameMonthObjects, currentMonthObjects);
                 buildTopDomesticInternationalResponseDTO(response, topObjects, moM , yoY);
             }
 
@@ -254,7 +254,34 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
         }
     }
 
-    // calculate Mom and Yoy Percentage Change
+    // calculate Mom and Yoy Percentage Change for Booking Count
+    public List<Object[]> calculateMomYoyPercentageChangeBookingCount(List<Object[]> previousMonthData, List<Object[]> currentMonthData) {
+        List<Object[]> momPercentageChangeList = new ArrayList<>();
+
+        if (previousMonthData.size() != currentMonthData.size()) {
+            throw new IllegalArgumentException("Input lists must have the same size");
+        }
+
+        for (int i = 0; i < previousMonthData.size(); i++) {
+            Object[] previousData = previousMonthData.get(i);
+            Object[] currentData = currentMonthData.get(i);
+            Number previousValue = (Number) previousData[1];
+            if(previousValue==null){
+                previousValue=0;
+            }
+            Number currentValue = (Number) currentData[1];
+            if(currentValue==null){
+                currentValue=0;
+            }
+            double momPercentageChange = calculatePercentageChange(previousValue.doubleValue(), currentValue.doubleValue());
+            momPercentageChange = Math.round(momPercentageChange * 10.0) / 10.0;
+            Object[] result = new Object[]{previousValue, currentValue, momPercentageChange};
+            momPercentageChangeList.add(result);
+        }
+        return momPercentageChangeList;
+    }
+
+    // calculate Mom and Yoy Percentage Change for Volume and Weight
     public List<Object[]> calculateMomYoyPercentageChange(List<Object[]> previousMonthData, List<Object[]> currentMonthData) {
         List<Object[]> momPercentageChangeList = new ArrayList<>();
 
