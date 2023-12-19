@@ -284,13 +284,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           when c.totalWeight is null and m.totalWeight <> 0 then -100
           when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
           when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
-          when m.totalWeight = 0  then 100
+          when m.totalWeight = 0 or m.totalWeight is null then 100
           end as momPercent,
           case
           when c.totalWeight is null and y.totalWeight <> 0 then -100
           when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
           when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
-          when y.totalWeight = 0  then 100
+          when y.totalWeight = 0 or y.totalWeight is null then 100
           end as yoyPercent
           from
           (SELECT a.org, a.DEST, SUM(a.stdWeight) AS totalWeight
@@ -348,13 +348,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
             when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
@@ -411,13 +411,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            when c.totalWeight is null and m.totalWeight <> 0 then -100
            when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
            when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
-           when m.totalWeight = 0  then 100
+           when m.totalWeight = 0 or m.totalWeight is null then 100
            end as momPercent,
            case
            when c.totalWeight is null and y.totalWeight <> 0 then -100
            when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
-           when y.totalWeight = 0  then 100
+           when y.totalWeight = 0 or y.totalWeight is null then 100
            end as yoyPercent
            from
            (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
@@ -474,13 +474,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
             when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0 or y.totalWeight is null  then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
@@ -542,13 +542,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0 or m.totalVolume is null  then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
             when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0 or y.totalVolume is null  then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
@@ -601,13 +601,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
             when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
@@ -666,13 +666,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
             when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
@@ -729,13 +729,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
             when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
