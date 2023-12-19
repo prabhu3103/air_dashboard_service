@@ -1093,7 +1093,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND a.org= :origin
             group by a.carrier, a.accNo
             ) y
-            on s.accNo = m.accNo
+            on s.accNo = y.accNo
             order by s.totalNoOfVolumeCount desc
             offset 0 rows
             fetch next 5 rows only
