@@ -309,8 +309,12 @@ public class TopDomesticInternationalServiceImpl implements TopDomesticInternati
     }
 
     private double calculatePercentageChange(double previousValue, double currentValue) {
-        if (previousValue == 0) {
-            return (currentValue - previousValue) * 100.0;
+        if (previousValue == 0 && currentValue != 0) {
+            return 100.0;
+        } else if (currentValue == 0 && previousValue != 0) {
+            return -100.0;
+        } else if (currentValue == 0 && previousValue == 0) {
+            return 0.0;
         } else {
             return ((currentValue - previousValue) / Math.abs(previousValue)) * 100.0;
         }
