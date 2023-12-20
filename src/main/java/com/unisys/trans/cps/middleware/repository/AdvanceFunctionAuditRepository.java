@@ -26,7 +26,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
             when y.TOPLANE = 0  and c.TOPLANE = 0 then 0 when y.TOPLANE is null  and c.TOPLANE is null then 0
             when y.TOPLANE = 0 or y.TOPLANE is null then 100
-            end as yoyPercent              
+            end as yoyPercent         
             from
             (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
             FROM AdvanceFunctionAudit a
@@ -233,7 +233,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND a.carrier = :carrier
             AND c.regionName = :region
             GROUP BY a.ORG, a.DEST
-            ) s left join           
+            ) s left join          
             (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.org = b.code
@@ -284,13 +284,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           when c.totalWeight is null and m.totalWeight <> 0 then -100
           when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
           when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
-          when m.totalWeight = 0  then 100
+          when m.totalWeight = 0 or m.totalWeight is null then 100
           end as momPercent,
           case
           when c.totalWeight is null and y.totalWeight <> 0 then -100
           when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
           when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
-          when y.totalWeight = 0  then 100
+          when y.totalWeight = 0 or y.totalWeight is null then 100
           end as yoyPercent
           from
           (SELECT a.org, a.DEST, SUM(a.stdWeight) AS totalWeight
@@ -348,13 +348,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
             when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
@@ -411,13 +411,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            when c.totalWeight is null and m.totalWeight <> 0 then -100
            when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
            when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
-           when m.totalWeight = 0  then 100
+           when m.totalWeight = 0 or m.totalWeight is null then 100
            end as momPercent,
            case
            when c.totalWeight is null and y.totalWeight <> 0 then -100
            when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
-           when y.totalWeight = 0  then 100
+           when y.totalWeight = 0 or y.totalWeight is null then 100
            end as yoyPercent
            from
            (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
@@ -474,13 +474,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
             when m.totalWeight = 0  and c.totalWeight = 0 then 0  when m.totalWeight is null  and c.totalWeight is null then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
             when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
             when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0 or y.totalWeight is null  then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.stdWeight) AS totalWeight
@@ -542,13 +542,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0 or m.totalVolume is null  then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
             when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0 or y.totalVolume is null  then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
@@ -601,13 +601,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
             when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
@@ -666,13 +666,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
             when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
@@ -729,13 +729,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
             when m.totalVolume = 0  and c.totalVolume = 0 then 0  when m.totalVolume is null  and c.totalVolume is null then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
             when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
             when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.ORG, a.DEST, SUM(a.STDVOLUME) AS totalVolume
@@ -807,8 +807,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
         end as yoyPercent             
         from
         (SELECT a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount
-        FROM AdvanceFunctionAudit a
-        JOIN CityCountryMaster b ON a.org = b.code
+        FROM AdvanceFunctionAudit a        
         where a.eventDate >= :startDate and a.eventDate <= :endDate
         AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
         AND a.carrier = :carrier
@@ -845,7 +844,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
         AND a.org= :origin
         group by a.carrier, a.accNo
         ) y
-        on s.accNo = m.accNo
+        on s.accNo = y.accNo
         order by s.totalNoOfBookingCount desc
         offset 0 rows
         fetch next 5 rows only
@@ -1057,8 +1056,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             end as yoyPercent             
             from
             (SELECT a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount
-            FROM AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.org = b.code
+            FROM AdvanceFunctionAudit a            
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
@@ -1095,7 +1093,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND a.org= :origin
             group by a.carrier, a.accNo
             ) y
-            on s.accNo = m.accNo
+            on s.accNo = y.accNo
             order by s.totalNoOfVolumeCount desc
             offset 0 rows
             fetch next 5 rows only
@@ -1308,8 +1306,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             end as yoyPercent            
             from
             (SELECT a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount
-            FROM AdvanceFunctionAudit a
-            JOIN CityCountryMaster b ON a.org = b.code
+            FROM AdvanceFunctionAudit a            
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
@@ -1346,7 +1343,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND a.org= :origin
             group by a.carrier, a.accNo
             ) y
-            on s.accNo = m.accNo
+            on s.accNo = y.accNo
             order by s.totalNoOfWeightCount desc
             offset 0 rows
             fetch next 5 rows only
@@ -1543,16 +1540,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Booking Count for Airport
     @Query(value = """
-            select s.day, s.bookingCount,
+            select s.day, s.bookingCount,                     
             case
+            when m.monthbookingCount is null and pm.pmbookingCount <> 0 then -100
             when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1)
-            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0
-            when pm.pmbookingCount = 0  then 100
+            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0  when pm.pmbookingCount is null  and m.monthbookingCount is null then 0
+            when pm.pmbookingCount = 0 or pm.pmbookingCount is null then 100
             end as momPercent,
             case
+            when y.yearbookingCount is null and py.pybookingCount <> 0 then -100
             when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1)
-            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0
-            when py.pybookingCount = 0  then 100
+            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0 when py.pybookingCount is null  and y.yearbookingCount is null then 0
+            when py.pybookingCount = 0 or py.pybookingCount is null  then 100
             end as yoyPercent
             from
             (select a.eventDate as day, count(*) as bookingCount
@@ -1562,13 +1561,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.carrier = :carrier
             and a.org = :originAirport
             group by a.eventDate) s,
-            (select count(*) as monthbookingCount
+            (select COALESCE( COUNT(*), 0) as monthbookingCount
             from AdvanceFunctionAudit a
             where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org = :originAirport) m,
-                 (select count(*) as pmbookingCount
+            (select COALESCE( COUNT(*), 0) as pmbookingCount
             from AdvanceFunctionAudit a
             where
             (
@@ -1579,13 +1578,13 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org = :originAirport) pm,
-            (select count(*) as yearbookingCount
+            (select COALESCE( COUNT(*), 0) as yearbookingCount
             from AdvanceFunctionAudit a
             where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and a.org = :originAirport) y,
-            (select count(*) as pybookingCount
+            (select COALESCE( COUNT(*), 0) as pybookingCount
             from AdvanceFunctionAudit a
             where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
@@ -1599,14 +1598,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.day, s.bookingCount,
             case
+            when m.monthbookingCount is null and pm.pmbookingCount <> 0 then -100
             when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1)
-            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0
-            when pm.pmbookingCount = 0  then 100
+            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0  when pm.pmbookingCount is null  and m.monthbookingCount is null then 0
+            when pm.pmbookingCount = 0 or pm.pmbookingCount is null then 100
             end as momPercent,
             case
+            when y.yearbookingCount is null and py.pybookingCount <> 0 then -100
             when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1)
-            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0
-            when py.pybookingCount = 0  then 100
+            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0 when py.pybookingCount is null  and y.yearbookingCount is null then 0
+            when py.pybookingCount = 0 or py.pybookingCount is null  then 100
             end as yoyPercent
             from
             (select a.eventDate as day, count(*) as bookingCount
@@ -1617,14 +1618,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.carrier = :carrier
             and b.countryCode = :country
             group by a.eventDate) s,
-            (select count(*) as monthbookingCount
+            (select COALESCE( COUNT(*), 0) as monthbookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country) m,
-            (select count(*) as pmbookingCount
+            (select COALESCE( COUNT(*), 0) as pmbookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where
@@ -1636,14 +1637,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country) pm,
-            (select count(*) as yearbookingCount
+            (select COALESCE( COUNT(*), 0) as yearbookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.countryCode = :country) y,
-            (select count(*) as pybookingCount
+            (select COALESCE( COUNT(*), 0) as pybookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
@@ -1658,14 +1659,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.day, s.bookingCount,
             case
+            when m.monthbookingCount is null and pm.pmbookingCount <> 0 then -100
             when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1)
-            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0
-            when pm.pmbookingCount = 0  then 100
+            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0  when pm.pmbookingCount is null  and m.monthbookingCount is null then 0
+            when pm.pmbookingCount = 0 or pm.pmbookingCount is null then 100
             end as momPercent,
             case
+            when y.yearbookingCount is null and py.pybookingCount <> 0 then -100
             when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1)
-            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0
-            when py.pybookingCount = 0  then 100
+            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0 when py.pybookingCount is null  and y.yearbookingCount is null then 0
+            when py.pybookingCount = 0 or py.pybookingCount is null  then 100
             end as yoyPercent
             from
             (select a.eventDate as day, count(*) as bookingCount
@@ -1676,14 +1679,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.carrier = :carrier
             and b.continent = :continent
             group by a.eventDate) s,
-            (select count(*) as monthbookingCount
+            (select COALESCE( COUNT(*), 0) as monthbookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where month(a.eventDate)=month(getdate()) and year(a.eventDate)=year(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent = :continent) m,
-            (select count(*) as pmbookingCount
+            (select COALESCE( COUNT(*), 0) as pmbookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where
@@ -1695,14 +1698,14 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent = :continent) pm,
-            (select count(*) as yearbookingCount
+            (select COALESCE( COUNT(*), 0) as yearbookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=year(getdate()) and month(a.eventDate)=month(getdate())
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and b.continent = :continent) y,
-            (select count(*) as pybookingCount
+            (select COALESCE( COUNT(*), 0) as pybookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             where year(a.eventDate)=(year(getdate())-1) and month(a.eventDate)=month(getdate())
@@ -1718,14 +1721,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.day, s.bookingCount,
             case
+            when m.monthbookingCount is null and pm.pmbookingCount <> 0 then -100
             when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1)
-            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0
-            when pm.pmbookingCount = 0  then 100
+            when pm.pmbookingCount = 0  and m.monthbookingCount = 0 then 0  when pm.pmbookingCount is null  and m.monthbookingCount is null then 0
+            when pm.pmbookingCount = 0 or pm.pmbookingCount is null then 100
             end as momPercent,
             case
+            when y.yearbookingCount is null and py.pybookingCount <> 0 then -100
             when py.pybookingCount <> 0 then round(((y.yearbookingCount - py.pybookingCount) * 100 / py.pybookingCount), 1)
-            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0
-            when py.pybookingCount = 0  then 100
+            when py.pybookingCount = 0  and y.yearbookingCount = 0 then 0 when py.pybookingCount is null  and y.yearbookingCount is null then 0
+            when py.pybookingCount = 0 or py.pybookingCount is null  then 100
             end as yoyPercent
             from
             (select a.eventDate as day, count(*) as bookingCount
@@ -1737,7 +1742,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.carrier = :carrier
             and c.regionName = :region
             group by a.eventDate) s,
-            (select count(*) as monthbookingCount
+            (select COALESCE( COUNT(*), 0) as monthbookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -1745,7 +1750,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region) m,
-            (select count(*) as pmbookingCount
+            (select COALESCE( COUNT(*), 0) as pmbookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -1758,7 +1763,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             and a.txnStatus != 'E' and a.txnStatus != '' and a.status = 'S'
             and a.carrier = :carrier
             and c.regionName = :region) pm,
-            (select count(*) as yearbookingCount
+            (select COALESCE( COUNT(*), 0) as yearbookingCount
             from AdvanceFunctionAudit a
             join CityCountryMaster b on a.org = b.code
             join RegionMaster c on b.continent = c.continent
@@ -1783,14 +1788,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.day, s.weight,
             case
+            when m.monthweight is null and pm.pmweight <> 0 then -100
             when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1)
-            when pm.pmweight = 0  and m.monthweight = 0 then 0
-            when pm.pmweight = 0  then 100
+            when pm.pmweight = 0  and m.monthweight = 0 then 0  when pm.pmweight is null  and m.monthweight is null then 0
+            when pm.pmweight = 0 or pm.pmweight is null then 100
             end as momPercent,
             case
+            when y.yearweight is null and py.pyweight <> 0 then -100
             when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1)
-            when py.pyweight = 0  and y.yearweight = 0 then 0
-            when py.pyweight = 0  then 100
+            when py.pyweight = 0  and y.yearweight = 0 then 0 when py.pyweight is null  and y.yearweight is null then 0
+            when py.pyweight = 0 or py.pyweight is null  then 100
             end as yoyPercent
             from
             (select a.eventDate as day, SUM(COALESCE(a.stdWeight, 0)) as weight
@@ -1838,14 +1845,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.day, s.weight,
             case
+            when m.monthweight is null and pm.pmweight <> 0 then -100
             when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1)
-            when pm.pmweight = 0  and m.monthweight = 0 then 0
-            when pm.pmweight = 0  then 100
+            when pm.pmweight = 0  and m.monthweight = 0 then 0  when pm.pmweight is null  and m.monthweight is null then 0
+            when pm.pmweight = 0 or pm.pmweight is null then 100
             end as momPercent,
             case
+            when y.yearweight is null and py.pyweight <> 0 then -100
             when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1)
-            when py.pyweight = 0  and y.yearweight = 0 then 0
-            when py.pyweight = 0  then 100
+            when py.pyweight = 0  and y.yearweight = 0 then 0 when py.pyweight is null  and y.yearweight is null then 0
+            when py.pyweight = 0 or py.pyweight is null  then 100
             end as yoyPercent
             from
             (select a.eventDate as day, SUM(COALESCE(a.stdWeight, 0)) as weight
@@ -1897,14 +1906,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.day, s.weight,
             case
+            when m.monthweight is null and pm.pmweight <> 0 then -100
             when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1)
-            when pm.pmweight = 0  and m.monthweight = 0 then 0
-            when pm.pmweight = 0  then 100
+            when pm.pmweight = 0  and m.monthweight = 0 then 0  when pm.pmweight is null  and m.monthweight is null then 0
+            when pm.pmweight = 0 or pm.pmweight is null then 100
             end as momPercent,
             case
+            when y.yearweight is null and py.pyweight <> 0 then -100
             when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1)
-            when py.pyweight = 0  and y.yearweight = 0 then 0
-            when py.pyweight = 0  then 100
+            when py.pyweight = 0  and y.yearweight = 0 then 0 when py.pyweight is null  and y.yearweight is null then 0
+            when py.pyweight = 0 or py.pyweight is null  then 100
             end as yoyPercent
             from
             (select a.eventDate as day, SUM(COALESCE(a.stdWeight, 0)) as weight
@@ -1956,14 +1967,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.day, s.weight,
             case
+            when m.monthweight is null and pm.pmweight <> 0 then -100
             when pm.pmweight <> 0 then round(((m.monthweight - pm.pmweight) * 100 / pm.pmweight), 1)
-            when pm.pmweight = 0  and m.monthweight = 0 then 0
-            when pm.pmweight = 0  then 100
+            when pm.pmweight = 0  and m.monthweight = 0 then 0  when pm.pmweight is null  and m.monthweight is null then 0
+            when pm.pmweight = 0 or pm.pmweight is null then 100
             end as momPercent,
             case
+            when y.yearweight is null and py.pyweight <> 0 then -100
             when py.pyweight <> 0 then round(((y.yearweight - py.pyweight) * 100 / py.pyweight), 1)
-            when py.pyweight = 0  and y.yearweight = 0 then 0
-            when py.pyweight = 0  then 100
+            when py.pyweight = 0  and y.yearweight = 0 then 0 when py.pyweight is null  and y.yearweight is null then 0
+            when py.pyweight = 0 or py.pyweight is null  then 100
             end as yoyPercent
             from
             (select a.eventDate as day, SUM(COALESCE(a.stdWeight, 0)) as weight
@@ -2021,14 +2034,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.day, s.volume,
             case
+            when m.monthvolume is null and pm.pmvolume <> 0 then -100
             when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1)
-            when pm.pmvolume = 0  and m.monthvolume = 0 then 0
-            when pm.pmvolume = 0  then 100
+            when pm.pmvolume = 0  and m.monthvolume = 0 then 0 when pm.pmvolume is null  and m.monthvolume is null then 0
+            when pm.pmvolume = 0 or pm.pmvolume is null then 100
             end as momPercent,
             case
+            when y.yearvolume is null and py.pyvolume <> 0 then -100
             when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1)
-            when py.pyvolume = 0  and y.yearvolume = 0 then 0
-            when py.pyvolume = 0  then 100
+            when py.pyvolume = 0  and y.yearvolume = 0 then 0 when py.pyvolume is null  and y.yearvolume is null then 0
+            when py.pyvolume = 0 or py.pyvolume is null then 100
             end as yoyPercent
             from
             (select a.eventDate as day, SUM(COALESCE(a.stdVolume, 0)) as volume
@@ -2075,14 +2090,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.day, s.volume,
             case
+            when m.monthvolume is null and pm.pmvolume <> 0 then -100
             when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1)
-            when pm.pmvolume = 0  and m.monthvolume = 0 then 0
-            when pm.pmvolume = 0  then 100
+            when pm.pmvolume = 0  and m.monthvolume = 0 then 0 when pm.pmvolume is null  and m.monthvolume is null then 0
+            when pm.pmvolume = 0 or pm.pmvolume is null then 100
             end as momPercent,
             case
+            when y.yearvolume is null and py.pyvolume <> 0 then -100
             when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1)
-            when py.pyvolume = 0  and y.yearvolume = 0 then 0
-            when py.pyvolume = 0  then 100
+            when py.pyvolume = 0  and y.yearvolume = 0 then 0 when py.pyvolume is null  and y.yearvolume is null then 0
+            when py.pyvolume = 0 or py.pyvolume is null then 100
             end as yoyPercent
             from
             (select a.eventDate as day, SUM(COALESCE(a.stdVolume, 0)) as volume
@@ -2134,14 +2151,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.day, s.volume,
             case
+            when m.monthvolume is null and pm.pmvolume <> 0 then -100
             when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1)
-            when pm.pmvolume = 0  and m.monthvolume = 0 then 0
-            when pm.pmvolume = 0  then 100
+            when pm.pmvolume = 0  and m.monthvolume = 0 then 0 when pm.pmvolume is null  and m.monthvolume is null then 0
+            when pm.pmvolume = 0 or pm.pmvolume is null then 100
             end as momPercent,
             case
+            when y.yearvolume is null and py.pyvolume <> 0 then -100
             when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1)
-            when py.pyvolume = 0  and y.yearvolume = 0 then 0
-            when py.pyvolume = 0  then 100
+            when py.pyvolume = 0  and y.yearvolume = 0 then 0 when py.pyvolume is null  and y.yearvolume is null then 0
+            when py.pyvolume = 0 or py.pyvolume is null then 100
             end as yoyPercent
             from
             (select a.eventDate as day, SUM(COALESCE(a.stdVolume, 0)) as volume
@@ -2193,14 +2212,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.day, s.volume,
             case
+            when m.monthvolume is null and pm.pmvolume <> 0 then -100
             when pm.pmvolume <> 0 then round(((m.monthvolume - pm.pmvolume) * 100 / pm.pmvolume), 1)
-            when pm.pmvolume = 0  and m.monthvolume = 0 then 0
-            when pm.pmvolume = 0  then 100
+            when pm.pmvolume = 0  and m.monthvolume = 0 then 0 when pm.pmvolume is null  and m.monthvolume is null then 0
+            when pm.pmvolume = 0 or pm.pmvolume is null then 100
             end as momPercent,
             case
+            when y.yearvolume is null and py.pyvolume <> 0 then -100
             when py.pyvolume <> 0 then round(((y.yearvolume - py.pyvolume) * 100 / py.pyvolume), 1)
-            when py.pyvolume = 0  and y.yearvolume = 0 then 0
-            when py.pyvolume = 0  then 100
+            when py.pyvolume = 0  and y.yearvolume = 0 then 0 when py.pyvolume is null  and y.yearvolume is null then 0
+            when py.pyvolume = 0 or py.pyvolume is null then 100
             end as yoyPercent
             from
             (select a.eventDate as day, SUM(COALESCE(a.stdVolume, 0)) as volume
@@ -2258,14 +2279,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
            select s.commodity,s.COMMODITY_COUNT,
            case
+           when c.COMMODITY_COUNT is null and m.COMMODITY_COUNT <> 0 then -100
            when m.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - m.COMMODITY_COUNT) * 100 / m.COMMODITY_COUNT), 1)
-           when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
-           when m.COMMODITY_COUNT = 0  then 100
+           when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0 when m.COMMODITY_COUNT is null  and c.COMMODITY_COUNT is null then 0
+           when m.COMMODITY_COUNT = 0 or m.COMMODITY_COUNT is null then 100
            end as momPercent,
            case
+           when c.COMMODITY_COUNT is null and y.COMMODITY_COUNT <> 0 then -100
            when y.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - y.COMMODITY_COUNT) * 100 / y.COMMODITY_COUNT), 1)
-           when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
-           when y.COMMODITY_COUNT = 0  then 100
+           when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0 when y.COMMODITY_COUNT is null  and c.COMMODITY_COUNT is null then 0
+           when y.COMMODITY_COUNT = 0 or y.COMMODITY_COUNT is null then 100
            end as yoyPercent
            from
            (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
@@ -2316,14 +2339,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
           select s.commodity,s.COMMODITY_COUNT,
           case
+          when c.COMMODITY_COUNT is null and m.COMMODITY_COUNT <> 0 then -100
           when m.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - m.COMMODITY_COUNT) * 100 / m.COMMODITY_COUNT), 1)
-          when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
-          when m.COMMODITY_COUNT = 0  then 100
+          when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0 when m.COMMODITY_COUNT is null  and c.COMMODITY_COUNT is null then 0
+          when m.COMMODITY_COUNT = 0 or m.COMMODITY_COUNT is null then 100
           end as momPercent,
           case
+          when c.COMMODITY_COUNT is null and y.COMMODITY_COUNT <> 0 then -100
           when y.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - y.COMMODITY_COUNT) * 100 / y.COMMODITY_COUNT), 1)
-          when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
-          when y.COMMODITY_COUNT = 0  then 100
+          when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0 when y.COMMODITY_COUNT is null  and c.COMMODITY_COUNT is null then 0
+          when y.COMMODITY_COUNT = 0 or y.COMMODITY_COUNT is null then 100
           end as yoyPercent
           from
           (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
@@ -2379,14 +2404,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
           select s.commodity,s.COMMODITY_COUNT,
           case
+          when c.COMMODITY_COUNT is null and m.COMMODITY_COUNT <> 0 then -100
           when m.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - m.COMMODITY_COUNT) * 100 / m.COMMODITY_COUNT), 1)
-          when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
-          when m.COMMODITY_COUNT = 0  then 100
+          when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0 when m.COMMODITY_COUNT is null  and c.COMMODITY_COUNT is null then 0
+          when m.COMMODITY_COUNT = 0 or m.COMMODITY_COUNT is null then 100
           end as momPercent,
           case
+          when c.COMMODITY_COUNT is null and y.COMMODITY_COUNT <> 0 then -100
           when y.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - y.COMMODITY_COUNT) * 100 / y.COMMODITY_COUNT), 1)
-          when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
-          when y.COMMODITY_COUNT = 0  then 100
+          when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0 when y.COMMODITY_COUNT is null  and c.COMMODITY_COUNT is null then 0
+          when y.COMMODITY_COUNT = 0 or y.COMMODITY_COUNT is null then 100
           end as yoyPercent
           from
           (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
@@ -2441,14 +2468,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.commodity,s.COMMODITY_COUNT,
             case
+            when c.COMMODITY_COUNT is null and m.COMMODITY_COUNT <> 0 then -100
             when m.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - m.COMMODITY_COUNT) * 100 / m.COMMODITY_COUNT), 1)
-            when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
-            when m.COMMODITY_COUNT = 0  then 100
+            when m.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0 when m.COMMODITY_COUNT is null  and c.COMMODITY_COUNT is null then 0
+            when m.COMMODITY_COUNT = 0 or m.COMMODITY_COUNT is null then 100
             end as momPercent,
             case
+            when c.COMMODITY_COUNT is null and y.COMMODITY_COUNT <> 0 then -100
             when y.COMMODITY_COUNT <> 0 then round(((c.COMMODITY_COUNT - y.COMMODITY_COUNT) * 100 / y.COMMODITY_COUNT), 1)
-            when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0
-            when y.COMMODITY_COUNT = 0  then 100
+            when y.COMMODITY_COUNT = 0  and c.COMMODITY_COUNT = 0 then 0 when y.COMMODITY_COUNT is null  and c.COMMODITY_COUNT is null then 0
+            when y.COMMODITY_COUNT = 0 or y.COMMODITY_COUNT is null then 100
             end as yoyPercent
             from
             (select a.commodity, COUNT(a.commodity) AS COMMODITY_COUNT
@@ -2507,14 +2536,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
           select s.commodity,s.totalWeight,
           case
+          when c.totalWeight is null and m.totalWeight <> 0 then -100
           when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-          when m.totalWeight = 0  and c.totalWeight = 0 then 0
-          when m.totalWeight = 0  then 100
+          when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+          when m.totalWeight = 0 or m.totalWeight is null then 100
           end as momPercent,
           case
+          when c.totalWeight is null and y.totalWeight <> 0 then -100
           when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-          when y.totalWeight = 0  and c.totalWeight = 0 then 0
-          when y.totalWeight = 0  then 100
+          when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+          when y.totalWeight = 0 or y.totalWeight is null then 100
           end as yoyPercent
           from
           (select a.commodity, SUM(a.stdWeight) AS totalWeight
@@ -2565,14 +2596,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.commodity,s.totalWeight,
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.commodity, SUM(a.stdWeight) AS totalWeight
@@ -2628,14 +2661,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.commodity,s.totalWeight,
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.commodity, SUM(a.stdWeight) AS totalWeight
@@ -2690,14 +2725,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.commodity,s.totalWeight,
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.commodity, SUM(a.stdWeight) AS totalWeight
@@ -2757,14 +2794,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
          select s.commodity,s.totalVolume,
          case
+         when c.totalVolume is null and m.totalVolume <> 0 then -100
          when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-         when m.totalVolume = 0  and c.totalVolume = 0 then 0
-         when m.totalVolume = 0  then 100
+         when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+         when m.totalVolume = 0 or m.totalVolume is null then 100
          end as momPercent,
          case
+         when c.totalVolume is null and y.totalVolume <> 0 then -100
          when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-         when y.totalVolume = 0  and c.totalVolume = 0 then 0
-         when y.totalVolume = 0  then 100
+         when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+         when y.totalVolume = 0 or y.totalVolume is null then 100
          end as yoyPercent
          from
          (select a.commodity, SUM(a.STDVOLUME) AS totalVolume
@@ -2813,14 +2852,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
          select s.commodity,s.totalVolume,
          case
+         when c.totalVolume is null and m.totalVolume <> 0 then -100
          when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-         when m.totalVolume = 0  and c.totalVolume = 0 then 0
-         when m.totalVolume = 0  then 100
+         when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+         when m.totalVolume = 0 or m.totalVolume is null then 100
          end as momPercent,
          case
+         when c.totalVolume is null and y.totalVolume <> 0 then -100
          when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-         when y.totalVolume = 0  and c.totalVolume = 0 then 0
-         when y.totalVolume = 0  then 100
+         when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+         when y.totalVolume = 0 or y.totalVolume is null then 100
          end as yoyPercent
          from
          (select a.commodity, SUM(a.STDVOLUME) AS totalVolume
@@ -2875,14 +2916,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
          select s.commodity,s.totalVolume,
          case
+         when c.totalVolume is null and m.totalVolume <> 0 then -100
          when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-         when m.totalVolume = 0  and c.totalVolume = 0 then 0
-         when m.totalVolume = 0  then 100
+         when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+         when m.totalVolume = 0 or m.totalVolume is null then 100
          end as momPercent,
          case
+         when c.totalVolume is null and y.totalVolume <> 0 then -100
          when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-         when y.totalVolume = 0  and c.totalVolume = 0 then 0
-         when y.totalVolume = 0  then 100
+         when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+         when y.totalVolume = 0 or y.totalVolume is null then 100
          end as yoyPercent
          from
          (select a.commodity, SUM(a.STDVOLUME) AS totalVolume
@@ -2937,14 +2980,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value="""
             select s.commodity,s.totalVolume,
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.commodity, SUM(a.STDVOLUME) AS totalVolume
@@ -3003,14 +3048,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
          select s.productCode,s.description,s.TOPPRODUCTS,
          case
+         when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
          when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
-         when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-         when m.TOPPRODUCTS = 0  then 100
+         when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+         when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
          end as momPercent,
          case
+         when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
          when y.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - y.TOPPRODUCTS) * 100 / y.TOPPRODUCTS), 1)
-         when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-         when y.TOPPRODUCTS = 0  then 100
+         when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when y.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+         when y.TOPPRODUCTS = 0 or y.TOPPRODUCTS is null then 100
          end as yoyPercent
          from
          (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
@@ -3068,14 +3115,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.TOPPRODUCTS,
             case
+            when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
-            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when m.TOPPRODUCTS = 0  then 100
+            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
+            when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
             when y.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - y.TOPPRODUCTS) * 100 / y.TOPPRODUCTS), 1)
-            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when y.TOPPRODUCTS = 0  then 100
+            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when y.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when y.TOPPRODUCTS = 0 or y.TOPPRODUCTS is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
@@ -3137,14 +3186,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.TOPPRODUCTS,
             case
+            when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
-            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when m.TOPPRODUCTS = 0  then 100
+            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
+            when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
             when y.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - y.TOPPRODUCTS) * 100 / y.TOPPRODUCTS), 1)
-            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when y.TOPPRODUCTS = 0  then 100
+            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when y.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when y.TOPPRODUCTS = 0 or y.TOPPRODUCTS is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
@@ -3207,14 +3258,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.TOPPRODUCTS,
             case
+            when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
-            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when m.TOPPRODUCTS = 0  then 100
+            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
+            when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
             when y.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - y.TOPPRODUCTS) * 100 / y.TOPPRODUCTS), 1)
-            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when y.TOPPRODUCTS = 0  then 100
+            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when y.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when y.TOPPRODUCTS = 0 or y.TOPPRODUCTS is null then 100
             end as yoyPercent
             from
             (select a.productCode ,p.description, COUNT(*) AS TOPPRODUCTS
@@ -3280,14 +3333,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalWeight,
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.stdWeight) AS totalWeight
@@ -3347,14 +3402,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalWeight,
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.stdWeight) AS totalWeight
@@ -3418,14 +3475,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalWeight,
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.stdWeight) AS totalWeight
@@ -3485,20 +3544,19 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     List<Object[]> getTopProductsWeightContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                  @Param("carrier") String carrier, @Param("continent") String continent);
 
-
-
-
     @Query(value = """
             select s.productCode,s.description,s.totalWeight,
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
@@ -3565,14 +3623,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalVolume,
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.STDVOLUME) AS totalVolume
@@ -3632,14 +3692,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalVolume,
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.STDVOLUME) AS totalVolume
@@ -3704,14 +3766,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalVolume,
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.STDVOLUME) AS totalVolume
@@ -3774,14 +3838,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalVolume,
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.productCode ,p.description, SUM(a.STDVOLUME) AS totalVolume
@@ -4361,14 +4427,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
          select s.productCode,s.description,s.TOPPRODUCTS,
          case
+         when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
          when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
-         when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-         when m.TOPPRODUCTS = 0  then 100
+         when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+         when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
          end as momPercent,
          case
+         when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
          when y.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - y.TOPPRODUCTS) * 100 / y.TOPPRODUCTS), 1)
-         when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-         when y.TOPPRODUCTS = 0  then 100
+         when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when y.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+         when y.TOPPRODUCTS = 0 or y.TOPPRODUCTS is null then 100
          end as yoyPercent
          from
          (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
@@ -4426,14 +4494,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.TOPPRODUCTS,
             case
+            when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
-            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when m.TOPPRODUCTS = 0  then 100
+            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
+            when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
             when y.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - y.TOPPRODUCTS) * 100 / y.TOPPRODUCTS), 1)
-            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when y.TOPPRODUCTS = 0  then 100
+            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when y.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when y.TOPPRODUCTS = 0 or y.TOPPRODUCTS is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
@@ -4495,14 +4565,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.TOPPRODUCTS,
             case
+            when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
-            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when m.TOPPRODUCTS = 0  then 100
+            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
+            when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
             when y.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - y.TOPPRODUCTS) * 100 / y.TOPPRODUCTS), 1)
-            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when y.TOPPRODUCTS = 0  then 100
+            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when y.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when y.TOPPRODUCTS = 0 or y.TOPPRODUCTS is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, COUNT(*) AS TOPPRODUCTS
@@ -4565,14 +4637,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.TOPPRODUCTS,
             case
+            when c.TOPPRODUCTS is null and m.TOPPRODUCTS <> 0 then -100
             when m.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - m.TOPPRODUCTS) * 100 / m.TOPPRODUCTS), 1)
-            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when m.TOPPRODUCTS = 0  then 100
+            when m.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when m.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when m.TOPPRODUCTS = 0 or m.TOPPRODUCTS is null then 100
             end as momPercent,
             case
+            when c.TOPPRODUCTS is null and y.TOPPRODUCTS <> 0 then -100
             when y.TOPPRODUCTS <> 0 then round(((c.TOPPRODUCTS - y.TOPPRODUCTS) * 100 / y.TOPPRODUCTS), 1)
-            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0
-            when y.TOPPRODUCTS = 0  then 100
+            when y.TOPPRODUCTS = 0  and c.TOPPRODUCTS = 0 then 0 when y.TOPPRODUCTS is null  and c.TOPPRODUCTS is null then 0
+            when y.TOPPRODUCTS = 0 or y.TOPPRODUCTS is null then 100
             end as yoyPercent
             from
             (select a.productCode ,p.description, COUNT(*) AS TOPPRODUCTS
@@ -4638,14 +4712,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalWeight,
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.stdWeight) AS totalWeight
@@ -4705,14 +4781,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalWeight,
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.stdWeight) AS totalWeight
@@ -4776,14 +4854,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalWeight,
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.stdWeight) AS totalWeight
@@ -4849,14 +4929,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalWeight,
             case
+            when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
-            when m.totalWeight = 0  and c.totalWeight = 0 then 0
-            when m.totalWeight = 0  then 100
+            when m.totalWeight = 0  and c.totalWeight = 0 then 0 when m.totalWeight is null  and c.totalWeight is null then 0
+            when m.totalWeight = 0 or m.totalWeight is null then 100
             end as momPercent,
             case
+            when c.totalWeight is null and y.totalWeight <> 0 then -100
             when y.totalWeight <> 0 then round(((c.totalWeight - y.totalWeight) * 100 / y.totalWeight), 1)
-            when y.totalWeight = 0  and c.totalWeight = 0 then 0
-            when y.totalWeight = 0  then 100
+            when y.totalWeight = 0  and c.totalWeight = 0 then 0 when y.totalWeight is null  and c.totalWeight is null then 0
+            when y.totalWeight = 0 or y.totalWeight is null then 100
             end as yoyPercent
             from
             (select a.productCode ,p.description, SUM(a.stdWeight) AS totalWeight
@@ -4923,14 +5005,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalVolume,
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.STDVOLUME) AS totalVolume
@@ -4990,14 +5074,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalVolume,
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.STDVOLUME) AS totalVolume
@@ -5060,14 +5146,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalVolume,
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.productCode,p.description, SUM(a.STDVOLUME) AS totalVolume
@@ -5131,14 +5219,16 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     @Query(value = """
             select s.productCode,s.description,s.totalVolume,
             case
+            when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
-            when m.totalVolume = 0  and c.totalVolume = 0 then 0
-            when m.totalVolume = 0  then 100
+            when m.totalVolume = 0  and c.totalVolume = 0 then 0 when m.totalVolume is null  and c.totalVolume is null then 0
+            when m.totalVolume = 0 or m.totalVolume is null then 100
             end as momPercent,
             case
+            when c.totalVolume is null and y.totalVolume <> 0 then -100
             when y.totalVolume <> 0 then round(((c.totalVolume - y.totalVolume) * 100 / y.totalVolume), 1)
-            when y.totalVolume = 0  and c.totalVolume = 0 then 0
-            when y.totalVolume = 0  then 100
+            when y.totalVolume = 0  and c.totalVolume = 0 then 0 when y.totalVolume is null  and c.totalVolume is null then 0
+            when y.totalVolume = 0 or y.totalVolume is null then 100
             end as yoyPercent
             from
             (select a.productCode ,p.description, SUM(a.STDVOLUME) AS totalVolume
