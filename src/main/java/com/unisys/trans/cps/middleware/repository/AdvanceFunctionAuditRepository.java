@@ -26,7 +26,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when y.TOPLANE <> 0 then round(((c.TOPLANE - y.TOPLANE) * 100 / y.TOPLANE), 1)
             when y.TOPLANE = 0  and c.TOPLANE = 0 then 0 when y.TOPLANE is null  and c.TOPLANE is null then 0
             when y.TOPLANE = 0 or y.TOPLANE is null then 100
-            end as yoyPercent         
+            end as yoyPercent
             from
             (SELECT a.org, a.DEST, COUNT(*) AS TOPLANE
             FROM AdvanceFunctionAudit a
@@ -233,7 +233,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             AND a.carrier = :carrier
             AND c.regionName = :region
             GROUP BY a.ORG, a.DEST
-            ) s left join          
+            ) s left join
             (SELECT a.org, a.DEST, COALESCE( COUNT(*), 0) AS TOPLANE
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.org = b.code
@@ -279,7 +279,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total of Weight Count for Airport
     @Query(value="""
-          select s.ORG,s.DEST,s.totalWeight, 
+          select s.ORG,s.DEST,s.totalWeight,
           case
           when c.totalWeight is null and m.totalWeight <> 0 then -100
           when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
@@ -343,7 +343,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Weight  for Country
     @Query(value="""
-            select s.ORG,s.DEST,s.totalWeight, 
+            select s.ORG,s.DEST,s.totalWeight,
             case
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
@@ -406,7 +406,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Weight  for Continent
     @Query(value="""
-           select s.ORG,s.DEST,s.totalWeight, 
+           select s.ORG,s.DEST,s.totalWeight,
            case
            when c.totalWeight is null and m.totalWeight <> 0 then -100
            when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
@@ -469,7 +469,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Weight  for Region
     @Query(value="""
-            select s.ORG,s.DEST,s.totalWeight, 
+            select s.ORG,s.DEST,s.totalWeight,
             case
             when c.totalWeight is null and m.totalWeight <> 0 then -100
             when m.totalWeight <> 0 then round(((c.totalWeight - m.totalWeight) * 100 / m.totalWeight), 1)
@@ -521,7 +521,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
             JOIN RegionMaster c ON b.continent = c.continent
-            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)           
+            where month(a.eventDate)= month(getdate()) and year(a.eventDate)=(year(getdate())-1)
             and a.carrier = :carrier
             AND c.regionName = :region
             group by a.ORG, a.DEST
@@ -537,7 +537,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Volume  for Airport
     @Query(value="""
-            select s.ORG,s.DEST,s.totalVolume, 
+            select s.ORG,s.DEST,s.totalVolume,
             case
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
@@ -596,7 +596,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Volume  for Country
     @Query(value="""
-            select s.ORG,s.DEST,s.totalVolume, 
+            select s.ORG,s.DEST,s.totalVolume,
             case
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
@@ -661,7 +661,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Volume  for Continent
     @Query(value="""
-            select s.ORG,s.DEST,s.totalVolume, 
+            select s.ORG,s.DEST,s.totalVolume,
             case
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
@@ -724,7 +724,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Lanes - Total Number of Volume  for Region
     @Query(value="""
-            select s.ORG,s.DEST,s.totalVolume, 
+            select s.ORG,s.DEST,s.totalVolume,
             case
             when c.totalVolume is null and m.totalVolume <> 0 then -100
             when m.totalVolume <> 0 then round(((c.totalVolume - m.totalVolume) * 100 / m.totalVolume), 1)
@@ -761,7 +761,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             (SELECT a.ORG, a.DEST, COALESCE(SUM(a.STDVOLUME),0) AS totalVolume
             from   AdvanceFunctionAudit a
             JOIN CityCountryMaster b ON a.ORG = b.code
-            JOIN RegionMaster c ON b.continent = c.continent            
+            JOIN RegionMaster c ON b.continent = c.continent
             where (
             month(getdate()) <> 1 and month(a.eventDate)=(month(getdate())-1)  and  year(a.eventDate)=year(getdate())
             or
@@ -804,10 +804,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
         when y.totalNoOfBookingCount <> 0 then round(((c.totalNoOfBookingCount - y.totalNoOfBookingCount) * 100 / y.totalNoOfBookingCount), 1)
         when y.totalNoOfBookingCount = 0  and c.totalNoOfBookingCount = 0 then 0 when y.totalNoOfBookingCount is null  and c.totalNoOfBookingCount is null then 0
         when y.totalNoOfBookingCount = 0 or y.totalNoOfBookingCount is null then 100
-        end as yoyPercent             
+        end as yoyPercent
         from
         (SELECT a.carrier, a.accNo, COUNT(*) as totalNoOfBookingCount
-        FROM AdvanceFunctionAudit a        
+        FROM AdvanceFunctionAudit a
         where a.eventDate >= :startDate and a.eventDate <= :endDate
         AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
         AND a.carrier = :carrier
@@ -856,7 +856,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Booking Count for Country
     @Query(value="""
-      select s.carrier,s.accNo,s.totalNoOfBookingCount, 
+      select s.carrier,s.accNo,s.totalNoOfBookingCount,
       case
       when c.totalNoOfBookingCount is null and m.totalNoOfBookingCount <> 0 then -100
       when m.totalNoOfBookingCount <> 0 then round(((c.totalNoOfBookingCount - m.totalNoOfBookingCount) * 100 / m.totalNoOfBookingCount), 1)
@@ -918,7 +918,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Top Agents - Total Number of Booking Count for Continent
     @Query(value="""
-      select s.carrier,s.accNo,s.totalNoOfBookingCount, 
+      select s.carrier,s.accNo,s.totalNoOfBookingCount,
       case
       when c.totalNoOfBookingCount is null and m.totalNoOfBookingCount <> 0 then -100
       when m.totalNoOfBookingCount <> 0 then round(((c.totalNoOfBookingCount - m.totalNoOfBookingCount) * 100 / m.totalNoOfBookingCount), 1)
@@ -1053,10 +1053,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when y.totalNoOfVolumeCount <> 0 then round(((c.totalNoOfVolumeCount - y.totalNoOfVolumeCount) * 100 / y.totalNoOfVolumeCount), 1)
             when y.totalNoOfVolumeCount = 0  and c.totalNoOfVolumeCount = 0 then 0 when y.totalNoOfVolumeCount is null  and c.totalNoOfVolumeCount is null then 0
             when y.totalNoOfVolumeCount = 0 or y.totalNoOfVolumeCount is null then 100
-            end as yoyPercent             
+            end as yoyPercent
             from
             (SELECT a.carrier, a.accNo, SUM(a.STDVOLUME) as totalNoOfVolumeCount
-            FROM AdvanceFunctionAudit a            
+            FROM AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
@@ -1303,10 +1303,10 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             when y.totalNoOfWeightCount <> 0 then round(((c.totalNoOfWeightCount - y.totalNoOfWeightCount) * 100 / y.totalNoOfWeightCount), 1)
             when y.totalNoOfWeightCount = 0  and c.totalNoOfWeightCount = 0 then 0 when y.totalNoOfWeightCount is null  and c.totalNoOfWeightCount is null then 0
             when y.totalNoOfWeightCount = 0 or y.totalNoOfWeightCount is null then 100
-            end as yoyPercent            
+            end as yoyPercent
             from
             (SELECT a.carrier, a.accNo, SUM(a.stdWeight) as totalNoOfWeightCount
-            FROM AdvanceFunctionAudit a            
+            FROM AdvanceFunctionAudit a
             where a.eventDate >= :startDate and a.eventDate <= :endDate
             AND a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
             AND a.carrier = :carrier
@@ -1540,7 +1540,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
 
     //Point Of Sales - Total Number of Booking Count for Airport
     @Query(value = """
-            select s.day, s.bookingCount,                     
+            select s.day, s.bookingCount,
             case
             when m.monthbookingCount is null and pm.pmbookingCount <> 0 then -100
             when pm.pmbookingCount <> 0 then round(((m.monthbookingCount - pm.pmbookingCount) * 100 / pm.pmbookingCount), 1)
@@ -2394,7 +2394,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           on s.commodity = y.commodity
           order by s.COMMODITY_COUNT desc
           offset 0 rows
-          fetch next 6 rows only		  
+          fetch next 6 rows only
           """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                  @Param("carrier") String carrier, @Param("country") String country);
@@ -2459,7 +2459,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
           on s.commodity = y.commodity
           order by s.COMMODITY_COUNT desc
           offset 0 rows
-          fetch next 6 rows only		  
+          fetch next 6 rows only
           """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingContinent(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                    @Param("carrier") String carrier, @Param("continent") String continent);
@@ -2527,7 +2527,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             on s.commodity = y.commodity
             order by s.COMMODITY_COUNT desc
             offset 0 rows
-            fetch next 6 rows only	  
+            fetch next 6 rows only
             """,nativeQuery = true)
     List<Object[]> getTopCommodityBookingRegion(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                 @Param("carrier") String carrier, @Param("region") String region);
@@ -3913,11 +3913,53 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
     //Top Domestic and International - Total Number of Booking Count for AirPort
     @Query(value ="""
             WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
+              SELECT 'false' AS category
+              UNION ALL
+              SELECT 'true'
+              )
+              
+             SELECT
+             ac.category,
+             COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
+             FROM AllCategories ac
+             LEFT JOIN (
+             SELECT
+             a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
+             CASE
+             WHEN a.ORG NOT IN (
+             SELECT b.CODE
+             FROM CITYCOUNTRYMASTER b
+             JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
+             WHERE c.CARRIERCODE = :carrier
+             ) OR (
+                 COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
+             ) THEN 'true'
+             ELSE 'false'
+             END AS category
+             FROM ADVANCEFUNCTIONAUDIT a
+             LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+             LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+             WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+             AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
+             AND a.CARRIER = :carrier
+             AND a.ORG = :origin
+            ) AS CategoryCTE
+            ON ac.category = CategoryCTE.category
+            GROUP BY ac.category
+            ORDER BY ac.category""",nativeQuery = true)
 
+    List<Object[]> getTopDomesticInternationalBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
+                                                             @Param("carrier") String carrier, @Param("origin") String origin);
+
+
+    //Top Domestic and International - Total Number of Booking Count for Country
+    @Query(value ="""
+            WITH AllCategories AS (
+           SELECT 'false' AS category
+           UNION ALL
+           SELECT 'true'
+           )
+          
            SELECT
            ac.category,
            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
@@ -3931,65 +3973,22 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
            FROM CITYCOUNTRYMASTER b
            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
            WHERE c.CARRIERCODE = :carrier
-           ) OR a.DEST NOT IN (
-           SELECT b.CODE
-           FROM CITYCOUNTRYMASTER b
-           JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-           WHERE c.CARRIERCODE = :carrier
+           ) OR (
+               COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
            ) THEN 'true'
            ELSE 'false'
            END AS category
-           FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-           and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
+           FROM ADVANCEFUNCTIONAUDIT a
+           LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+           LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+           WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+           AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
            AND a.CARRIER = :carrier
-           AND a.ORG = :origin
+           AND org_country.COUNTRYCODE = :country
            ) AS CategoryCTE
            ON ac.category = CategoryCTE.category
            GROUP BY ac.category
            ORDER BY ac.category""",nativeQuery = true)
-
-    List<Object[]> getTopDomesticInternationalBookingAirport(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
-                                                             @Param("carrier") String carrier, @Param("origin") String origin);
-
-
-    //Top Domestic and International - Total Number of Booking Count for Country
-    @Query(value ="""
-            WITH AllCategories AS (
-            SELECT 'false' AS category
-            UNION ALL
-            SELECT 'true'
-            )
-            
-            SELECT
-            ac.category,
-            COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
-            FROM AllCategories ac
-            LEFT JOIN (
-            SELECT
-            a.AWBNUMBER, a.ORG, a.EVENTDATE, a.CONFNUMBER, a.CARRIER,
-            CASE
-            WHEN a.ORG NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
-            ) THEN 'true'
-            ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and b.COUNTRYCODE = :country
-            ) AS CategoryCTE
-            ON ac.category = CategoryCTE.category
-            GROUP BY ac.category
-            ORDER BY ac.category""",nativeQuery = true)
 
     List<Object[]> getTopDomesticInternationalBookingCountry(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,
                                                              @Param("carrier") String carrier, @Param("country") String country);
@@ -4016,19 +4015,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM CITYCOUNTRYMASTER b
             JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
             WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
+            ) OR (
+                COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
             ) THEN 'true'
             ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and b.CONTINENT=:continent
+                    END AS category
+            FROM ADVANCEFUNCTIONAUDIT a
+            LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+            LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+            WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+            AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
+            AND a.CARRIER = :carrier
+            AND org_country.CONTINENT  = :continent
             ) AS CategoryCTE
             ON ac.category = CategoryCTE.category
             GROUP BY ac.category
@@ -4044,7 +4042,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             UNION ALL
             SELECT 'true'
             )
-                                        
+          
             SELECT
             ac.category,
             COALESCE(COUNT(CategoryCTE.category), 0) AS category_count
@@ -4058,20 +4056,19 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM CITYCOUNTRYMASTER b
             JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
             WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
+            ) OR (
+                COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
             ) THEN 'true'
             ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE
-            a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and e.REGIONNAME= :region
+                    END AS category
+            FROM ADVANCEFUNCTIONAUDIT a
+            LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+            LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+            LEFT JOIN REGIONMASTER r ON org_country.CONTINENT = r.CONTINENT
+            WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+            AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
+            AND a.CARRIER = :carrier
+            AND r.REGIONNAME  = :region
             ) AS CategoryCTE
             ON ac.category = CategoryCTE.category
             GROUP BY ac.category
@@ -4101,18 +4098,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM CITYCOUNTRYMASTER b
             JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
             WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
+            ) OR (
+                COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
             ) THEN 'true'
             ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and a.ORG = :origin
+                    END AS category
+            FROM ADVANCEFUNCTIONAUDIT a
+            LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+            LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+            WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+            AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
+            AND a.CARRIER = :carrier
+            AND a.ORG = :origin
             ) AS CategoryCTE
             ON ac.category = CategoryCTE.category
             GROUP BY ac.category
@@ -4142,19 +4139,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM CITYCOUNTRYMASTER b
             JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
             WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
+            ) OR (
+                COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
             ) THEN 'true'
             ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b  WHERE a.ORG = b.CODE
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and b.COUNTRYCODE = :country
+                    END AS category
+            FROM ADVANCEFUNCTIONAUDIT a
+            LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+            LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+            WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+            AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
+            AND a.CARRIER = :carrier
+            AND org_country.COUNTRYCODE = :country
             ) AS CategoryCTE
             ON ac.category = CategoryCTE.category
             GROUP BY ac.category
@@ -4185,19 +4181,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM CITYCOUNTRYMASTER b
             JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
             WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
+            ) OR (
+                COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
             ) THEN 'true'
             ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and b.CONTINENT=:continent
+                    END AS category
+            FROM ADVANCEFUNCTIONAUDIT a
+            LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+            LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+            WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+            AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
+            AND a.CARRIER = :carrier
+            AND org_country.CONTINENT=:continent
             ) AS CategoryCTE
             ON ac.category = CategoryCTE.category
             GROUP BY ac.category
@@ -4227,19 +4222,19 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM CITYCOUNTRYMASTER b
             JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
             WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
+            ) OR (
+                COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
             ) THEN 'true'
             ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE a.ORG = b.CODE and b.CONTINENT = e.CONTINENT
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and e.REGIONNAME= :region
+                    END AS category
+            FROM ADVANCEFUNCTIONAUDIT a
+            LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+            LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+            LEFT JOIN REGIONMASTER r ON org_country.CONTINENT = r.CONTINENT
+            WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+            AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
+            AND a.CARRIER = :carrier
+            AND r.REGIONNAME  = :region
             ) AS CategoryCTE
             ON ac.category = CategoryCTE.category
             GROUP BY ac.category
@@ -4269,18 +4264,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM CITYCOUNTRYMASTER b
             JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
             WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
+            ) OR (
+                COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
             ) THEN 'true'
             ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a WHERE a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and a.ORG = :origin
+                    END AS category
+            FROM ADVANCEFUNCTIONAUDIT a
+            LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+            LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+            WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+            AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
+            AND a.CARRIER = :carrier
+            AND a.ORG = :origin
             ) AS CategoryCTE
             ON ac.category = CategoryCTE.category
             GROUP BY ac.category
@@ -4310,19 +4305,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM CITYCOUNTRYMASTER b
             JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
             WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
+            ) OR (
+                COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
             ) THEN 'true'
             ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and b.COUNTRYCODE = :country
+                    END AS category
+            FROM ADVANCEFUNCTIONAUDIT a
+            LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+            LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+            WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+            AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
+            AND a.CARRIER = :carrier
+            AND org_country.COUNTRYCODE = :country
             ) AS CategoryCTE
             ON ac.category = CategoryCTE.category
             GROUP BY ac.category
@@ -4352,19 +4346,18 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM CITYCOUNTRYMASTER b
             JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
             WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
+            ) OR (
+                COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
             ) THEN 'true'
             ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a , CITYCOUNTRYMASTER b WHERE a.ORG = b.CODE
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and b.CONTINENT=:continent
+                    END AS category
+            FROM ADVANCEFUNCTIONAUDIT a
+            LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+            LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+            WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+            AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
+            AND a.CARRIER = :carrier
+            AND org_country.CONTINENT = :continent
             ) AS CategoryCTE
             ON ac.category = CategoryCTE.category
             GROUP BY ac.category
@@ -4394,20 +4387,19 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
             FROM CITYCOUNTRYMASTER b
             JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
             WHERE c.CARRIERCODE = :carrier
-            ) OR a.DEST NOT IN (
-            SELECT b.CODE
-            FROM CITYCOUNTRYMASTER b
-            JOIN AIRLINEHOSTCOUNTRYMASTER c ON b.COUNTRYCODE = c.HOSTCOUNTRYCODE
-            WHERE c.CARRIERCODE = :carrier
+            ) OR (
+                COALESCE(org_country.COUNTRYCODE, '') <> COALESCE(dest_country.COUNTRYCODE, '')
             ) THEN 'true'
             ELSE 'false'
-            END AS category
-            FROM ADVANCEFUNCTIONAUDIT a, CITYCOUNTRYMASTER b, REGIONMASTER e WHERE a.ORG = b.CODE
-            and b.CONTINENT = e.CONTINENT
-            and a.EVENTDATE >= :startDate and a.EVENTDATE <= :endDate
-            and a.txnStatus <> 'E' and a.txnStatus <> '' and a.status = 'S'
-            and a.CARRIER = :carrier
-            and e.REGIONNAME= :region
+                    END AS category
+            FROM ADVANCEFUNCTIONAUDIT a
+            LEFT JOIN CITYCOUNTRYMASTER org_country ON a.ORG = org_country.CODE
+            LEFT JOIN CITYCOUNTRYMASTER dest_country ON a.DEST = dest_country.CODE
+            LEFT JOIN REGIONMASTER r ON org_country.CONTINENT = r.CONTINENT
+            WHERE a.EVENTDATE >= :startDate AND a.EVENTDATE <= :endDate
+            AND a.txnStatus <> 'E' AND a.txnStatus <> '' AND a.status = 'S'
+            AND a.CARRIER = :carrier
+            AND r.REGIONNAME  = :region
             ) AS CategoryCTE
             ON ac.category = CategoryCTE.category
             GROUP BY ac.category
@@ -4487,7 +4479,7 @@ public interface AdvanceFunctionAuditRepository extends JpaRepository<AdvanceFun
          group by a.productCode,p.description
          ) y
          on s.productCode = y.productCode
-         order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only             		  
+         order by s.TOPPRODUCTS desc offset 0 rows fetch next 5 rows only
          """, nativeQuery = true)
     List<Object[]> getTopProductsBookingAirportForAA(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate,@Param("carrier") String carrier,@Param("originAirport") String originAirport);
 
